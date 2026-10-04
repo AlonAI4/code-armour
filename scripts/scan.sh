@@ -32,7 +32,10 @@ for b in dist build out .next/static public; do
   hits=$(grep -rIlE "$SECRETS" "$b" 2>/dev/null | head -10)
   if [ -n "$hits" ]; then bad "Secrets inside $b/ (anyone can read these):"; echo "$hits"; build_bad=1; fi
 done
-[ $found_build = 0 ] && warn "No build folder found. Run your build, then scan again to check the real output."
+if [ $found_build = 0 ]; then
+  if [ -f index.html ]; then ok "Static site: these files ARE what visitors download (already checked in step 1)"
+  else warn "No build folder found. Run your build, then scan again to check the real output."; fi
+fi
 [ $found_build = 1 ] && [ $build_bad = 0 ] && ok "No secret patterns in build output"
 
 echo; echo "-- 3. Public env var prefixes holding secrets --"
