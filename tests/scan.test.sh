@@ -54,7 +54,10 @@ refuse "using our own recipes doesn't trigger a secret alarm (red-team find)" "P
 refuse "no explanation lines without findings" "(XSS? ="
 
 echo "# vulnerable test game (tests/fixtures/vuln-game)"
-OUT=$(bash "$SCAN" "$HERE/fixtures/vuln-game" 2>&1 | sed 's/\x1b\[[0-9;]*m//g')
+# The game's .env is git-ignored (never uploaded), so build it here with fake keys.
+V=$T/vuln-game; cp -R "$HERE/fixtures/vuln-game" "$V"
+printf 'VITE_SUPABASE_URL=https://abcd.supabase.co\nVITE_SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiJ9.service\nSTRIPE_SECRET_KEY=sk_test_51FAKEfakeFAKEfake000\nOPENAI_API_KEY=sk-proj-FAKEfakeFAKEfakeFAKE1234\n' > "$V/.env"
+OUT=$(bash "$SCAN" "$V" 2>&1 | sed 's/\x1b\[[0-9;]*m//g')
 expect "admin key in front-end code" "Secret key names used in front-end folders"
 expect "secrets sitting in .env" ".env holds secret keys"
 expect "RLS turned off" "RLS turned off"
