@@ -8,7 +8,7 @@ Run the **code-armour** skill on this project from start to finish. Its SKILL.md
    - ask what you need;
    - choose the rules that apply;
    - scan;
-   - fix with the recipes;
+   - **show the plan and ask "Should I put the armour on?"** (Step 3b), then fix only what was approved;
    - test each fix for real;
    - save the tests in `security-tests/` (Step 5b), and prove they can fail;
    - write `COMPLIANCE.md`;

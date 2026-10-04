@@ -73,7 +73,22 @@ Skip whole sections that can't apply. For example, no payments means skip Stripe
     (see `references/stacks.md` §1). Firebase: read `firestore.rules` / `storage.rules`, try the Rules Playground. Postgres/Prisma/Drizzle, Convex, Express: read every route or function and confirm it filters by the verified user. PocketBase/Appwrite: check each collection's rules in the admin UI. If Supabase is used, run `recipes/supabase/audit.sql` through whatever you have: the Supabase MCP `execute_sql` tool, the `supabase` CLI, or ask the user to paste it into the SQL Editor and share the output. Also open (or ask for) **Advisors → Security** and explain every warning in plain words.
 3. Go through each applicable item in the references and check it against the code.
 
-## Step 4: Fix
+## Step 3b: Show the plan and ask before changing anything
+
+Before editing a single file, show the user what you found and what you'd change. Keep it to one screen, worst first, in plain words:
+
+| # | Problem | Fix (files that will change) | Risk if left |
+|---|---|---|---|
+
+Then ask: **"Should I put the armour on?"** Use your question tool if you have one (Claude Code: AskUserQuestion), and offer:
+- **All fixes** (recommended)
+- **Only the critical ones**
+- **Let me pick:** list the numbers
+- **No changes:** just write `COMPLIANCE.md` with the problems as ❌
+
+Only change what they said yes to. Anything risky (live database, deleting data, rotating keys, account settings) still needs its own separate yes, even if they chose "All fixes". If they say no, nothing is edited. Everything still goes in `COMPLIANCE.md` so it isn't forgotten.
+
+## Step 4: Fix (only what was approved)
 
 Use the recipes in `recipes/` as starting points. Each one marks the names you must change (tables, columns) at the top. Netlify recipes use the modern `export default (req) => Response` style; if the project uses the older `export const handler = async (event)` style, keep the logic and switch the style. They're written for Supabase + Netlify, Firebase, Vercel/Next.js, Cloudflare, Express and Lemon Squeezy/Paddle. For other stacks, keep the same logic and translate it using `references/stacks.md`. Adapt table names, columns and routes to the project, and don't paste them blindly.
 
@@ -160,7 +175,7 @@ Don't call the project "secure", "legal" or "compliant". Severity labels mean ho
 
 Use this when the user says "re-test", "re-check" or "run code armour again", or when the project already has a `COMPLIANCE.md`.
 
-1. **Run the saved tests first:** `bash security-tests/run.sh [live-url]`. Every ✗ is a fix that broke since last time. That's the top priority: find the change that undid it (`git log -p` on the file), fix it, and re-run until all pass.
+1. **Run the saved tests first:** `bash security-tests/run.sh [live-url]`. Every ✗ is a fix that broke since last time. That's the top priority: find the change that undid it (`git log -p` on the file), show the user what broke and the fix, ask before changing it (same as Step 3b), then re-run until all pass.
 2. **Check what changed since the date in COMPLIANCE.md** (`git log --since=<date> --stat`):
    - New tables, functions, routes or webhooks? Run Steps 3–5 for them, and add their attacks to `attacks.test.mjs`.
    - New features like payments, chat, uploads, AI or kids' accounts? Re-do Step 2 for those features.

@@ -1,98 +1,156 @@
-# Code Armour
+# 🛡️ Code Armour
 
-A pre-launch skill that lowers your risk of getting hacked or sued, for vibe coders. Your AI coding agent:
-1. asks where you are and what you're building,
-2. keeps only the rules that apply,
-3. scans your real code,
-4. fixes problems with tested recipes,
-5. proves each fix by trying the attack, and
-6. writes a `COMPLIANCE.md` checklist.
+[![tests](https://github.com/AlonAI4/code-armour/actions/workflows/test.yml/badge.svg)](https://github.com/AlonAI4/code-armour/actions/workflows/test.yml)
+![license](https://img.shields.io/badge/license-MIT-blue)
+![works with](https://img.shields.io/badge/works%20with-Claude%20Code%20%7C%20Codex%20%7C%20Agent%20Skills-black)
 
-**It's a checklist, not legal advice.**
+**A skill for AI coding agents that checks your app before launch, so you're less likely to get hacked, get a surprise bill, or break a law you didn't know about. Then it proves every fix works.**
 
-It covers security, privacy, kids, selling, tax, IP, user content and AI rules for the UK, EU and US, plus 24 more countries. It works with Supabase, Firebase, Postgres/Prisma, Convex, PocketBase, Appwrite, MongoDB, Netlify, Vercel, Cloudflare, Next.js, Express, Stripe, Lemon Squeezy and Paddle.
+Made for vibe coders: solo builders, beginners and teenagers who build with AI and ship fast.
+
+> ⚠️ Code Armour is a checklist run by an AI. It is **not legal advice** and not a professional security audit. It lowers risk; it can't promise you're safe.
+
+---
+
+## Why this exists
+
+AI writes code that works, but it often isn't safe:
+
+- **When the database blocks a request, AI "fixes" it by switching the protection off.** In 2025, 170+ apps built with one AI tool leaked their whole database this way ([CVE-2025-48757](https://www.sentinelone.com/vulnerability-database/cve-2025-48757/)).
+- **AI puts secret keys where anyone can see them.** One stolen AI key ran up an **$82,000 bill in 24 hours**.
+- **Payments get faked.** If nobody checks Stripe's signature, anyone can send a fake "paid" message and get things for free.
+- **Laws apply even to tiny apps:** privacy rules, kids' rules (under 13s), tax on digital sales, loot-box bans, AI labels. They differ in every country.
+
+Most checklists only *list* these things. Code Armour **finds them in your real code, fixes them, attacks its own fixes to prove they work, and keeps re-testing** so a later "quick fix" can't quietly undo them.
+
+## What a run looks like
+
+You type `/armour` in your project. The agent:
+
+1. **Asks** what it can't work out from your code: your country, where your users are, whether you take payments, and whether kids might use it.
+2. **Picks only the rules that apply.** No payments means no tax section. Kids possible means the kids' rules switch on. When countries disagree, the strictest rule wins.
+3. **Scans** the code, the git history, the build and the live site.
+4. **Fixes** problems using tested recipes, adapted to your tables and routes.
+5. **Attacks every fix to prove it.** It signs in as a second user and tries to read your data, sends a fake payment, and tries to make itself admin. Each attack must fail.
+6. **Saves those attacks as tests** in `security-tests/`, so `bash security-tests/run.sh` (or GitHub, on every push) re-checks them forever.
+7. **Writes `COMPLIANCE.md`**, a dated checklist:
+   - ✅ done, with proof
+   - ❌ not done
+   - ➖ doesn't apply, and why
+   - ❓ needs checking
+
+   Legal items never get an automatic ✅, because code can't prove a law is followed: a person has to review them.
 
 ## Commands
 
 | Command | What it does |
 |---|---|
-| `/armour` | **Adds the armour.** Asks about the project, finds and fixes security and legal risks, proves each fix by attacking it, saves the attacks as re-tests in `security-tests/`, and writes `COMPLIANCE.md`. |
-| `/armourcheck` | **Checks the armour.** Is it there, do the saved re-tests still pass, and is anything new or out of date? Read-only unless you ask for fixes. |
-| `/armourtest` | **Tests the armour.** A lawyer agent reviews it and a hacker agent attacks local copies (never live systems). Then their findings are verified, and every fix gets a new re-test. |
+| `/armour` | **Add the armour.** The full run above. |
+| `/armourcheck` | **Check the armour.** Is it there, do the saved tests still pass, and has anything new been added or gone out of date? Changes nothing unless you ask. |
+| `/armourtest` | **Test the armour.** A *lawyer* agent reviews your legal pages and a *hacker* agent attacks local copies of your app (never live systems). Their findings are double-checked, and every real one becomes a new saved test. |
 
-In Codex, custom prompts are called with `/prompts:armour`, `/prompts:armourcheck` and `/prompts:armourtest`. Or just ask: "run code armour".
+You can also just ask: *"is my project safe to launch?"*
 
-## Install
+## Quick start
 
-It uses the open Agent Skills format (a folder with a `SKILL.md`), so one copy works in several tools.
+```bash
+git clone https://github.com/AlonAI4/code-armour.git ~/code-armour
+```
 
 **Claude Code**
 ```bash
 ln -s ~/code-armour ~/.claude/skills/code-armour
-```
-Commands:
-```bash
 mkdir -p ~/.claude/commands && for c in armour armourcheck armourtest; do ln -sfn ~/code-armour/commands/$c.md ~/.claude/commands/$c.md; done
 ```
-Then type `/armour`, or say "is my project safe to launch?".
+Then open your project and type `/armour`.
 
 **Codex**
 ```bash
 ln -s ~/code-armour ~/.codex/skills/code-armour
-```
-Commands:
-```bash
 mkdir -p ~/.codex/prompts && for c in armour armourcheck armourtest; do ln -sfn ~/code-armour/commands/$c.md ~/.codex/prompts/$c.md; done
 ```
-Then type `/prompts:armour`, or `$code-armour`.
+Then type `/prompts:armour` or `$code-armour`.
 
-**Other agents** (Cursor, Gemini CLI, Copilot, Windsurf…)
-- If your tool supports Agent Skills, put the folder in its skills directory.
-- Otherwise, add this to the project's `AGENTS.md` (or `.cursorrules` / `GEMINI.md`):
-  ```
-  Before launch, or when asked about security, privacy or legal readiness, follow ~/code-armour/SKILL.md step by step.
-  ```
+**Other agents** (Cursor, Gemini CLI, Copilot, Windsurf…): if they support Agent Skills, put the folder in their skills directory. If not, add this line to your project's `AGENTS.md`:
+```
+Before launch, or when asked about security, privacy or legal readiness, follow ~/code-armour/SKILL.md step by step.
+```
 
-## What's inside
-| Path | What |
+## What it checks
+
+| Area | Examples |
 |---|---|
-| `SKILL.md` | The step-by-step instructions the agent follows |
-| `references/security.md` | ~70 ways apps get hacked or run up bills, each with a CHECK |
-| `references/legal.md` | UK, EU and US legal risks |
-| `references/countries-*.md` | 24 more countries |
-| `references/stacks.md` | How each protection works on each platform |
-| `recipes/` | Ready-to-adapt code: Supabase SQL and Edge Functions, Firebase rules, Netlify/Vercel/Cloudflare headers, Stripe/Lemon Squeezy/Paddle webhooks, Express, Next.js |
-| `scripts/scan.sh` | Quick scanner: secrets, git history, risky code, npm audit, live headers |
-| `commands/` | `/armour`, `/armourcheck`, `/armourtest` |
-| `templates/` | `COMPLIANCE.md` checklist, a plain-words privacy policy, the re-test kit (`security-tests/`), the lawyer and hacker reviewer briefs, and the new-country research template |
-| `references/upcoming.md` | Watchlist of laws with future dates, checked against today on every run |
-| `references/countries-extra/` | Countries researched on demand (Thailand so far). Pull requests welcome |
+| 🔑 **Leaked secrets** | Keys in the browser bundle or git history, `VITE_`/`NEXT_PUBLIC_` mistakes, database passwords, admin keys |
+| 🗄️ **Data access** | Supabase RLS off or fake (`using (true)`), Firebase "test mode" rules, users editing other users' data, making themselves admin, public storage buckets |
+| 💳 **Payments** | Unverified webhooks, prices set by the browser, double payouts, replayed events |
+| 💸 **Surprise bills** | AI endpoints anyone can spam, no spend caps, bot signups |
+| 🎮 **Games** | Fake scores, coin cheating, unsafe usernames (look-alike letters, emails, links), loot boxes |
+| 🌐 **Website** | Security headers, XSS, exposed `/.env`, outdated or invented packages |
+| 🧒 **Kids** | COPPA, UK Children's Code, Brazil, India, Indonesia and more: age gates, guest mode, no chat with strangers |
+| 🔒 **Privacy** | Privacy policy that matches the code, a working "delete my account", cookies, trackers |
+| 🧾 **Selling and tax** | Refund rights, subscriptions, VAT/GST for foreign sellers (the skill usually suggests a Merchant of Record) |
+| 🤖 **AI apps** | AI labels, prompt injection, secrets in system prompts, AI with too much power |
+| ⚖️ **Content and IP** | Asset licences, UK Online Safety Act, EU DSA, takedowns |
+
+**Countries:**
+- In depth: UK, EU, US.
+- Summarised: 24 more (India, China, Brazil, Japan, Korea, Indonesia, Nigeria, Canada, Australia and others).
+- Thailand: researched on demand.
+- Any other country: the skill researches it with a fixed template and saves it for next time.
+- **Upcoming laws:** a watchlist of laws with future dates, compared with today on every run.
+
+**Stacks:** Supabase, Firebase, Postgres/Prisma, Convex, PocketBase, Appwrite, MongoDB · Netlify, Vercel, Cloudflare, Firebase Hosting · Next.js, Express · Stripe, Lemon Squeezy, Paddle.
 
 ## Tested, not just written
 
-Run the tests with `cd tests && npm install && npm test`. GitHub Actions also runs them on every push. They do three things:
+Every recipe is attacked by an automated test suite. [GitHub Actions](https://github.com/AlonAI4/code-armour/actions) runs it on every push. Run it yourself with `cd tests && npm install && npm test`.
 
-1. **Database recipes vs. real Postgres** (`sql.test.mjs`, 75 checks). Each recipe runs on real Postgres (PGlite, running inside Node) with Supabase-style roles, and then gets attacked. The attacks: reading or editing other users' rows, making yourself admin, creating a profile with free coins, look-alike-letter swear words, fake or farmed scores, double payouts.
-2. **Webhooks and server functions** (`webhooks.test.mjs`, 23 checks). These use real Stripe signatures and real Lemon Squeezy/Paddle HMACs. They check that fake, tampered, replayed and duplicate events are rejected, that endpoints refuse anyone not logged in, and that daily AI limits hold.
-3. **The scanner** (`scan.test.sh`, 29 checks), run against planted leaks, a clean app (no false alarms) and `tests/fixtures/vuln-game`, a deliberately broken game.
-5. **Firestore rules in the real Firebase emulator** (`firestore.test.mjs`, 12 checks): self-admin, self-credits, look-alike names, other users' data.
-4. **The re-test kit** (`retest.test.sh`, 9 checks). A game fixed by Code Armour passes its saved re-test. Then four typical AI "quick fixes" that undo security each turn it red, and removing them turns it green again.
+| Suite | Checks | What it proves |
+|---|---|---|
+| `sql.test.mjs` | 75 | Database recipes on **real Postgres** (PGlite) with Supabase-style roles. Attacks include: reading other users' rows, self-admin, free coins at signup, look-alike swear words, farmed scores, double payouts. |
+| `webhooks.test.mjs` | 23 | Payment and AI endpoints with **real Stripe signatures** and Lemon Squeezy/Paddle HMACs: fake, tampered, replayed and duplicate events rejected; logged-out users refused; daily AI limits hold. |
+| `scan.test.sh` | 29 | The scanner catches planted leaks and the deliberately broken test game (`tests/fixtures/vuln-game`), and gives **no false alarms** on a clean app. |
+| `retest.test.sh` | 9 | A fixed game passes its saved re-test. Four typical AI "quick fixes" that undo security each turn it **red**. |
+| `firestore.test.mjs` | 12 | Firestore rules in the **real Firebase emulator**. |
 
-The skill was also reviewed by three AI agents (4 Oct 2026):
-- **A skill test.** A fresh agent followed `SKILL.md` on the broken game. It found almost all of the 30 planted problems and fixed them, with tests.
-- **A lawyer review.** It corrected cookie, AI Act, accessibility and consumer-law details, and rewrote the privacy template to cover GDPR Art. 13.
-- **A red team.** It found the bypasses in the name filter, the profile insert, score farming, webhook replay and the scanner. Each is now fixed and has a test.
+### Reviewed and attacked
 
-These are AI reviews. They are **not** a human lawyer or a professional penetration test.
+On 4 Oct 2026, every part was reviewed or attacked by independent checks:
 
-It was also scanned with NVIDIA's [SkillSpector](https://github.com/NVIDIA/SkillSpector) (4 Oct 2026), with its AI layer on. Its AI reviewer confirmed one real bug: in Firestore rules v2, `{sub=**}` also matches the profile document itself, so players could make themselves admin. The red-team agent had missed it. It was reproduced in the emulator (5 holes), fixed, and is now tested. SkillSpector's AI disagreed with every other high finding. Most came from the deliberately broken test game and from `tests/node_modules`, which is never published.
+- **A skill test:** a fresh AI agent followed the skill on a game with 30 planted problems. It found almost all of them and fixed them, with tests.
+- **A lawyer agent:** corrected cookie, AI Act, accessibility and consumer-law details, and rewrote the privacy template to cover GDPR Art. 13.
+- **A hacker agent:** found bypasses in the name filter, profile creation, the scoring and webhook replay. All fixed, all now tested.
+- **NVIDIA [SkillSpector](https://github.com/NVIDIA/SkillSpector):** its AI reviewer confirmed one real bug the hacker agent had missed. In Firestore rules v2, `{sub=**}` also matches the profile document itself, so players could make themselves admin. It was reproduced in the emulator, fixed, and is now tested. SkillSpector's AI disagreed with every other high finding.
 
-## Limits
+These are AI and automated reviews, **not** a human lawyer or a professional penetration test.
 
-These are honest limits, not modesty:
-- Laws change, and some country details are marked "unverified" in the files.
-- The scanner only finds known patterns.
-- Recipes need adapting to your tables and routes.
-- The two Supabase Edge Functions are type-checked and reviewed, but not run in this test suite (they need a Supabase project).
-- The name filter can't catch everything. One example is random characters used in place of letters. Keep a report button.
-- Research date: October 2026. Re-check anything important.
+## What's inside
+
+| Path | What |
+|---|---|
+| `SKILL.md` | The step-by-step instructions the agent follows |
+| `commands/` | `/armour`, `/armourcheck`, `/armourtest` |
+| `references/` | Security (~70 risks), legal (UK/EU/US), 24 countries + extras, stacks, upcoming-laws watchlist |
+| `recipes/` | Ready-to-adapt fixes: Supabase SQL and Edge Functions, Firebase rules, headers for Netlify, Vercel and Cloudflare, Stripe/Lemon Squeezy/Paddle webhooks, Express, Next.js |
+| `scripts/scan.sh` | Quick scanner: secrets, git history, risky code, packages, live headers, and whether the project's own armour is set up |
+| `templates/` | `COMPLIANCE.md`, a plain-words privacy policy, the re-test kit, lawyer and hacker briefs, the country research template |
+| `tests/` | The suites above, plus the broken and fixed test games |
+
+## Honest limits
+
+- Laws change. Some country details are marked "unverified", and every reference file shows its research date (October 2026).
+- The scanner finds known patterns. A clean scan isn't proof of safety, which is why the attack tests exist.
+- Recipes need adapting to your app. The two Supabase Edge Functions are type-checked but not run in the suite, because they need a live Supabase project.
+- The name filter can't catch everything (for example, random characters standing in for letters). Keep a report button.
+- Most enforcement risk depends on scale. Severity labels mean "how likely is trouble for a small app", **not** "does the law apply".
+
+## Contributing
+
+Pull requests are welcome, especially:
+- new countries in `references/countries-extra/` (use `templates/country-research.md`);
+- new recipes, **with a test that attacks them**;
+- corrections with a source link.
+
+## About
+
+Built by Alon with Claude Code, October 2026. MIT licensed.
