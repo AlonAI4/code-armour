@@ -1,0 +1,25 @@
+# Code Armour recipe: security headers for Netlify. Paste into netlify.toml.
+# Plain words:
+#  HSTS        = browsers always use HTTPS for your site
+#  CSP         = a list of where scripts, images, etc. may load from (blocks most injected scripts)
+#  frame rules = other sites can't put your page in an invisible frame to trick clicks
+#  nosniff     = browsers don't guess file types (stops some upload tricks)
+#  Permissions = no camera, microphone or location unless you need them
+#
+# Edit connect-src for your Supabase project, and add any other domains your site really uses.
+# Tip: first deploy with "Content-Security-Policy-Report-Only" instead of "Content-Security-Policy",
+# open the browser console, fix anything it reports, then switch to the real header.
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://*.supabase.co; font-src 'self'; connect-src 'self' https://YOUR-PROJECT.supabase.co wss://YOUR-PROJECT.supabase.co https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self' https://checkout.stripe.com; object-src 'none'"
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(self \"https://js.stripe.com\")"
+
+# No Stripe? Remove the stripe.com entries. Fonts: self-host them (put the files in your site)
+# so visitors' IPs aren't sent to Google (a real legal issue in Germany).
+# TEST IT: curl -I https://your-site and check every header above is there. Or use securityheaders.com.

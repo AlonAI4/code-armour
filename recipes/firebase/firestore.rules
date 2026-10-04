@@ -1,0 +1,45 @@
+// Code Armour recipe: Firestore rules. Owner-only data, protected admin/credit fields,
+// a public read-only leaderboard, and everything else locked.
+// Deploy: firebase deploy --only firestore:rules
+// "Test mode" rules (if request.time < ... or if true) let ANYONE read and write everything. Never launch with them.
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function isOwner(userId) { return signedIn() && request.auth.uid == userId; }
+    function cleanName(n) {
+      return n is string && n.size() >= 3 && n.size() <= 20
+        && !n.matches('.*[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+[.][A-Za-z]{2,}.*')    // no emails
+        && !n.matches('.*(https?://|www[.]).*')                                // no links
+        && !n.matches('.*[0-9]{7,}.*');                                        // no phone numbers
+      // Swear/slur filtering: do it in a Cloud Function (rules can't hold a big word list).
+    }
+
+    // Private profile: only the owner. Privileged fields can never be set or changed from the app.
+    match /users/{userId} {
+      allow read, delete: if isOwner(userId);
+      allow create: if isOwner(userId)
+        && !request.resource.data.keys().hasAny(['isAdmin', 'credits', 'isPro'])
+        && cleanName(request.resource.data.displayName);
+      allow update: if isOwner(userId)
+        && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['isAdmin', 'credits', 'isPro'])
+        && cleanName(request.resource.data.displayName);
+    }
+
+    // The user's own items, e.g. /users/{userId}/notes/{noteId}
+    match /users/{userId}/{sub=**} {
+      allow read, write: if isOwner(userId);
+    }
+
+    // Public leaderboard: anyone reads, only the server (Admin SDK in a Cloud Function) writes.
+    // Store only displayName + score here, never emails or uids you don't want public.
+    match /leaderboard/{entry} {
+      allow read: if true;
+      allow write: if false;
+    }
+  }
+}
+// Unmatched paths are denied by default.
+// TEST IT: in the console's Rules Playground, or the emulator, try (a) reading /users/B while signed in as A,
+// (b) updating your own isAdmin to true. Both must be DENIED.

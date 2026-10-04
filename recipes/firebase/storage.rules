@@ -1,0 +1,13 @@
+// Code Armour recipe: Firebase Storage rules. Each user's files are private and size/type limited.
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /users/{userId}/{fileName} {
+      allow read, delete: if request.auth != null && request.auth.uid == userId;
+      allow create, update: if request.auth != null && request.auth.uid == userId
+        && request.resource.size < 5 * 1024 * 1024                         // 5 MB max
+        && request.resource.contentType.matches('image/(png|jpeg|webp)');  // no SVG/HTML (can carry scripts)
+    }
+  }
+}
+// Anything not matched is denied. TEST IT: upload to another user's folder -> denied; upload a 20 MB file -> denied.

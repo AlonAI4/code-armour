@@ -1,0 +1,11 @@
+# Code Armour recipe: security headers as a _headers file.
+# Works on Cloudflare Pages AND Netlify: put it in the folder that gets published (e.g. public/ or dist/).
+# Edit connect-src for your backend (Supabase, Firebase, your API). Remove Stripe entries if unused.
+# Firebase hosts also need: https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com in connect-src.
+/*
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://YOUR-BACKEND.example.com https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
