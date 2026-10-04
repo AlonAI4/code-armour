@@ -28,21 +28,48 @@ export default async (req) => {
 
   // 4. Call the AI with YOUR key, from the server only. The system prompt holds no secrets
   //    (assume users can make the AI reveal it). Treat the answer as untrusted text.
-  const answer = await callModel({
-    system: "You are the helper for <your app>. Only help with <your topic>.",
-    message,
-    maxTokens: MAX_OUTPUT_TOKENS,
-  });
+  let answer;
+  try {
+    answer = await callModel({
+      system: "You are the helper for <your app>. Only help with <your topic>.",
+      message,
+      maxTokens: MAX_OUTPUT_TOKENS,
+    });
+  } catch (e) {
+    console.error(e);                                            // details stay in your logs
+    return new Response("The helper is unavailable, try again later", { status: 502 });
+  }
 
   // 5. Send back plain text. The page must show it with textContent / normal JSX,
   //    never innerHTML (an AI answer can contain a script someone tricked it into writing).
   return Response.json({ answer, ai: true });   // ai: true -> show an "AI-generated" label (EU AI Act and others)
 };
 
-// Fill this in for your provider (Anthropic, OpenAI, Gemini...). Use their official SDK or REST API,
-// the key from process.env (e.g. process.env.ANTHROPIC_API_KEY), and pass maxTokens as the output limit.
+// The AI call. Pick ONE provider; keys come from Netlify env vars (never a VITE_/NEXT_PUBLIC_ prefix).
+// Set AI_MODEL in env vars to the model you want (check the provider's current model list).
 async function callModel({ system, message, maxTokens }) {
-  throw new Error("callModel not set up yet");
+  if (process.env.ANTHROPIC_API_KEY) {
+    const r = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "x-api-key": process.env.ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json" },
+      body: JSON.stringify({ model: process.env.AI_MODEL, max_tokens: maxTokens, system, messages: [{ role: "user", content: message }] }),
+    });
+    if (!r.ok) throw new Error(`AI provider error ${r.status}`);   // log it; don't show it to users
+    const j = await r.json();
+    return j.content?.map((b) => b.text ?? "").join("") ?? "";
+  }
+  if (process.env.OPENAI_API_KEY) {
+    const r = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${process.env.OPENAI_API_KEY}`, "content-type": "application/json" },
+      body: JSON.stringify({ model: process.env.AI_MODEL, max_completion_tokens: maxTokens,
+        messages: [{ role: "system", content: system }, { role: "user", content: message }] }),
+    });
+    if (!r.ok) throw new Error(`AI provider error ${r.status}`);
+    const j = await r.json();
+    return j.choices?.[0]?.message?.content ?? "";
+  }
+  throw new Error("No AI key set");
 }
 
 export const config = { path: "/api/ai" };

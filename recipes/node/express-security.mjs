@@ -26,6 +26,7 @@ app.use(helmet({
 app.use((req, res, next) => { res.set("Permissions-Policy", "camera=(), microphone=(), geolocation=()"); next(); });
 
 // Only your own site may call the API from a browser.
+if (!process.env.SITE_URL) throw new Error("Set SITE_URL");   // fail closed: a missing value must not allow every site
 app.use(cors({ origin: process.env.SITE_URL }));
 
 // Stripe webhook BEFORE express.json(): the signature check needs the raw body.

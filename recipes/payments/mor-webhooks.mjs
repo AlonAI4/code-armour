@@ -1,6 +1,7 @@
 // Code Armour recipe: verify Lemon Squeezy and Paddle webhooks (Merchants of Record: they handle VAT/GST for you).
 // Works in Netlify Functions, Vercel, Cloudflare Workers (nodejs_compat) or Node. Always use the RAW body text.
 import { createHmac, timingSafeEqual } from "node:crypto";
+import { admin } from "./_auth.mjs";   // only needed by the example handler at the bottom
 
 function safeEqual(a, b) {
   const x = Buffer.from(a || "", "utf8"), y = Buffer.from(b || "", "utf8");
@@ -22,12 +23,21 @@ export function verifyPaddle(rawBody, req, maxAgeSeconds = 300) {
   return safeEqual(expected, parts.h1);
 }
 
-// Example (Netlify / any fetch-style handler):
+// Example (Netlify / any fetch-style handler). Needs _auth.mjs (from recipes/netlify) and the
+// webhook_events table (recipes/supabase/stripe-events.sql).
+// Lemon Squeezy signatures have no timestamp, so a captured webhook could be sent again later:
+// recording each event id once is what stops replays. Never skip it.
 export default async (req) => {
   const raw = await req.text();
   if (!verifyLemonSqueezy(raw, req)) return new Response("Bad signature", { status: 401 });
   const event = JSON.parse(raw);
-  // Record a unique event id first (no double grants), then grant from event.data.
+  const eventId = `ls:${event.meta?.event_name}:${event.data?.id}`;   // Paddle: use event.event_id
+
+  const { error } = await admin.from("webhook_events").insert({ id: eventId });
+  if (error?.code === "23505") return new Response("Already handled");   // replay or retry: do nothing
+  if (error) return new Response("Try again", { status: 500 });
+
+  // Grant here, based on event.meta.event_name and event.data.
   return new Response("ok");
 };
 // Check both providers' current docs when you set this up; header names and formats can change.

@@ -9,7 +9,9 @@ service cloud.firestore {
     function signedIn() { return request.auth != null; }
     function isOwner(userId) { return signedIn() && request.auth.uid == userId; }
     function cleanName(n) {
-      return n is string && n.size() >= 3 && n.size() <= 20
+      // Allow-list: plain letters, numbers, spaces, _ - . only. Blocks look-alike letters and invisible
+      // characters (rules can't normalise Unicode). Widen it only if you filter names in a Cloud Function.
+      return n is string && n.size() >= 3 && n.size() <= 20 && n.matches('^[A-Za-z0-9 _.-]+$')
         && !n.matches('.*[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+[.][A-Za-z]{2,}.*')    // no emails
         && !n.matches('.*(https?://|www[.]).*')                                // no links
         && !n.matches('.*[0-9]{7,}.*');                                        // no phone numbers
@@ -19,11 +21,12 @@ service cloud.firestore {
     // Private profile: only the owner. Privileged fields can never be set or changed from the app.
     match /users/{userId} {
       allow read, delete: if isOwner(userId);
+      // Allow-LIST the fields users may set (safer than a block-list: a field you forget stays locked).
       allow create: if isOwner(userId)
-        && !request.resource.data.keys().hasAny(['isAdmin', 'credits', 'isPro'])
+        && request.resource.data.keys().hasOnly(['displayName', 'avatarUrl'])
         && cleanName(request.resource.data.displayName);
       allow update: if isOwner(userId)
-        && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['isAdmin', 'credits', 'isPro'])
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['displayName', 'avatarUrl'])
         && cleanName(request.resource.data.displayName);
     }
 

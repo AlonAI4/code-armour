@@ -1,12 +1,23 @@
 -- Code Armour recipe: nobody can make themselves admin, or give themselves credits / pro / score.
 -- "Update own row" policies allow changing EVERY column in that row, so we lock the dangerous ones.
+--
+-- >>> CHANGE BEFORE RUNNING (every name must exist in YOUR table, or this errors):
+--   table:              public.profiles
+--   safe columns:       display_name, avatar_url          (users may edit these)  -> Layer 1 grant list
+--   privileged columns: is_admin, credits, is_pro         (server only)           -> Layer 2 trigger
+--   e.g. a game might use coins, best_score, level instead of credits, is_pro.
+--
 -- Two layers (use both):
 
 -- Layer 1: column grants. Logged-in users may only update the harmless columns you list.
 revoke update on public.profiles from authenticated, anon;
 grant update (display_name, avatar_url) on public.profiles to authenticated;   -- list your safe columns
+-- Same for creating a profile, or a player could create theirs with coins = 999999.
+-- (Best: let new-user-profile.sql create profiles on the server, then users never insert at all.)
+revoke insert on public.profiles from authenticated, anon;
+grant insert (id, display_name, avatar_url) on public.profiles to authenticated;
 
--- Layer 2: a trigger that rejects any change to privileged columns unless it comes from your server
+-- Layer 2 (backup, in case a grant is ever widened by mistake): a trigger that rejects any change to privileged columns unless it comes from your server
 -- (the service_role key used in Edge Functions / Netlify Functions / Stripe webhook).
 create or replace function public.protect_privileged_columns()
 returns trigger

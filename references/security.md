@@ -22,7 +22,7 @@ Researched 2026-10-04. Key: S site, G game, A AI app, $ store. Severity Crit/Hig
 
 ## 2. Supabase data access (#1 vibe-coder breach)
 2.1 RLS disabled [V] (all, Crit). AI "fixes" RLS errors by turning RLS off. CHECK: Advisors → Security, or `select tablename from pg_tables where schemaname='public' and not rowsecurity;` = 0 rows.
-2.2 Fake policies `using (true)`, writes `to anon`, UPDATE/INSERT without `with check` (all, Crit). CHECK: `select tablename, policyname, roles, cmd, qual, with_check from pg_policies where schemaname='public';` Owner rows: `(select auth.uid()) = user_id`. Test with curl: logged out, and as user B reading user A.
+2.2 Fake policies: `using (true)` on private data, or writes `to anon` (all, Crit). An UPDATE policy without `with check` is NOT a hole: Postgres reuses `using` as the check (tested). CHECK: `select tablename, policyname, roles, cmd, qual, with_check from pg_policies where schemaname='public';` Owner rows: `(select auth.uid()) = user_id`. Test with curl: logged out, and as user B reading user A.
 2.3 Policies trusting `user_metadata` (users can edit it → become admin) [V] (all, Crit). Use app_metadata or a server-written roles table.
 2.4 Views / SECURITY DEFINER functions bypass RLS [V] (all, Crit). `alter view x set (security_invoker = on)`; advisor lint 0010.
 2.5 Column leaks: RLS is per row, a public profiles table exposes email, stripe_customer_id, is_admin (all, High). Split private columns or use column grants.

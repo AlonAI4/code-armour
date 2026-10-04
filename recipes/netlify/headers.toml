@@ -20,6 +20,7 @@
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(self \"https://js.stripe.com\")"
 
-# No Stripe? Remove the stripe.com entries. Fonts: self-host them (put the files in your site)
+# Using redirect-style Stripe Checkout (you send people to checkout.stripe.com)? It needs NO Stripe entries here: remove them.
+# Only embedded Stripe Elements / Payment Element needs js.stripe.com. No Stripe at all? Remove them too. Fonts: self-host them (put the files in your site)
 # so visitors' IPs aren't sent to Google (a real legal issue in Germany).
 # TEST IT: curl -I https://your-site and check every header above is there. Or use securityheaders.com.

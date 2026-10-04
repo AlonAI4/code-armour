@@ -63,7 +63,7 @@ The table maps each one to each platform. Recipes in `recipes/` are written for 
 ## 5. Surprise bills
 - **Firebase (Blaze plan) and Google Cloud:** budgets only *alert*, they don't stop spending. A hard stop needs a Cloud Function that disables billing on a budget alert. Without one, a leaked key or a loop has no ceiling.
 - **Vercel:** turn on Spend Management with a limit that pauses projects. Also turn on Deployment Protection so preview deployments aren't public.
-- **Vercel Hobby plan is for non-commercial use only.** Ads, sales or paid features need Pro. That's a terms-of-service issue, not just a cost one.
+- **Vercel Hobby plan is for non-commercial use only.** Any payment request, ads (e.g. AdSense) or affiliate-first sites count as commercial and need Pro. Donations are OK. It's a terms-of-service issue, not just a cost one.
 - **Cloudflare:** Workers Free plan stops at its limits. On paid plans, set usage notifications.
 - **Netlify:** credit plans; keep auto-recharge off unless needed.
 - **AI providers:** set a monthly hard limit in OpenAI / Anthropic / Google AI Studio, plus a separate key per project.

@@ -26,12 +26,6 @@ from pg_policies
 where schemaname = 'public' and 'anon' = any(roles) and cmd in ('INSERT','UPDATE','DELETE','ALL')
 
 union all
--- 5. UPDATE policies with no WITH CHECK (user could move a row to someone else)
-select 'UPDATE without WITH CHECK: ' || policyname, schemaname || '.' || tablename
-from pg_policies
-where schemaname = 'public' and cmd in ('UPDATE','ALL') and with_check is null and qual is not null and qual <> 'false'
-
-union all
 -- 6. Policies trusting user_metadata (users can edit it themselves!)
 select 'policy trusts user_metadata: ' || policyname, schemaname || '.' || tablename
 from pg_policies
@@ -50,6 +44,22 @@ select case when p.prosecdef then 'SECURITY DEFINER function callable by anon' e
        n.nspname || '.' || p.proname || '(' || pg_get_function_identity_arguments(p.oid) || ')'
 from pg_proc p join pg_namespace n on n.oid = p.pronamespace
 where n.nspname = 'public' and has_function_privilege('anon', p.oid, 'execute')
+  and p.prorettype <> 'trigger'::regtype   -- trigger functions can't be called over the API
+
+union all
+-- 8b. SECURITY DEFINER functions any logged-in user can call (they skip RLS: check each one is safe)
+select 'SECURITY DEFINER function callable by any logged-in user (check it)',
+       n.nspname || '.' || p.proname || '(' || pg_get_function_identity_arguments(p.oid) || ')'
+from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+where n.nspname = 'public' and p.prosecdef and p.prorettype <> 'trigger'::regtype
+  and has_function_privilege('authenticated', p.oid, 'execute')
+  and not has_function_privilege('anon', p.oid, 'execute')
+
+union all
+-- 8c. Tables linked to users that won't delete with them ("delete my account" fails or leaves data behind)
+select 'links to auth.users without ON DELETE CASCADE', conrelid::regclass::text
+from pg_constraint
+where contype = 'f' and confrelid = 'auth.users'::regclass and confdeltype <> 'c'
 
 union all
 -- 9. Public storage buckets (every file readable by URL)

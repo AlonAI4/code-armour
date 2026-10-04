@@ -8,9 +8,10 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 
 const BUCKETS = ["avatars", "uploads"];   // every bucket where you store files in a <userId>/ folder
-const ALLOWED_ORIGIN = Deno.env.get("SITE_URL") ?? "*";
+const ALLOWED_ORIGIN = Deno.env.get("SITE_URL");   // your live site
+if (!ALLOWED_ORIGIN) throw new Error("Set the SITE_URL secret");   // fail closed: never fall back to "*"
 const cors = {
-  "Access-Control-Allow-Origin": ALLOWED_ORIGIN,
+  "Access-Control-Allow-Origin": ALLOWED_ORIGIN!,
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
@@ -24,14 +25,12 @@ Deno.serve(async (req) => {
   const { data: { user } } = await admin.auth.getUser(token);
   if (!user) return new Response("Not logged in", { status: 401, headers: cors });
 
-  // 1. Files: list and remove everything in each bucket's <userId>/ folder (in pages of 1000).
-  for (const bucket of BUCKETS) {
-    while (true) {
-      const { data: files, error } = await admin.storage.from(bucket).list(user.id, { limit: 1000 });
-      if (error || !files?.length) break;
-      await admin.storage.from(bucket).remove(files.map((f) => `${user.id}/${f.name}`));
-      if (files.length < 1000) break;
-    }
+  // 1. Files: remove everything in each bucket's <userId>/ folder, including sub-folders.
+  try {
+    for (const bucket of BUCKETS) await removeFolder(admin.storage.from(bucket), user.id);
+  } catch (e) {
+    console.error(e);
+    return new Response("Could not delete your files, please contact us", { status: 500, headers: cors });
   }
 
   // 2. The account itself. Cascades delete their rows in every table linked to auth.users.
@@ -45,4 +44,20 @@ Deno.serve(async (req) => {
 // Client: await supabase.functions.invoke('delete-account'); await supabase.auth.signOut();
 // TEST IT: make a test user with a profile, scores and an uploaded file, delete it, then check
 // in the dashboard that the auth user, every row and every file are gone.
-// Nested folders (<userId>/sub/file) need a recursive list. Adapt if you use them.
+
+// Deletes every file under `path`, going into sub-folders. In list() results, folders have no id.
+type Bucket = ReturnType<ReturnType<typeof createClient>["storage"]["from"]>;
+async function removeFolder(bucket: Bucket, path: string): Promise<void> {
+  while (true) {
+    const { data: items, error } = await bucket.list(path, { limit: 1000 });
+    if (error) throw error;
+    if (!items?.length) return;
+    for (const folder of items.filter((i) => !i.id)) await removeFolder(bucket, `${path}/${folder.name}`);
+    const files = items.filter((i) => i.id).map((i) => `${path}/${i.name}`);
+    if (files.length) {
+      const { error: rmError } = await bucket.remove(files);
+      if (rmError) throw rmError;
+    }
+    if (items.length < 1000) return;
+  }
+}

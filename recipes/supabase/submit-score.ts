@@ -1,6 +1,6 @@
 // Code Armour recipe: Supabase Edge Function that accepts a score only if it's possible.
 // Deploy: supabase functions deploy submit-score   (keep JWT verification ON)
-// Needs: game-runs.sql, safe-leaderboard.sql. The browser never writes scores directly.
+// Needs: game-runs.sql, safe-leaderboard.sql (record_score). The browser never writes scores directly.
 //
 // Flow: game starts -> client inserts a game_runs row (server clock records start time)
 //       game ends   -> client calls this function with { runId, score }
@@ -9,10 +9,12 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 
 const MAX_POINTS_PER_SECOND = 50;   // set from your game's real maximum
 const MIN_SECONDS = 5;              // shortest real game
-const ALLOWED_ORIGIN = Deno.env.get("SITE_URL") ?? "*";   // set SITE_URL to your live site
+const MAX_SECONDS = 60 * 60;        // longest real game: older runs are refused, so time can't be banked
+const ALLOWED_ORIGIN = Deno.env.get("SITE_URL");   // your live site, e.g. https://mygame.netlify.app
+if (!ALLOWED_ORIGIN) throw new Error("Set the SITE_URL secret");   // fail closed: never fall back to "*"
 
 const cors = {
-  "Access-Control-Allow-Origin": ALLOWED_ORIGIN,
+  "Access-Control-Allow-Origin": ALLOWED_ORIGIN!,
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
@@ -44,18 +46,14 @@ Deno.serve(async (req) => {
 
   // 3. Is the score possible for the time played (server clock, not the browser's)?
   const seconds = (Date.now() - new Date(run.started_at).getTime()) / 1000;
-  if (seconds < MIN_SECONDS || score > seconds * MAX_POINTS_PER_SECOND) {
+  if (seconds < MIN_SECONDS || seconds > MAX_SECONDS || score > seconds * MAX_POINTS_PER_SECOND) {
     return reply(400, { error: "Score not possible" });
   }
 
-  // 4. Only opted-in players appear on the public board.
-  const { data: profile } = await admin
-    .from("profiles").select("display_name, show_on_leaderboard").eq("id", user.id).single();
-  if (profile?.show_on_leaderboard) {
-    const { error } = await admin.from("leaderboard")
-      .insert({ user_id: user.id, display_name: profile.display_name, score });
-    if (error) return reply(500, { error: "Could not save" });   // don't leak database details
-  }
+  // 4. Record it. record_score keeps each player's best and skips players who didn't opt in.
+  //    (Also update your own stats here if you keep them, e.g. profiles.best_score.)
+  const { error } = await admin.rpc("record_score", { p_user: user.id, p_score: score });
+  if (error) return reply(500, { error: "Could not save" });   // don't leak database details
   return reply(200, { ok: true });
 });
 

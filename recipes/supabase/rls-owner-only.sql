@@ -1,5 +1,7 @@
 -- Code Armour recipe: "each user can only see and change their own rows".
--- Replace `notes` and `user_id` with your table and owner column.
+-- >>> CHANGE: `notes` and `user_id` to your table and owner column.
+-- The owner column should be: user_id uuid references auth.users(id) on delete cascade
+-- (so "delete my account" removes these rows too).
 -- Plain words: RLS = Row Level Security, the database's own rules for who can touch each row.
 -- These rules run on the server, so nobody can skip them from the browser.
 
