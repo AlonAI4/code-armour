@@ -14,6 +14,11 @@ mkdir -p $T/selfscan/security-tests && cd $T/selfscan && git init -q && cp "$ROO
   && git add -A && git -c user.email=t@t -c user.name=t commit -qm "add armour"
 out=$(bash security-tests/scan.sh . 2>&1); echo "$out" | grep -q "Secret patterns in git history" && no "scanner flagged its own copy in history" || ok "scanner ignores its own copy in history"
 
+# 1c. npm audit runs in sub-packages even with no package.json at the top (monorepos like Forge).
+mkdir -p $T/mono/packages/a && cd $T/mono && echo '{"name":"a"}' > packages/a/package.json \
+  && echo '{"name":"a","lockfileVersion":3,"requires":true,"packages":{"":{"name":"a"}}}' > packages/a/package-lock.json
+bash "$ROOT/scripts/scan.sh" . 2>&1 | grep -q "npm audit (./packages/a)" && ok "npm audit runs in sub-packages of a monorepo" || no "npm audit skipped in monorepo"
+
 # 2. A project with no database runs its plain tests without PGlite installed.
 mkdir -p $T/static/security-tests && cd $T/static && echo '<h1>hi</h1>' > index.html
 cp "$ROOT/templates/security-tests/run.sh" "$ROOT/scripts/scan.sh" security-tests/
