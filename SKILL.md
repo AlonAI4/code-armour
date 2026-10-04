@@ -138,21 +138,21 @@ A fix that worked today can be undone by tomorrow's change (an AI "fixing" an RL
 
 1. Create `security-tests/` in the project and copy in, from this skill:
    - `templates/security-tests/harness.mjs`
-   - `templates/security-tests/attacks.test.mjs`
+   - `templates/security-tests/attacks.test.mjs` (database projects) **or** `templates/security-tests/plain.test.mjs` (no database: static sites, extensions, MCP servers, tools; plain Node, no packages)
    - `templates/security-tests/run.sh`
    - `scripts/scan.sh`
    - `recipes/supabase/audit.sql` (if Supabase)
 2. Fill `attacks.test.mjs` with **this project's** attacks from Step 5, using its real tables. One `check()` per attack. Each check must fail if the protection disappears. Where there are two layers (e.g. column permissions + a trigger), test **each layer on its own** too (`canUpdateColumn()` in the harness), or losing one layer goes unnoticed while the other still blocks. Keep the database audit at the top.
-3. If Supabase is used, add the test tool: `npm i -D @electric-sql/pglite`.
+3. If Supabase is used, add the test tool: `npm i -D @electric-sql/pglite`. No database? Skip it; `run.sh` runs plain tests without it.
 4. Run `bash security-tests/run.sh` and show it passing.
 5. **Prove the tests can fail.** Break one protection on purpose in a throwaway migration, run the tests and show the ✗, then remove the throwaway. A test that can't fail proves nothing.
-6. Offer to add `templates/security-tests/github-workflow.yml` as `.github/workflows/security-tests.yml`, so GitHub re-tests every push and shows a red ✗ if a fix gets undone.
+6. Offer (or, if nobody can be asked, list as an owner decision in COMPLIANCE.md) `templates/security-tests/github-workflow.yml` as `.github/workflows/security-tests.yml`, so GitHub re-tests every push and shows a red ✗ if a fix gets undone.
 
 Not Supabase? Same idea in the project's own test tool: Firebase rules with the emulator plus `@firebase/rules-unit-testing`, or Prisma/Express routes with a test database. Call each endpoint as user B and as a logged-out visitor.
 
 ## Step 6: Write COMPLIANCE.md
 
-Copy `templates/COMPLIANCE.md` into the project root and fill it in:
+Copy `templates/COMPLIANCE.md` into the project root and fill it in. **Delete whole sections that don't apply** (e.g. no database: replace the data-access and payments tables with one ➖ line saying why) instead of filling them with ➖ rows. Add rows for what this project really has (extension, MCP server, CLI):
 
 - ✅ done (with evidence);
 - ❌ not done (with how to fix);

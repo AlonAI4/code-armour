@@ -128,3 +128,12 @@ Not verified: Supabase rate-limit defaults, Netlify credit numbers, Supabase fre
 
 ## Test-for-real rule
 Every fix must be proven, not assumed: e.g. sign in as user B and try to edit user A's row → must fail; call a paid/AI endpoint with no token → 401; POST a fake Stripe webhook → 400; set a slur as a username via curl → rejected. Show the failing attempt as evidence.
+
+## 14. Non-database projects: extensions, MCP servers, tools (added after the Forge run, 2026-10-04)
+Found for real on a live project: the risk is often slowness and crashes, not data leaks.
+14.1 Slow regex / ReDoS: a pattern like `(\s*\w+\s*)+` or nested `*`/`+` can take seconds to minutes on long or odd input (4,000 spaces froze a real engine for 67 s). Pasted text, file names, chat logs are all attack input (all, High). Fix: avoid nested quantifiers, cap input length, test with long inputs in a worker that's killed after a few seconds (templates/security-tests/plain.test.mjs `finishesWithin`).
+14.2 Decompression / zip bombs: a 1 MB PNG, zip or gzip can unpack to gigabytes and crash the process. A file-size limit doesn't help: cap the UNPACKED size (e.g. width × height × channels) (any upload or image/file tool, High).
+14.3 Browser extensions: ask for the fewest permissions (no `<all_urls>`, list exact sites); a strict extension CSP; no `eval`/remote code; never auto-press Send or act for the user without a click; message handlers check the sender; Chrome Web Store needs an adult account + data disclosure + privacy link (extension, High).
+14.4 MCP servers / AI tools: every tool input is untrusted (it can come from a prompt-injected AI): validate paths (no reading files outside an allowed folder), cap sizes and time, prefer read-only tools, never return secrets or file contents the user didn't ask for (MCP, High).
+14.5 Local dev servers (bench/preview receivers): CORS only hides the reply; it doesn't stop a write. Check the Origin header and refuse other websites, block path traversal (`../`) (dev tools, Med).
+14.6 Big bundles and word lists cause scanner noise: review XSS/PROMPT hits in your own source, not in generated bundles.

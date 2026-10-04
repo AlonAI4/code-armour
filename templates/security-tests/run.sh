@@ -7,10 +7,13 @@ status=0
 echo "== 1. Scanner =="
 bash security-tests/scan.sh . "${1:-}" || status=1
 echo; echo "== 2. Attack tests =="
-if [ -d supabase/migrations ] || ls security-tests/*.test.mjs >/dev/null 2>&1; then
-  if [ ! -d node_modules/@electric-sql/pglite ]; then echo "Run once: npm i -D @electric-sql/pglite"; status=1; else
-    for t in security-tests/*.test.mjs; do echo "-- $t"; node "$t" || status=1; done
+# Database tests need PGlite; projects without a database just run plain-Node tests (no packages needed).
+for t in security-tests/*.test.mjs; do
+  [ -f "$t" ] || continue
+  if grep -qE "harness\.mjs|@electric-sql/pglite" "$t" && [ ! -d node_modules/@electric-sql/pglite ]; then
+    echo "-- $t needs: npm i -D @electric-sql/pglite"; status=1; continue
   fi
-fi
+  echo "-- $t"; node "$t" || status=1
+done
 echo; [ $status = 0 ] && echo "RE-TEST PASSED: every saved check still holds." || echo "RE-TEST FAILED: read the ✗ lines above. A fix may have been undone."
 exit $status

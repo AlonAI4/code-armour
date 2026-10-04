@@ -62,7 +62,7 @@ for e in $envs; do
 done
 
 echo; echo "-- 4. .env handling --"
-if [ -d .git ]; then
+if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then   # works in worktrees and subfolders too
   tracked=$(git ls-files | grep -E '(^|/)\.env($|\.)' | grep -v '\.env\.example$')
   [ -n "$tracked" ] && bad ".env files are committed to git: $tracked (remove, add to .gitignore, ROTATE keys)" || ok "No .env files tracked by git"
   grep -qE '^\.env' .gitignore 2>/dev/null && ok ".gitignore covers .env" || bad ".gitignore doesn't list .env*"
@@ -79,7 +79,7 @@ fi
 
 echo; echo "-- 6. Risky code patterns (review each) --"
 grep -rInE "${EXCL[@]}" --include=*.js --include=*.jsx --include=*.ts --include=*.tsx --include=*.vue --include=*.svelte --include=*.html \
-  --exclude-dir=dist --exclude-dir=build --exclude-dir=.next \
+  --exclude-dir=dist --exclude-dir=build --exclude-dir=.next --exclude=*.min.js --exclude=*bundle*.js --exclude=*.bundle.* \
   '(innerHTML\s*=|dangerouslySetInnerHTML|v-html|document\.write|insertAdjacentHTML|eval\(|new Function\()' . 2>/dev/null | head -15 > /tmp/ca-xss.txt
 [ -s /tmp/ca-xss.txt ] && { sed 's/^/  XSS? /' /tmp/ca-xss.txt | cut -c1-200; echo "  (XSS? = page content set as HTML: safe only if the text is escaped/sanitised; use textContent or DOMPurify)"; }
 # Migrations are history: an old file may turn RLS off and a LATER one turn it back on. Only flag it
@@ -125,11 +125,14 @@ maps=$(find dist build out .next/static -name '*.map' 2>/dev/null | head -5)
 [ -n "$maps" ] && warn "Source maps will be public (your full source code): $maps" || ok "No source maps in build"
 
 echo; echo "-- 8. Dependencies --"
-if [ -f package.json ]; then
-  if [ -f package-lock.json ]; then
-    npm audit --audit-level=high >/tmp/ca-audit.txt 2>&1 && ok "npm audit: no high/critical" || { bad "npm audit found high/critical issues:"; tail -8 /tmp/ca-audit.txt; }
-  else
+if [ -f package.json ] || ls */package.json packages/*/package.json >/dev/null 2>&1; then
+  locks=$(find . -name package-lock.json -not -path '*/node_modules/*' 2>/dev/null | head -20)
+  if [ -z "$locks" ]; then
     warn "No package-lock.json: commit a lockfile and use npm ci (protects against surprise package changes)"
+  else
+    for l in $locks; do d=$(dirname "$l")
+      (cd "$d" && npm audit --audit-level=high >/tmp/ca-audit.txt 2>&1) && ok "npm audit ($d): no high/critical" || { bad "npm audit ($d) found high/critical issues:"; tail -6 /tmp/ca-audit.txt; }
+    done
   fi
   echo "  New packages? Check each on npmjs.com (age, downloads, real repo). AI sometimes invents package names."
 fi
