@@ -70,7 +70,9 @@ if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then   # works in worktr
   if command -v gitleaks >/dev/null; then
     gitleaks detect --no-banner --redact -s . >/tmp/ca-gitleaks.txt 2>&1 && ok "gitleaks: no leaks in history" || { bad "gitleaks found leaks:"; tail -20 /tmp/ca-gitleaks.txt; }
   else
-    hist=$(git log --all -p 2>/dev/null | grep -oE "$SECRETS" | sort -u | head -10 | cut -c1-14 | sed 's/$/…/')
+    # Skip Code Armour's own tool files: they contain the detection patterns themselves (a copy of this
+# scanner in the history would otherwise flag itself forever).
+    hist=$(git log --all -p -- . ':(exclude,glob)**/scan.sh' ':(exclude,glob)**/audit.sql' ':(exclude,glob)**/harness.mjs' 2>/dev/null | grep -oE "$SECRETS" | sort -u | head -10 | cut -c1-14 | sed 's/$/…/')
     [ -n "$hist" ] && { bad "Secret patterns in git history (ROTATE these keys; deleting the file doesn't help):"; echo "$hist"; } || ok "No secret patterns in git history (install gitleaks for a deeper check)"
   fi
 else

@@ -11,7 +11,7 @@ Check this project's **Code Armour** using the code-armour skill (SKILL.md in th
    - `.github/workflows/` with a re-test
 
    If there's no armour at all, say so and suggest `/armour`. A missing GitHub workflow is a **gap**, not "no armour".
-   - **Refresh the tool files first.** The project's `security-tests/scan.sh`, `harness.mjs` and `audit.sql` are copies and may be out of date. Copy the latest ones over them from the skill folder (`scripts/scan.sh`, `templates/security-tests/harness.mjs`, `recipes/supabase/audit.sql`). This is the one change allowed without asking: they're tools, not project code. Never touch `attacks.test.mjs`.
+   - **Refresh the tool files first.** The project's `security-tests/scan.sh`, `harness.mjs` and `audit.sql` are copies and may be out of date. Copy the latest ones over them from the skill folder: `scripts/scan.sh` always; `templates/security-tests/harness.mjs` and `recipes/supabase/audit.sql` **only if the project uses a database and still has the template harness** (a project with its own or a plain-Node harness keeps it). If the project's `scan.sh` has local edits (`diff` it first), tell the user what they were before replacing it. This is the one change allowed without asking: they're tools, not project code. Never touch `attacks.test.mjs`.
 2. **Does it still work?**
    - Run `bash security-tests/run.sh $ARGUMENTS`. If it's missing, run the skill's `scripts/scan.sh . $ARGUMENTS` instead.
    - Every ✗ means a protection broke since the last check. Find the change that caused it with `git log -p`. Not a git repo? Compare file dates with the date in COMPLIANCE.md, and suggest `git init`.

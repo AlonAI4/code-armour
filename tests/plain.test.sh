@@ -9,6 +9,11 @@ cd $T && git init -q main && cd main && echo 'k="sk_live_abcdefghijklmnop1234"' 
 cd $T/wt && out=$(bash "$ROOT/scripts/scan.sh" . 2>&1)
 echo "$out" | grep -q "git history" && ok "leaked key in history found from a git worktree" || no "worktree history scan (got: $(echo "$out" | grep -i 'git' | head -2))"
 
+# 1b. A copy of scan.sh in the history must NOT flag itself (it contains the key patterns).
+mkdir -p $T/selfscan/security-tests && cd $T/selfscan && git init -q && cp "$ROOT/scripts/scan.sh" security-tests/ \
+  && git add -A && git -c user.email=t@t -c user.name=t commit -qm "add armour"
+out=$(bash security-tests/scan.sh . 2>&1); echo "$out" | grep -q "Secret patterns in git history" && no "scanner flagged its own copy in history" || ok "scanner ignores its own copy in history"
+
 # 2. A project with no database runs its plain tests without PGlite installed.
 mkdir -p $T/static/security-tests && cd $T/static && echo '<h1>hi</h1>' > index.html
 cp "$ROOT/templates/security-tests/run.sh" "$ROOT/scripts/scan.sh" security-tests/
