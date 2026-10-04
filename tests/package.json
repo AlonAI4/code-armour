@@ -11,7 +11,7 @@
     "@firebase/rules-unit-testing": "^5.0.2",
     "@supabase/supabase-js": "^2.45.0",
     "firebase": "^12.19.0",
-    "firebase-tools": "^14.27.0",
+    "firebase-tools": "^15.32.1",
     "stripe": "^17.0.0"
   }
 }
