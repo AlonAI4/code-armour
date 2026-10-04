@@ -143,13 +143,13 @@ if [ -f COMPLIANCE.md ]; then
     age=$(( ( $(date +%s) - $(date -j -f %Y-%m-%d "$last" +%s 2>/dev/null || date -d "$last" +%s 2>/dev/null || date +%s) ) / 86400 ))
     [ "$age" -gt 90 ] && warn "Last re-test was $age days ago ($last): run bash security-tests/run.sh again" || ok "Last re-test $age days ago ($last)"
   else warn "COMPLIANCE.md has no date (use YYYY-MM-DD after 'Last re-test:')"; fi
-  todo=$(grep -cE '\| *(❌|❓) *\|' COMPLIANCE.md 2>/dev/null)
+  todo=$(grep -cE '\| *(❌|❓)' COMPLIANCE.md 2>/dev/null)
   [ "${todo:-0}" -gt 0 ] && warn "COMPLIANCE.md still has $todo ❌/❓ item(s) open"
 else warn "No COMPLIANCE.md yet: run the Code Armour skill to make one"; fi
 if [ -f security-tests/run.sh ]; then
   ok "Saved re-test found (security-tests/run.sh)"
-  n=$(grep -hcE '^[^/]*check\(' security-tests/*.test.mjs 2>/dev/null | awk '{s+=$1} END {print s+0}')
-  [ "$n" -le 1 ] && warn "security-tests has no real attack checks yet (only the template): add this project's attacks" || ok "$n attack checks saved"
+  n=$(cat security-tests/*.test.mjs 2>/dev/null | grep -vE '^[[:space:]]*//' | grep -oE '(^|[^a-zA-Z_.])check\(' | wc -l | tr -d ' ')
+  [ "$n" -le 1 ] && warn "security-tests has no real attack checks yet (only the template): add this project's attacks" || ok "$n attack checks saved (loops can run some more than once)"
   { [ -d supabase/migrations ] && [ ! -d node_modules/@electric-sql/pglite ]; } && warn "Database tests need: npm i -D @electric-sql/pglite"
 else warn "No saved re-test (security-tests/run.sh): fixes can be undone without anyone noticing"; fi
 ls .github/workflows/*.yml >/dev/null 2>&1 && grep -lq 'security-tests/run.sh' .github/workflows/*.yml 2>/dev/null \

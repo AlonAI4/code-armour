@@ -1,0 +1,24 @@
+---
+description: Test whether this project's Code Armour really works. A lawyer agent reviews it and a hacker agent attacks it.
+argument-hint: "[live-url or focus]"
+---
+Stress-test this project's **Code Armour** with two independent reviewers, using the code-armour skill (SKILL.md in the skill folder, usually `~/code-armour/`). If the project has no armour yet, say so and suggest `/armour` first.
+
+1. **Start two reviewers with fresh context, in parallel if your tool can start sub-agents.** Claude Code: two Agent calls in one message. In tools without sub-agents, do them yourself one after the other, and start each one fresh: don't reuse your earlier conclusions.
+   - **Lawyer:** give it `templates/reviewers/lawyer.md` from the skill folder, plus this project's path.
+   - **Hacker:** give it `templates/reviewers/hacker.md` from the skill folder, plus this project's path and the live URL if given: $ARGUMENTS
+   - **Rules for both:**
+     - They may only work on throwaway copies or local test databases (PGlite).
+     - They must **never attack a live site, database or account**, except read-only checks of the URL the user gave.
+     - Reviewers report. They don't edit the project.
+2. **When both are done, verify their findings yourself.**
+   - Re-run each proof that was "proved by running".
+   - Read the code for each "theoretical" finding.
+   - Drop anything you can't confirm, and say you dropped it.
+3. **Report** worst first:
+   - what's confirmed;
+   - what's theoretical;
+   - what the armour already handles well.
+
+   Then offer to fix the confirmed issues. Every fix must come with a new check in `security-tests/` so it stays fixed, then re-run `bash security-tests/run.sh`.
+4. **Be clear:** these are AI reviewers, not a human lawyer or a professional penetration test.

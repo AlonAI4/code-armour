@@ -20,6 +20,9 @@ Last full update: 2026-10-04. Status: ⏳ coming · ✅ confirmed started · ⚠
 | open | Canada | Bill C-36 (privacy reform) — not law yet; check its status | Apps with Canadian users | ⏳ |
 | open | Brazil | AI bill PL 2338/2023 — not law yet | AI apps | ⏳ |
 | open | Australia | Privacy Act "tranche 2" may remove the small-business exemption | Apps with Australian users | ⏳ |
+| open | Thailand | Draft AI Act (hearing July 2026); core rules start on publication, risk rules 180 days later | AI apps with Thai users | ⏳ |
+| open | Thailand | PDPA amendment bill (consultation ended 15 Aug 2026) | Apps with Thai users | ⏳ |
+| open | Thailand | Game Industry Promotion Act (expected end of 2025, not confirmed passed) | Games with Thai users | ⏳ |
 | open | US | New state privacy and kids' laws keep arriving (app-store age laws, AI companion laws) | Apps with US users | ⏳ |
 
 Add a row whenever research finds a future date. Never delete rows: mark them ✅ or ⚠️ and keep a note, so the history stays visible.
