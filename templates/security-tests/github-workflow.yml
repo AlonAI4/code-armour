@@ -1,0 +1,18 @@
+# Code Armour: re-test on every push and pull request. Copy to .github/workflows/security-tests.yml
+# If a change undoes a security fix, GitHub shows a red ✗ on that commit.
+name: security-tests
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  retest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0          # full history, so the scanner can check old commits for leaked keys
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci || npm i
+      - run: bash security-tests/run.sh

@@ -1,3 +1,13 @@
-{ "name": "code-armour-tests", "private": true, "type": "module",
-  "scripts": { "test": "node sql.test.mjs && node webhooks.test.mjs && bash scan.test.sh" },
-  "devDependencies": { "@electric-sql/pglite": "^0.3.0", "stripe": "^17.0.0", "@supabase/supabase-js": "^2.45.0" } }
+{
+  "name": "code-armour-tests",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node sql.test.mjs && node webhooks.test.mjs && bash scan.test.sh && bash retest.test.sh"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "^0.3.0",
+    "stripe": "^17.0.0",
+    "@supabase/supabase-js": "^2.45.0"
+  }
+}

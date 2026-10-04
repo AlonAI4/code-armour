@@ -16,7 +16,7 @@ ok()   { echo "${GRN}✓ $*${RST}"; }
 # Secret patterns: Stripe secret/restricted, OpenAI/Anthropic, Supabase secret/service_role,
 # Google API keys, GitHub tokens, Slack tokens, AWS keys, private keys.
 SECRETS='(sk_live_[0-9A-Za-z]{10,}|sk_test_[0-9A-Za-z]{10,}|rk_live_[0-9A-Za-z]{10,}|sk-ant-[0-9A-Za-z_-]{10,}|sk-proj-[0-9A-Za-z_-]{10,}|sk-[A-Za-z0-9]{32,}|sb_secret_[0-9A-Za-z_-]{10,}|InJvbGUiOiJzZXJ2aWNlX3Jv|b2xlIjoic2VydmljZV9yb2xl|cm9sZSI6InNlcnZpY2Vfcm9s|AIza[0-9A-Za-z_-]{35}|gh[pousr]_[0-9A-Za-z]{30,}|xox[baprs]-[0-9A-Za-z-]{10,}|AKIA[0-9A-Z]{16}|-----BEGIN [A-Z ]*PRIVATE KEY-----|whsec_[0-9A-Za-z]{10,}|postgres(ql)?://[^:@/[:space:]]+:[^@/[:space:]]+@|mongodb(\+srv)?://[^:@/[:space:]]+:[^@/[:space:]]+@|GOCSPX-[0-9A-Za-z_-]{10,})'
-EXCL=(--exclude-dir=node_modules --exclude-dir=.git --exclude-dir=.netlify --exclude-dir=.next/cache --exclude=*.lock --exclude=package-lock.json --exclude=scan.sh)
+EXCL=(--exclude-dir=node_modules --exclude-dir=.git --exclude-dir=.netlify --exclude-dir=.next/cache --exclude=*.lock --exclude=package-lock.json --exclude=scan.sh --exclude=audit.sql)
 
 echo "== Code Armour scan: $(pwd) =="
 
@@ -82,8 +82,18 @@ grep -rInE "${EXCL[@]}" --include=*.js --include=*.jsx --include=*.ts --include=
   --exclude-dir=dist --exclude-dir=build --exclude-dir=.next \
   '(innerHTML\s*=|dangerouslySetInnerHTML|v-html|document\.write|insertAdjacentHTML|eval\(|new Function\()' . 2>/dev/null | head -15 > /tmp/ca-xss.txt
 [ -s /tmp/ca-xss.txt ] && { sed 's/^/  XSS? /' /tmp/ca-xss.txt | cut -c1-200; echo "  (XSS? = page content set as HTML: safe only if the text is escaped/sanitised; use textContent or DOMPurify)"; }
-rlsoff=$(grep -rInEi "${EXCL[@]}" 'disable row level security' . 2>/dev/null | grep -vE ':[0-9]+:\s*--' | head -5)
-[ -n "$rlsoff" ] && { bad "RLS turned off (anyone with the public key can read/write the table):"; echo "$rlsoff" | cut -c1-200; }
+# Migrations are history: an old file may turn RLS off and a LATER one turn it back on. Only flag it
+# if no later file in the same folder re-enables RLS on that table (audit.sql checks the real final state).
+rlsoff=""
+while IFS= read -r hit; do
+  [ -z "$hit" ] && continue
+  f=${hit%%:*}; tbl=$(echo "$hit" | grep -oiE 'alter table +(if exists +)?([a-z_]+\.)?"?[a-z0-9_]+' | awk '{print $NF}' | sed 's/.*\.//; s/"//g')
+  later=$(ls "$(dirname "$f")" 2>/dev/null | sort | awk -v cur="$(basename "$f")" '$0 > cur' | while read -r g; do
+    grep -qiE "alter table +(if exists +)?([a-z_]+\.)?\"?$tbl\"? +enable row level security" "$(dirname "$f")/$g" && echo yes; done | head -1)
+  [ -n "$tbl" ] && [ -n "$later" ] && { ok "RLS off for $tbl in $(basename "$f") is undone by a later migration"; continue; }
+  rlsoff="$rlsoff$hit"$'\n'
+done < <(grep -rInEi "${EXCL[@]}" 'disable row level security' . 2>/dev/null | grep -vE ':[0-9]+:\s*--' | head -10)
+[ -n "$rlsoff" ] && { bad "RLS turned off (anyone with the public key can read/write the table):"; printf '%s' "$rlsoff" | cut -c1-200; }
 db_hits=$(grep -rInE "${EXCL[@]}" --exclude-dir=dist --exclude-dir=build '(using\s*\(\s*true\s*\)|with check\s*\(\s*true\s*\)|security definer|user_metadata)' . 2>/dev/null | grep -vE ':[0-9]+:\s*--' | head -15)
 [ -n "$db_hits" ] && { echo "$db_hits" | sed 's/^/  DB? /' | cut -c1-200; echo "  (DB? = using(true) is only OK on truly public data; security definer skips RLS; user_metadata is editable by users)"; }
 prompt_hits=$(grep -rInEi "${EXCL[@]}" --exclude-dir=dist --exclude-dir=build '(password|passwd|api[_ ]?key|secret)[^"\x27`]{0,20}(is|:|=)\s*["\x27`]?[A-Za-z0-9]' --include=*.js --include=*.mjs --include=*.ts --include=*.py . 2>/dev/null \
@@ -122,6 +132,27 @@ if [ -f package.json ]; then
   echo "  New packages? Check each on npmjs.com (age, downloads, real repo). AI sometimes invents package names."
 fi
 
+echo; echo "-- 8b. Code Armour setup (can this project re-test itself?) --"
+if [ -f COMPLIANCE.md ]; then
+  ok "COMPLIANCE.md exists"
+  last=$(grep -oE 'Last re-test: *[0-9]{4}-[0-9]{2}-[0-9]{2}' COMPLIANCE.md | grep -oE '[0-9]{4}-[0-9]{2}-[0-9]{2}' | head -1)
+  [ -z "$last" ] && last=$(grep -oE 'Checked: *[0-9]{4}-[0-9]{2}-[0-9]{2}' COMPLIANCE.md | grep -oE '[0-9]{4}-[0-9]{2}-[0-9]{2}' | head -1)
+  if [ -n "$last" ]; then
+    age=$(( ( $(date +%s) - $(date -j -f %Y-%m-%d "$last" +%s 2>/dev/null || date -d "$last" +%s 2>/dev/null || date +%s) ) / 86400 ))
+    [ "$age" -gt 90 ] && warn "Last re-test was $age days ago ($last): run bash security-tests/run.sh again" || ok "Last re-test $age days ago ($last)"
+  else warn "COMPLIANCE.md has no date (use YYYY-MM-DD after 'Last re-test:')"; fi
+  todo=$(grep -cE '\| *(❌|❓) *\|' COMPLIANCE.md 2>/dev/null)
+  [ "${todo:-0}" -gt 0 ] && warn "COMPLIANCE.md still has $todo ❌/❓ item(s) open"
+else warn "No COMPLIANCE.md yet: run the Code Armour skill to make one"; fi
+if [ -f security-tests/run.sh ]; then
+  ok "Saved re-test found (security-tests/run.sh)"
+  n=$(grep -hcE '^[^/]*check\(' security-tests/*.test.mjs 2>/dev/null | awk '{s+=$1} END {print s+0}')
+  [ "$n" -le 1 ] && warn "security-tests has no real attack checks yet (only the template): add this project's attacks" || ok "$n attack checks saved"
+  { [ -d supabase/migrations ] && [ ! -d node_modules/@electric-sql/pglite ]; } && warn "Database tests need: npm i -D @electric-sql/pglite"
+else warn "No saved re-test (security-tests/run.sh): fixes can be undone without anyone noticing"; fi
+ls .github/workflows/*.yml >/dev/null 2>&1 && grep -lq 'security-tests/run.sh' .github/workflows/*.yml 2>/dev/null \
+  && ok "GitHub re-tests every push" || warn "GitHub doesn't re-test on push (add templates/security-tests/github-workflow.yml)"
+
 if [ -n "$URL" ]; then
   echo; echo "-- 9. Live site: $URL --"
   H=$(curl -sIL --max-time 15 "$URL")
@@ -140,3 +171,4 @@ fi
 
 echo
 [ $problems = 0 ] && echo "${GRN}No problems found by the scan. Now do the manual checks in SKILL.md.${RST}" || echo "${RED}$problems problem(s) found.${RST} Fix them, then run again."
+[ $problems = 0 ]   # exit code 1 when problems were found, so re-tests and GitHub checks fail

@@ -45,7 +45,8 @@ Load only the reference files you need:
 | Builder or users in Asia-Pacific (India, China, Indonesia, Japan, Korea, Vietnam, Philippines, Pakistan, Bangladesh, Australia, Singapore) | `references/countries-apac.md` |
 | Builder or users in Canada, Brazil, Mexico, Argentina, Nigeria, South Africa, Kenya, Egypt, Turkey, Israel, Saudi Arabia, UAE, Russia | `references/countries-americas-africa-mideast.md` |
 | "Worldwide" users | Both country files, but only their "Cross-cutting" sections plus any country the user names |
-| A country not listed | Say so plainly. Apply the general rules (privacy notice, consent, delete-my-data, breach plan, kids' consent, tax via a Merchant of Record) and mark it ❓ |
+| Always | `references/upcoming.md`: compare each date with today (see "Staying up to date") |
+| A country not in the files | Check `references/countries-extra/` first. Not there? Research it with `templates/country-research.md` (needs web search), save it to `references/countries-extra/<country>.md`, and mark its rows ❓. No web search? Say so plainly and apply the general rules (privacy notice, consent, delete-my-data, breach plan, kids' consent, tax via a Merchant of Record), all ❓ |
 
 **Read in tiers to save effort:** start with the "10-minute pre-launch check" at the end of `security.md`, the Top 5 in `legal.md`, and the "Cross-cutting" sections of the country files. Only open a detailed section when the project has that feature (payments, user posts, AI, kids...).
 
@@ -116,6 +117,24 @@ Prove each fix by attacking it, and show the output. Examples:
 
 If you can't run a test at all (no access, or it needs the live database), say so and leave it ❓ with the exact command for the user to run.
 
+## Step 5b: Save the tests so they can be re-run
+
+A fix that worked today can be undone by tomorrow's change (an AI "fixing" an RLS error by turning RLS off is the classic). So leave the proof behind as tests the project can re-run:
+
+1. Create `security-tests/` in the project and copy in, from this skill:
+   - `templates/security-tests/harness.mjs`
+   - `templates/security-tests/attacks.test.mjs`
+   - `templates/security-tests/run.sh`
+   - `scripts/scan.sh`
+   - `recipes/supabase/audit.sql` (if Supabase)
+2. Fill `attacks.test.mjs` with **this project's** attacks from Step 5, using its real tables. One `check()` per attack. Each check must fail if the protection disappears. Where there are two layers (e.g. column permissions + a trigger), test **each layer on its own** too (`canUpdateColumn()` in the harness), or losing one layer goes unnoticed while the other still blocks. Keep the database audit at the top.
+3. If Supabase is used, add the test tool: `npm i -D @electric-sql/pglite`.
+4. Run `bash security-tests/run.sh` and show it passing.
+5. **Prove the tests can fail.** Break one protection on purpose in a throwaway migration, run the tests and show the ✗, then remove the throwaway. A test that can't fail proves nothing.
+6. Offer to add `templates/security-tests/github-workflow.yml` as `.github/workflows/security-tests.yml`, so GitHub re-tests every push and shows a red ✗ if a fix gets undone.
+
+Not Supabase? Same idea in the project's own test tool: Firebase rules with the emulator plus `@firebase/rules-unit-testing`, or Prisma/Express routes with a test database. Call each endpoint as user B and as a logged-out visitor.
+
 ## Step 6: Write COMPLIANCE.md
 
 Copy `templates/COMPLIANCE.md` into the project root and fill it in:
@@ -125,7 +144,7 @@ Copy `templates/COMPLIANCE.md` into the project root and fill it in:
 - ➖ doesn't apply (with why);
 - ❓ needs checking (with what to check).
 
-Date it. Keep it updated on later runs instead of starting over.
+Date it, and add the re-test command (`bash security-tests/run.sh`) at the top. Keep it updated on later runs instead of starting over.
 
 ## Step 7: Report
 
@@ -136,3 +155,32 @@ End with a short, honest summary:
 3. What the user must do themselves (accounts, dashboards, parent sign-ups, a lawyer for anything serious).
 
 Don't call the project "secure", "legal" or "compliant". Severity labels mean how likely enforcement is for a small project, not whether the law applies. Say what was checked and what wasn't.
+
+## Re-testing (later runs)
+
+Use this when the user says "re-test", "re-check" or "run code armour again", or when the project already has a `COMPLIANCE.md`.
+
+1. **Run the saved tests first:** `bash security-tests/run.sh [live-url]`. Every ✗ is a fix that broke since last time. That's the top priority: find the change that undid it (`git log -p` on the file), fix it, and re-run until all pass.
+2. **Check what changed since the date in COMPLIANCE.md** (`git log --since=<date> --stat`):
+   - New tables, functions, routes or webhooks? Run Steps 3–5 for them, and add their attacks to `attacks.test.mjs`.
+   - New features like payments, chat, uploads, AI or kids' accounts? Re-do Step 2 for those features.
+3. **Re-check things that go stale, even if no code changed:**
+   - Every ✅ older than 3 months on a live site: headers, hosting still alive, billing alerts, 2FA.
+   - Every 👤 legal row if the app's features changed.
+   - Any rule in the references dated more than 6 months ago that the project relies on. Laws move: say so and mark it ❓.
+4. Update COMPLIANCE.md in place: new date, what was re-tested, what changed. Never tick an old ✅ again without re-running its proof.
+
+**When to remind the user to re-test:** before each launch or big update, after any change to the database, login, payments or AI features, and at least monthly for a live app.
+
+## Staying up to date
+
+Laws change after this skill was written. Its research dates are at the top of each reference file. On every run:
+
+1. **Watchlist.** Compare each date in `references/upcoming.md` with today.
+   - If a date has passed, web-search whether the change really started (dates often slip), update the reference file and the watchlist row, and tell the user if it affects them.
+   - If a date is due within 6 months and it affects the project, warn the user so they can prepare.
+2. **Old research.** If a reference file the project relies on is more than 6 months old, and you have web search, quickly re-check the specific rules this project depends on. Prefer regulator websites. Update the file with the date and source, and add any new future dates to the watchlist. Without web search, say the information may be out of date.
+3. **Missing country.** Research it with `templates/country-research.md` (see Step 2) and save it, so the next run already has it.
+4. **New laws.** Once per run, do one quick search for new rules for this kind of project in the user's countries, e.g. "<country> new law apps children 2026" or "<country> data protection law changes this year". Add anything real to the right file and the watchlist.
+
+Be honest about freshness: say when something was last checked, and never present memory as a verified current fact.

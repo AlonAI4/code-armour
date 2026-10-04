@@ -1,0 +1,19 @@
+# Re-tests Code Armour itself on every push: database recipes vs. real Postgres, webhooks with real
+# signatures, the scanner, and the re-test kit catching undone fixes.
+name: tests
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: tests
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install
+      - run: npm test

@@ -3,6 +3,8 @@
 Checked: <date> · Stack: <e.g. Vite + Supabase + Netlify + Stripe> · Builder in: <country> · Users in: <countries>
 Project type: <site / game / AI app / store> · Logins: <yes/no> · Payments: <yes/no> · Under-13s / under-18s possible: <yes/no>
 
+Re-test any time: `bash security-tests/run.sh [live-url]` (also runs on every push if the GitHub workflow is added). Last re-test: <date> · result: <passed / N failed>
+
 > This is a checklist, not legal advice. Laws differ by country and change often. For anything serious, ask a lawyer.
 
 Key: ✅ done (with proof) · ❌ not done · ➖ doesn't apply (why) · ❓ needs checking
