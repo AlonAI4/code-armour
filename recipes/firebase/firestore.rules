@@ -30,8 +30,11 @@ service cloud.firestore {
         && cleanName(request.resource.data.displayName);
     }
 
-    // The user's own items, e.g. /users/{userId}/notes/{noteId}
-    match /users/{userId}/{sub=**} {
+    // The user's own items, e.g. /users/{userId}/notes/{noteId}.
+    // Careful: in rules_version 2, {x=**} also matches ZERO segments, so /users/{userId}/{sub=**}
+    // would match the profile document itself and undo the field allow-list above.
+    // {collection}/{doc=**} always needs at least one sub-collection, so it can't.
+    match /users/{userId}/{collection}/{doc=**} {
       allow read, write: if isOwner(userId);
     }
 
@@ -44,5 +47,5 @@ service cloud.firestore {
   }
 }
 // Unmatched paths are denied by default.
-// TEST IT: in the console's Rules Playground, or the emulator, try (a) reading /users/B while signed in as A,
-// (b) updating your own isAdmin to true. Both must be DENIED.
+// TESTED in the Firestore emulator: tests/firestore.test.mjs (12 checks, incl. self-admin, self-credits,
+// look-alike names, other users' data). Run your own rules through it before deploying.

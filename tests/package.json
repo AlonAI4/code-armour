@@ -3,11 +3,15 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node sql.test.mjs && node webhooks.test.mjs && bash scan.test.sh && bash retest.test.sh"
+    "test": "node sql.test.mjs && node webhooks.test.mjs && bash scan.test.sh && bash retest.test.sh",
+    "test:firebase": "firebase emulators:exec --only firestore --project demo-armour \"node firestore.test.mjs\""
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.3.0",
-    "stripe": "^17.0.0",
-    "@supabase/supabase-js": "^2.45.0"
+    "@firebase/rules-unit-testing": "^5.0.2",
+    "@supabase/supabase-js": "^2.45.0",
+    "firebase": "^12.19.0",
+    "firebase-tools": "^14.27.0",
+    "stripe": "^17.0.0"
   }
 }

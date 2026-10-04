@@ -75,6 +75,7 @@ Run the tests with `cd tests && npm install && npm test`. GitHub Actions also ru
 1. **Database recipes vs. real Postgres** (`sql.test.mjs`, 75 checks). Each recipe runs on real Postgres (PGlite, running inside Node) with Supabase-style roles, and then gets attacked. The attacks: reading or editing other users' rows, making yourself admin, creating a profile with free coins, look-alike-letter swear words, fake or farmed scores, double payouts.
 2. **Webhooks and server functions** (`webhooks.test.mjs`, 23 checks). These use real Stripe signatures and real Lemon Squeezy/Paddle HMACs. They check that fake, tampered, replayed and duplicate events are rejected, that endpoints refuse anyone not logged in, and that daily AI limits hold.
 3. **The scanner** (`scan.test.sh`, 29 checks), run against planted leaks, a clean app (no false alarms) and `tests/fixtures/vuln-game`, a deliberately broken game.
+5. **Firestore rules in the real Firebase emulator** (`firestore.test.mjs`, 12 checks): self-admin, self-credits, look-alike names, other users' data.
 4. **The re-test kit** (`retest.test.sh`, 9 checks). A game fixed by Code Armour passes its saved re-test. Then four typical AI "quick fixes" that undo security each turn it red, and removing them turns it green again.
 
 The skill was also reviewed by three AI agents (4 Oct 2026):
@@ -84,12 +85,14 @@ The skill was also reviewed by three AI agents (4 Oct 2026):
 
 These are AI reviews. They are **not** a human lawyer or a professional penetration test.
 
+It was also scanned with NVIDIA's [SkillSpector](https://github.com/NVIDIA/SkillSpector) (4 Oct 2026), with its AI layer on. Its AI reviewer confirmed one real bug: in Firestore rules v2, `{sub=**}` also matches the profile document itself, so players could make themselves admin. The red-team agent had missed it. It was reproduced in the emulator (5 holes), fixed, and is now tested. SkillSpector's AI disagreed with every other high finding. Most came from the deliberately broken test game and from `tests/node_modules`, which is never published.
+
 ## Limits
 
 These are honest limits, not modesty:
 - Laws change, and some country details are marked "unverified" in the files.
 - The scanner only finds known patterns.
 - Recipes need adapting to your tables and routes.
-- The Firebase rules and the two Supabase Edge Functions are type-checked and reviewed, but not run in this test suite (they need the Firebase emulator or a Supabase project).
+- The two Supabase Edge Functions are type-checked and reviewed, but not run in this test suite (they need a Supabase project).
 - The name filter can't catch everything. One example is random characters used in place of letters. Keep a report button.
 - Research date: October 2026. Re-check anything important.
