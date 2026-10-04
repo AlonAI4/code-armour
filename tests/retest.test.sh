@@ -9,7 +9,7 @@ ln -s "$HERE/node_modules" node_modules
 pass=0; fail=0
 expect_run() {  # name, expected exit (0 = passes, 1 = must fail)
   bash security-tests/run.sh >/tmp/ca-retest.txt 2>&1; got=$?
-  [ "$got" = "$2" ] && { pass=$((pass+1)); echo "✓ $1"; } || { fail=$((fail+1)); echo "✗ $1 (exit $got)"; tail -15 /tmp/ca-retest.txt; }
+  [ "$got" = "$2" ] && { pass=$((pass+1)); echo "✓ $1"; } || { fail=$((fail+1)); echo "✗ $1 (exit $got)"; grep -E "✗|problem" /tmp/ca-retest.txt | head -20; }
 }
 expect_run "fixed game passes its saved re-test" 0
 grep -q "13 attack checks saved\|attack checks saved" /tmp/ca-retest.txt && { pass=$((pass+1)); echo "✓ scanner sees the saved attack checks"; } || { fail=$((fail+1)); echo "✗ scanner didn't count saved checks"; }
