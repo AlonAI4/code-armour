@@ -102,8 +102,10 @@ prompt_hits=$(grep -rInEi "${EXCL[@]}" --exclude-dir=dist --exclude-dir=build '(
 price_hits=$(grep -rInE "${EXCL[@]}" --exclude-dir=dist --exclude-dir=build '(unit_amount|amount)\s*:\s*[a-zA-Z_.]*(body|req|price|amount|params|query)' --include=*.js --include=*.mjs --include=*.ts . 2>/dev/null | head -5)
 [ -n "$price_hits" ] && { echo "$price_hits" | sed 's/^/  PRICE? /' | cut -c1-200; echo "  (PRICE? = check the price comes from the server, not from what the browser sent)"; }
 grep -rInE "${EXCL[@]}" --exclude-dir=dist --exclude-dir=build '(verify_jwt\s*=\s*false|jwt\.decode\(|unit_amount:\s*(req|body|request)|\.update\((req\.)?body\)|\.insert\((req\.)?body\))' . 2>/dev/null | head -10 | sed 's/^/  API? /' | cut -c1-200
-if grep -rqlE "${EXCL[@]}" 'stripe' --include=*.js --include=*.mjs --include=*.ts . 2>/dev/null; then
-  grep -rqE "${EXCL[@]}" 'constructEvent' . 2>/dev/null && ok "Stripe webhook signature check found" || bad "Stripe used but no webhooks.constructEvent (webhook signature check) found"
+stripe_files=$(grep -rlE "${EXCL[@]}" --include=*.js --include=*.mjs --include=*.ts "from ['\"]stripe['\"]|require\(['\"]stripe['\"]\)" . 2>/dev/null | head -5)
+if [ -n "$stripe_files" ]; then
+  grep -rqE "${EXCL[@]}" 'constructEvent' . 2>/dev/null && ok "Stripe webhook signature check found" \
+    || bad "Stripe used ($(echo $stripe_files | tr '\n' ' ')) but no webhooks.constructEvent (webhook signature check) found"
 fi
 
 echo; echo "-- 6b. Firebase / other backends --"
