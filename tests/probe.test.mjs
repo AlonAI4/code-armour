@@ -10,11 +10,13 @@ let passed = 0, failed = 0;
 const check = (n, ok, d = "") => { ok ? passed++ : failed++; console.log(`${ok ? "✓" : "✗"} ${n}${ok ? "" : "  -> " + d}`); };
 const PROBE = fileURLToPath(new URL("../scripts/supabase-probe.mjs", import.meta.url));
 const seen = [];
+let hidden = false; // newer Supabase projects hide the table list (/rest/v1/) from public keys
 const server = http.createServer((req, res) => {
   seen.push(`${req.method} ${req.url.split("?")[0]}`);
   const json = (code, body, h = {}) => { res.writeHead(code, { "content-type": "application/json", ...h }); res.end(JSON.stringify(body)); };
   const u = req.url.split("?")[0];
-  if (u === "/rest/v1/") return json(200, { paths: { "/": {}, "/profiles": {}, "/scores": {}, "/secrets": {}, "/rpc/add_coins": {} } });
+  if (u === "/rest/v1/") return hidden ? json(401, { message: "hidden" }) : json(200, { paths: { "/": {}, "/profiles": {}, "/scores": {}, "/secrets": {}, "/players": {}, "/rpc/add_coins": {} } });
+  if (u === "/rest/v1/players") return json(206, [{ id: 7, name: "Striker" }], { "content-range": "0-0/900" });
   if (u === "/rest/v1/profiles") return json(200, [{ id: 1, email: "kid@school.com", coins: 5 }], { "content-range": "0-0/42" });
   if (u === "/rest/v1/scores") return json(200, []);
   if (u === "/rest/v1/secrets") return json(401, { message: "permission denied" });
@@ -37,6 +39,22 @@ check("warns that GraphQL shows its schema", /GraphQL shows its schema/.test(out
 check("exit code 1 when doors are open", code === 1, code);
 const writes = seen.filter((s) => /^(PATCH|PUT|DELETE)/.test(s) || (s.startsWith("POST") && s !== "POST /graphql/v1"));
 check("read-only: never sends a write request", writes.length === 0, writes.join(", "));
+
+check("HTTP 206 (partial content) counts as readable, not blocked", /ANYONE can read "players"/.test(out), out);
+
+hidden = true;
+const { out: blind, code: blindCode } = await run([PROBE, base, "sb_publishable_abc"]);
+check("hidden table list: says NO tables were checked, never 'No open doors'", /NO tables were checked/.test(blind) && !/No open doors/.test(blind), blind);
+const { mkdtempSync, writeFileSync, mkdirSync } = await import("node:fs");
+const { tmpdir } = await import("node:os");
+const proj = mkdtempSync(tmpdir() + "/probe-");
+mkdirSync(proj + "/src"); mkdirSync(proj + "/node_modules");
+writeFileSync(proj + "/src/db.ts", `supabase.from('profiles').select(); supabase.rpc('add_coins', { n: 1 })`);
+writeFileSync(proj + "/node_modules/lib.js", `x.from('not_mine')`);
+const { out: fromCode } = await run([PROBE, base, "sb_publishable_abc", proj]);
+check("hidden table list + project folder: tests the tables the code uses", /ANYONE can read "profiles"/.test(fromCode) && /"add_coins" can be called/.test(fromCode), fromCode);
+check("…and skips node_modules", !/not_mine/.test(fromCode), fromCode);
+hidden = false;
 
 const { out: refused } = await run([PROBE, base, "sb_secret_abcdefghijklmnop"]);
 check("refuses a secret/service-role key", /SERVICE ROLE \/ SECRET key/.test(refused), refused);

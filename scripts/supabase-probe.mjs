@@ -2,10 +2,14 @@
 // Code Armour: Supabase "front door" probe. Looks at YOUR Supabase project the way an attacker would: with only the
 // public anon/publishable key that ships inside your website. READ-ONLY: it never inserts, updates or deletes anything.
 // Only run it on a project you own.
-//   node supabase-probe.mjs https://YOURPROJECT.supabase.co <anon-or-publishable-key>
+//   node supabase-probe.mjs https://YOURPROJECT.supabase.co <anon-or-publishable-key> [project-dir]
+// Newer Supabase projects hide the table list from public keys; give the project folder and the probe tries
+// every table and function the code uses (.from('x') / .rpc('x')) instead.
 // Exit code 1 if anyone can read data or something important is open.
 
-const [url, key] = process.argv.slice(2);
+import { readdirSync, readFileSync, statSync } from "node:fs";
+import { join } from "node:path";
+const [url, key, projectDir] = process.argv.slice(2);
 if (!url || !key) {
   console.log("Usage: node supabase-probe.mjs https://YOURPROJECT.supabase.co <anon-or-publishable-key>");
   process.exit(2);
@@ -30,27 +34,53 @@ async function get(path, extra = {}) {
   } catch (e) { return { status: 0, body: String(e.message || e) }; }
 }
 
+// Table and function names the project's code uses (skips node_modules, build output and huge files).
+function namesFromCode(dir) {
+  const tables = new Set(), rpcs = new Set();
+  const walk = (d) => {
+    for (const e of readdirSync(d, { withFileTypes: true })) {
+      if (/^(node_modules|\.git|dist|build|\.next|out)$/.test(e.name)) continue;
+      const p = join(d, e.name);
+      if (e.isDirectory()) walk(p);
+      else if (/\.(m?[jt]sx?|vue|svelte)$/.test(e.name) && statSync(p).size < 1e6) {
+        const src = readFileSync(p, "utf8");
+        for (const m of src.matchAll(/\.from\(\s*['"`]([A-Za-z0-9_]+)['"`]\s*\)/g)) tables.add(m[1]);
+        for (const m of src.matchAll(/\.rpc\(\s*['"`]([A-Za-z0-9_]+)['"`]/g)) rpcs.add(m[1]);
+      }
+    }
+  };
+  walk(dir);
+  return { tables: [...tables].sort(), rpcs: [...rpcs].sort() };
+}
+
 console.log(`== Supabase front-door probe: ${base} (read-only, public key only) ==`);
 
 // 1. What the public API exposes (PostgREST OpenAPI)
 const spec = await get("/rest/v1/");
-if (spec.status !== 200 || typeof spec.body !== "object") {
-  warn(`Couldn't read the API description (HTTP ${spec.status}). Wrong URL/key, or it's hidden (good).`);
-} else {
+let tables = null, rpcs = [];
+if (spec.status === 200 && typeof spec.body === "object") {
   const paths = Object.keys(spec.body.paths || {});
-  const tables = paths.filter((p) => p !== "/" && !p.startsWith("/rpc/")).map((p) => p.slice(1));
-  const rpcs = paths.filter((p) => p.startsWith("/rpc/")).map((p) => p.slice(5));
+  tables = paths.filter((p) => p !== "/" && !p.startsWith("/rpc/")).map((p) => p.slice(1));
+  rpcs = paths.filter((p) => p.startsWith("/rpc/")).map((p) => p.slice(5));
+} else if (projectDir) {
+  ({ tables, rpcs } = namesFromCode(projectDir));
+  console.log(`(The API description is hidden (HTTP ${spec.status}), so these names come from the code in ${projectDir}.)`);
+} else {
+  warn(`Couldn't read the API description (HTTP ${spec.status}), so NO tables were checked. Run again with the project folder as a third argument to check the tables the code uses.`);
+}
+if (tables) {
   console.log(`\n-- Tables and views reachable with the public key: ${tables.length} --`);
   for (const t of tables) {
     const r = await get(`/rest/v1/${encodeURIComponent(t)}?select=*&limit=3`, { Range: "0-2", Prefer: "count=exact" });
     const total = (r.headers?.get?.("content-range") || "").split("/")[1];
-    if (r.status === 200 && Array.isArray(r.body) && r.body.length > 0) {
+    const okStatus = r.status === 200 || r.status === 206; // 206 = "partial content": rows came back
+    if (okStatus && Array.isArray(r.body) && r.body.length > 0) {
       const cols = Object.keys(r.body[0]);
       const sensitive = cols.filter((c) => /email|phone|address|birth|password|token|secret|key|ip|stripe|admin|role|credit|coins|balance/i.test(c));
       bad(`ANYONE can read "${t}" (${total && total !== "*" ? total + " rows" : "rows"}; columns: ${cols.slice(0, 10).join(", ")}${cols.length > 10 ? ", …" : ""})` +
         (sensitive.length ? `\n    including sensitive-looking columns: ${sensitive.join(", ")}` : "") +
         `\n    If this is meant to be public, make sure ONLY public columns are readable (security.md 2.5, safe-leaderboard.sql).`);
-    } else if (r.status === 200) ok(`"${t}": no rows visible to the public (empty, or RLS hides them)`);
+    } else if (okStatus) ok(`"${t}": no rows visible to the public (empty, or RLS hides them)`);
     else ok(`"${t}": blocked for the public (HTTP ${r.status})`);
   }
   console.log(`\n-- Database functions callable over the API: ${rpcs.length} --`);
@@ -97,5 +127,7 @@ try {
   else ok("GraphQL schema not shown to the public");
 } catch { ok("GraphQL not reachable"); }
 
-console.log(problems ? `\n${problems} problem(s): anyone on the internet can do the things marked ✗.` : "\nNo open doors found with the public key. (Still run audit.sql and the Security Advisor: this probe only sees what's reachable from outside.)");
+console.log(problems ? `\n${problems} problem(s): anyone on the internet can do the things marked ✗.`
+  : tables ? "\nNo open doors found with the public key. (Still run audit.sql and the Security Advisor: this probe only sees what's reachable from outside.)"
+  : "\nTables NOT checked (see above), so this is not a clean result.");
 process.exit(problems ? 1 : 0);
