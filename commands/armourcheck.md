@@ -23,6 +23,6 @@ Check this project's **Code Armour** using the code-armour skill (SKILL.md in th
    - new tables, routes, payments, chat, AI or kids features added since then without attack tests;
    - stale ✅ items (older than 3 months);
    - dates in `references/upcoming.md` that have passed and affect this project.
-5. **Report** as a short table: Armour present · Re-test result · Coverage gaps · Out of date · Next steps. Worst problems first. End with which fixes to make, and offer to make them.
+5. **Report** as a short table: Armour present · Re-test result · Coverage gaps · Out of date · Next steps. Worst problems first. List open findings under the 4 category headings, in this order: 🔧 Confirmed technical issues · 🔍 Potential issues requiring verification · 📋 General compliance considerations · ⚖️ Professional advice recommended (with who to ask). End with which fixes to make, and offer to make them.
 
 **End every report with this disclaimer, word for word:** *Code Armour provides automated technical checks and general compliance information. It does not provide legal advice, certify compliance, guarantee security or identify every possible risk. Results may be incomplete or incorrect. Users remain responsible for testing their websites, reviewing applicable requirements and obtaining professional advice where appropriate.*

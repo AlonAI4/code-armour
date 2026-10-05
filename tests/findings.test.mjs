@@ -23,8 +23,9 @@ function run(d) { try { return { ok: true, out: execFileSync(process.execPath, [
 const good = () => structuredClone(EX("findings.example.json"));
 const cov = () => structuredClone(EX("coverage.example.json"));
 
-let r = run(project(good(), cov(), "| Emails | ✅ | F-001 fixed |\n| Column grants | ❓ | F-002 hardening |\n"));
+let r = run(project(good(), cov(), "| Emails | ✅ 🔧 | F-001 fixed |\n| Column grants | ❓ 🔧 | F-002 hardening |\n| EU VAT | ❓ 📋 | F-004 |\n| Under-13 accounts | ❓ ⚖️ Professional advice recommended | F-005 |\n"));
 check("the example findings + coverage pass", r.ok && /1 rejected/.test(r.out), r.out);
+check("the pass line counts each category", /2 confirmed technical, 0 to verify, 1 compliance, 1 professional advice/.test(r.out), r.out);
 
 let f = good(); f.findings[0].evidence.file = "src/does-not-exist.js";
 r = run(project(f, cov())); check("a finding pointing at a file that doesn't exist is refused (made-up)", !r.ok && /does not exist/.test(r.out), r.out);
@@ -53,6 +54,38 @@ f = good(); f.findings[0].verdict = "needs_validation";
 r = run(project(f, cov(), "| Emails | ❌ | F-001 |\n")); check("an unverified finding must be ❓ in COMPLIANCE.md", !r.ok && /must be ❓/.test(r.out), r.out);
 f = good(); f.findings[0].fix_status = "open";
 r = run(project(f, cov(), "| Emails | ✅ | F-001 |\n")); check("an open finding can't be ticked ✅", !r.ok && /still open/.test(r.out), r.out);
+
+// ---- the 4 finding categories ----
+f = good(); delete f.findings[0].category;
+r = run(project(f, cov())); check("version 2: a finding with no category is refused", !r.ok && /category must be one of/.test(r.out), r.out);
+f = good(); f.version = 1; f.findings = f.findings.slice(0, 3); for (const x of f.findings) delete x.category; // an old file, as written before categories
+r = run(project(f, cov())); check("version 1 (older copies): no category only warns, naming the likely one", r.ok && /⚠ .*F-001.*confirmed_technical/.test(r.out), r.out);
+f = good(); f.findings[0].category = "maybe";
+r = run(project(f, cov())); check("an unknown category is refused", !r.ok && /category must be one of/.test(r.out), r.out);
+f = good(); f.findings[0].verdict = "needs_validation";
+r = run(project(f, cov())); check("confirmed_technical with verdict needs_validation is refused", !r.ok && /confirmed_technical needs verdict 'confirmed'/.test(r.out), r.out);
+f = good(); f.findings[0].category = "needs_verification";
+r = run(project(f, cov())); check("needs_verification with verdict confirmed is refused", !r.ok && /needs_verification needs verdict 'needs_validation'/.test(r.out), r.out);
+f = good(); f.findings[0].area = "legal-pages";
+r = run(project(f, cov())); check("a legal-pages finding can't be confirmed_technical", !r.ok && /'legal-pages' must be compliance_consideration or professional_advice/.test(r.out), r.out);
+f = good(); f.findings[3].category = "needs_verification";
+r = run(project(f, cov())); check("a countries finding can't be needs_verification", !r.ok && /'countries' must be compliance_consideration/.test(r.out), r.out);
+f = good(); f.findings[1].category = "needs_verification"; f.findings[1].verdict = "needs_validation";
+r = run(project(f, cov())); check("a hardening note must be confirmed_technical", !r.ok && /hardening note must be confirmed_technical/.test(r.out), r.out);
+f = good(); delete f.findings[3].basis;
+r = run(project(f, cov())); check("a compliance consideration needs 'basis' (reference + research date)", !r.ok && /needs 'basis'/.test(r.out), r.out);
+f = good(); delete f.findings[4].trigger;
+r = run(project(f, cov())); check("professional advice needs 'trigger' (why it may apply)", !r.ok && /needs 'trigger'/.test(r.out), r.out);
+f = good(); f.findings[3].fix_status = "fixed";
+r = run(project(f, cov())); check("a compliance consideration can never be 'fixed'", !r.ok && /never 'fixed'/.test(r.out), r.out);
+f = good(); f.findings[3].evidence = { file: "src/made-up.js" };
+r = run(project(f, cov())); check("a compliance finding's evidence, if given, is still checked", !r.ok && /does not exist/.test(r.out), r.out);
+f = good(); f.findings[4].category = "compliance_consideration";
+r = run(project(f, cov())); check("a sensitive topic (child-under-13-data) must be professional_advice", !r.ok && /needs category professional_advice/.test(r.out), r.out);
+f = good(); delete f.findings[4].who;
+r = run(project(f, cov())); check("a sensitive topic needs 'who' to ask", !r.ok && /needs 'who'/.test(r.out), r.out);
+r = run(project(good(), cov(), "| EU VAT | ✅ 📋 | F-004 |\n")); check("COMPLIANCE.md: a compliance finding's row can never be ✅", !r.ok && /can never be ✅/.test(r.out), r.out);
+r = run(project(good(), cov(), "| Emails | ✅ | F-001 fixed |\n")); check("COMPLIANCE.md: a row citing a finding must show its category", !r.ok && /needs its category on the row/.test(r.out), r.out);
 
 let c = cov(); delete c.runs[0].areas["prompt-injection"];
 r = run(project(good(), c)); check("coverage must mention every area (n/a allowed)", !r.ok && /prompt-injection/.test(r.out), r.out);

@@ -12,7 +12,7 @@ Run the **code-armour** skill on this project from start to finish. Its SKILL.md
    - test each fix for real;
    - save the tests in `security-tests/` (Step 5b), and prove they can fail;
    - write `COMPLIANCE.md`;
-   - report.
+   - report in the skill's Step 7 order: 🔧 Confirmed technical issues · 🔍 Potential issues requiring verification · 📋 General compliance considerations · ⚖️ Professional advice recommended (with who to ask) · what was checked and not checked.
 2. If the project already has `COMPLIANCE.md` or `security-tests/`, start with the skill's **Re-testing** section instead of starting over.
 3. Ask before anything risky: live database, deleting data, rotating keys, account settings.
 4. Offer to add the GitHub re-test workflow.

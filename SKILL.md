@@ -90,13 +90,21 @@ One pass finds only part of the problems, and some "findings" are wrong. So:
    - `rejected` means not real, and you write down why.
 
    When unsure, prefer `needs_validation` over raising a false alarm.
+
+   **Give every finding a category** (field `category`; rejected ones get none):
+   - 🔧 **Confirmed technical issue** (`confirmed_technical`): a `confirmed` technical finding, including `hardening` notes.
+   - 🔍 **Potential issue requiring verification** (`needs_verification`): a `needs_validation` technical finding.
+   - 📋 **General compliance consideration** (`compliance_consideration`): a law or rule that may apply. Give `basis` (reference file, section, research date) and `trigger` (the user's answer or the code that makes it relevant).
+   - ⚖️ **Professional advice recommended** (`professional_advice`): the same, but the topic needs a qualified person; say who in `who`.
+
+   Findings in legal pages or countries are always 📋 or ⚖️, never 🔧 or 🔍. For kids and privacy, technical facts (no age gate in the code, delete-account leaves rows behind) are 🔧 or 🔍, and legal duties (COPPA consent, a DPIA) are 📋 or ⚖️. These topics (in `topics`) always need ⚖️ and a `who`: child-under-13-data, health-data, biometrics, sanctioned-places, gambling-sweepstakes, crypto-tokens, adult-content, csam-reporting, ai-companion, tax-registration, eu-uk-representative, data-broker, minor-owned-accounts.
 3. **Severity rule:** if another layer already stops the attack, a missing extra layer is a `hardening` note, not a vulnerability. Name the layer that blocks it in `blocked_by`.
 4. **Every finding states the attack and the fix.** A leaked key isn't handled until it's rotated at the provider, because deleting it from the code doesn't un-leak it.
 5. **Write `.code-armour/findings.json`** (format: `templates/code-armour/findings.example.json`) and the **coverage ledger** `.code-armour/coverage.json` (`templates/code-armour/coverage.example.json`). The ledger says, for every area, whether this run checked it: `checked`, `partial`, `not_checked` or `n/a`.
    - Areas: auth, database rules, payments, uploads, AI features, prompt injection, supply chain, secrets, hosting/headers, kids/privacy, legal pages, countries.
    - **Prompt injection** is required whenever the app sends user or web text to an AI model (security.md 8, 15.30–15.31). User text is data and goes in a user message, never in the system prompt. An AI that reads untrusted text **and** can use tools is high severity.
    - **Supply chain** is required whenever there's CI, dependencies, extensions, MCP servers or skills (security.md 9, 15.1–15.6, 15.32).
-6. **Run `node scripts/validate-findings.mjs <project>`.** It refuses a finding whose evidence file or line doesn't exist, a confirmed finding with no disprove attempt, and a fixed one with no proving test. It also refuses any `COMPLIANCE.md` row that cites a finding which isn't confirmed. Fix what it reports before going on.
+6. **Run `node scripts/validate-findings.mjs <project>`.** It refuses a finding whose evidence file or line doesn't exist, a confirmed finding with no disprove attempt, and a fixed one with no proving test. It also checks every finding's category, and refuses any `COMPLIANCE.md` row that cites a finding which isn't confirmed, a ✅ on a 📋 or ⚖️ finding, or a cited finding whose row doesn't show its category. Fix what it reports before going on.
 
 ## Step 3b: Show the plan and ask before changing anything
 
@@ -105,7 +113,7 @@ Before editing a single file, show the user what you found and what you'd change
 | # | Problem | Fix (files that will change) | Risk if left |
 |---|---|---|---|
 
-Build the plan only from **confirmed** findings (needs_validation ones are listed separately as "to check"). Then ask: **"Should I put the armour on?"** Use your question tool if you have one (Claude Code: AskUserQuestion), and offer:
+Build the plan only from 🔧 **confirmed technical** findings. List the other three categories separately: 🔍 to verify, 📋 compliance considerations, ⚖️ where to get professional advice. Then ask: **"Should I put the armour on?"** Use your question tool if you have one (Claude Code: AskUserQuestion), and offer:
 - **All fixes** (recommended)
 - **Only the critical ones**
 - **Let me pick:** list the numbers
@@ -194,11 +202,16 @@ Date it, and add the re-test command (`bash security-tests/run.sh`) at the top. 
 
 ## Step 7: Report
 
-End with a short, honest summary:
+End with a short, honest summary, in this order:
 
-1. The biggest risks found, worst first.
-2. What you fixed and proved.
-3. What the user must do themselves (accounts, dashboards, parent sign-ups, a lawyer for anything serious).
+1. 🔧 **Confirmed technical issues**, worst first: what you fixed and tested, and what's still open.
+2. 🔍 **Potential issues requiring verification**: what to check, and how.
+3. 📋 **General compliance considerations**.
+4. ⚖️ **Professional advice recommended**, with who to ask (e.g. a privacy lawyer, an accountant).
+5. **What was checked and not checked** (from the coverage ledger), and what the user must do themselves (accounts, dashboards, parent sign-ups).
+6. The disclaimer below.
+
+Rejected candidates get one line: "N candidate findings checked and rejected."
 
 Don't call the project "secure", "legal" or "compliant", and never give a "% secure" score. Say what was checked, which areas weren't (from the coverage ledger), and that one run finds only part of the problems. End every report with this disclaimer, word for word: *Code Armour provides automated technical checks and general compliance information. It does not provide legal advice, certify compliance, guarantee security or identify every possible risk. Results may be incomplete or incorrect. Users remain responsible for testing their websites, reviewing applicable requirements and obtaining professional advice where appropriate.* Severity labels mean how likely enforcement is for a small project, not whether the law applies. Say what was checked and what wasn't.
 

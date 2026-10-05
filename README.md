@@ -34,10 +34,12 @@ You type `/armour` in your project. The agent:
 5. **Attacks every fix to prove it.** It signs in as a second user and tries to read your data, sends a fake payment, and tries to make itself admin. Each attack must fail.
 6. **Saves those attacks as tests** in `security-tests/`, so `bash security-tests/run.sh` (or GitHub, on every push) re-checks them forever.
 7. **Writes `COMPLIANCE.md`**, a dated checklist:
-   - ✅ done, with proof
+   - ✅ this check passed (with proof). It never means "compliant".
    - ❌ not done
-   - ➖ doesn't apply, and why
+   - ➖ likely doesn't apply, and why
    - ❓ needs checking
+
+   Each finding is labelled with one of 4 categories: 🔧 Confirmed technical issue · 🔍 Potential issue requiring verification · 📋 General compliance consideration · ⚖️ Professional advice recommended.
 
    Legal items never get an automatic ✅, because code can't prove a law is followed: a person has to review them.
 

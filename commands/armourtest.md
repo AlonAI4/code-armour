@@ -17,13 +17,15 @@ Stress-test this project's **Code Armour** with two independent reviewers, using
    - Read the code for each "theoretical" finding.
    - Drop anything you can't confirm, and say you dropped it.
    - Check COMPLIANCE.md against the skill's own rules (legal rows never ✅; every ✅ has proof that still holds).
-3. **Report** worst first:
-   - what's confirmed;
-   - what's theoretical;
-   - what the armour already handles well.
+3. **Report** under these headings, in this order, worst first inside each:
+   - 🔧 Confirmed technical issues;
+   - 🔍 Potential issues requiring verification (including "theoretical" ones);
+   - 📋 General compliance considerations;
+   - ⚖️ Professional advice recommended (with who to ask);
+   - what was checked and not checked, and what the armour already handles well.
 
    Then offer to fix the confirmed issues. Every fix must come with a new check in `security-tests/` so it stays fixed, then re-run `bash security-tests/run.sh`.
-4. **Record** every finding in `.code-armour/findings.json` with its verdict (`confirmed` / `needs_validation` / `rejected`), add this run to `.code-armour/coverage.json`, and run `scripts/validate-findings.mjs`.
+4. **Record** every finding in `.code-armour/findings.json` with its verdict (`confirmed` / `needs_validation` / `rejected`) and its category (SKILL.md Step 3a), add this run to `.code-armour/coverage.json`, and run `scripts/validate-findings.mjs`.
 5. **Be clear:** these are AI reviewers, not a human lawyer or a professional penetration test. One run finds only part of what repeated runs find, so run `/armourtest` again after big changes, and aim each new run at the gaps in the coverage ledger.
 
 **End every report with this disclaimer, word for word:** *Code Armour provides automated technical checks and general compliance information. It does not provide legal advice, certify compliance, guarantee security or identify every possible risk. Results may be incomplete or incorrect. Users remain responsible for testing their websites, reviewing applicable requirements and obtaining professional advice where appropriate.*

@@ -12,7 +12,15 @@ const SEVERITY = ["critical", "high", "medium", "low", "hardening"];
 const VERDICT = ["confirmed", "needs_validation", "rejected"];
 const FIX = ["open", "fixed", "accepted"];
 const COVER = ["checked", "partial", "not_checked", "n/a"];
-const errors = [];
+// Every non-rejected finding gets one of 4 categories. Legal areas can only be the last two.
+const CATEGORY = { confirmed_technical: ["🔧", "Confirmed technical issue"], needs_verification: ["🔍", "Potential issue requiring verification"],
+  compliance_consideration: ["📋", "General compliance consideration"], professional_advice: ["⚖️", "Professional advice recommended"] };
+const LEGAL_AREAS = ["legal-pages", "countries"];
+const LEGAL_CATS = ["compliance_consideration", "professional_advice"];
+// Topics where general notes aren't enough: the category must be professional_advice, with 'who' to ask.
+const SENSITIVE = ["child-under-13-data", "health-data", "biometrics", "sanctioned-places", "gambling-sweepstakes", "crypto-tokens",
+  "adult-content", "csam-reporting", "ai-companion", "tax-registration", "eu-uk-representative", "data-broker", "minor-owned-accounts"];
+const errors = [], warnings = [];
 const err = (m) => errors.push(m);
 const str = (v) => typeof v === "string" && v.trim().length > 0;
 
@@ -27,7 +35,7 @@ const f = load(".code-armour/findings.json");
 const byId = new Map();
 if (f === undefined) err(".code-armour/findings.json is missing (every run writes it, even with zero findings)");
 else if (f) {
-  if (f.version !== 1) err("findings.json: version must be 1");
+  if (f.version !== 1 && f.version !== 2) err("findings.json: version must be 2 (or 1 for older files)");
   if (!Array.isArray(f.findings)) err("findings.json: 'findings' must be a list");
   for (const [i, x] of (f.findings || []).entries()) {
     const at = `finding #${i + 1}${x && x.id ? ` (${x.id})` : ""}`;
@@ -40,9 +48,36 @@ else if (f) {
     if (!SEVERITY.includes(x.severity)) err(`${at}: severity must be one of ${SEVERITY.join(", ")}`);
     if (!VERDICT.includes(x.verdict)) err(`${at}: verdict must be one of ${VERDICT.join(", ")}`);
     if (x.verdict === "rejected") { if (!str(x.reason)) err(`${at}: a rejected finding needs a 'reason' (why it isn't real)`); continue; }
-    // confirmed and needs_validation both need real evidence
+    // ---- category (R1-R7) ----
+    const cat = x.category;
+    if (cat === undefined && f.version === 1) {
+      const guess = LEGAL_AREAS.includes(x.area) ? "compliance_consideration" : x.verdict === "confirmed" ? "confirmed_technical" : "needs_verification";
+      warnings.push(`${at}: no 'category' (old version 1 file). Probably "${guess}" (${CATEGORY[guess][1]}): add it and move to version 2`);
+    } else if (!(cat in CATEGORY)) err(`${at}: category must be one of ${Object.keys(CATEGORY).join(", ")}`);
+    else {
+      if (cat === "confirmed_technical" && x.verdict !== "confirmed") err(`${at}: confirmed_technical needs verdict 'confirmed'`);
+      if (cat === "needs_verification" && x.verdict !== "needs_validation") err(`${at}: needs_verification needs verdict 'needs_validation'`);
+      if (LEGAL_AREAS.includes(x.area) && !LEGAL_CATS.includes(cat)) err(`${at}: a finding in '${x.area}' must be compliance_consideration or professional_advice, not ${cat}`);
+      if (x.severity === "hardening" && cat !== "confirmed_technical") err(`${at}: a hardening note must be confirmed_technical`);
+      if (LEGAL_CATS.includes(cat)) {
+        if (!str(x.basis)) err(`${at}: ${cat} needs 'basis' (reference file, section and research date, e.g. references/legal.md §5 (researched 2026-10-04))`);
+        if (!str(x.trigger)) err(`${at}: ${cat} needs 'trigger' (why it may apply: a user answer or code evidence)`);
+        if (x.fix_status !== undefined && !["open", "accepted"].includes(x.fix_status)) err(`${at}: ${cat} can only be 'open' or 'accepted', never 'fixed' (code can't prove a law is followed)`);
+      }
+    }
+    if (x.topics !== undefined) {
+      if (!Array.isArray(x.topics) || !x.topics.every(str)) err(`${at}: topics must be a list of words`);
+      else {
+        const hit = x.topics.filter((t) => SENSITIVE.includes(t));
+        if (hit.length && cat !== "professional_advice") err(`${at}: topic ${hit.join(", ")} needs category professional_advice`);
+        if (hit.length && !str(x.who)) err(`${at}: topic ${hit.join(", ")} needs 'who' (who to ask, e.g. "privacy lawyer", "accountant")`);
+      }
+    }
+    const legal = LEGAL_CATS.includes(cat);
+    // confirmed and needs_validation both need real evidence (optional for the two legal categories, but checked if given)
     const ev = x.evidence;
-    if (!ev || typeof ev !== "object" || (!str(ev.file) && !str(ev.command))) {
+    if (legal && ev === undefined) { /* basis + trigger stand in for evidence */ }
+    else if (!ev || typeof ev !== "object" || (!str(ev.file) && !str(ev.command))) {
       err(`${at}: evidence missing (give {file, line} or {command, output})`);
     } else if (str(ev.file)) {
       const p = resolve(dir, ev.file);
@@ -53,7 +88,7 @@ else if (f) {
         if (!Number.isInteger(ev.line) || ev.line < 1 || ev.line > n) err(`${at}: evidence line ${ev.line} is not in ${ev.file} (${n} lines)`);
       }
     } else if (!str(ev.output)) err(`${at}: command evidence needs its 'output'`);
-    if (x.verdict === "confirmed") {
+    if (x.verdict === "confirmed" && !legal) {
       if (!str(x.attack)) err(`${at}: a confirmed finding needs 'attack' (what an attacker does)`);
       if (!str(x.disproof)) err(`${at}: a confirmed finding needs 'disproof' (what the fresh attempt to disprove it tried, and why it failed)`);
       if (!FIX.includes(x.fix_status)) err(`${at}: fix_status must be one of ${FIX.join(", ")}`);
@@ -95,10 +130,16 @@ if (existsSync(cp) && f) {
       else if (x.verdict === "needs_validation" && !line.includes("❓")) err(`COMPLIANCE.md line ${i + 1}: ${id} is unverified, so its row must be ❓`);
       else if (x.verdict === "confirmed" && x.fix_status === "fixed" && line.includes("✅") === false && line.includes("❌")) err(`COMPLIANCE.md line ${i + 1}: ${id} is fixed and proven, but the row says ❌`);
       else if (x.verdict === "confirmed" && x.fix_status === "open" && line.includes("✅")) err(`COMPLIANCE.md line ${i + 1}: ${id} is still open, but the row says ✅`);
+      if (x && x.verdict !== "rejected" && x.category in CATEGORY) {
+        const [icon, label] = CATEGORY[x.category];
+        if (LEGAL_CATS.includes(x.category) && line.includes("✅")) err(`COMPLIANCE.md line ${i + 1}: ${id} is a ${label.toLowerCase()}, so its row can never be ✅`);
+        if (!line.includes(icon) && !line.includes(label)) err(`COMPLIANCE.md line ${i + 1}: ${id} needs its category on the row (${icon} ${label})`);
+      }
     }
   });
 }
 
+for (const w of warnings) console.log("⚠ " + w);
 if (errors.length) {
   console.log(`✗ findings check failed (${errors.length}):`);
   for (const e of errors) console.log("  - " + e);
@@ -106,4 +147,7 @@ if (errors.length) {
 }
 const all = [...byId.values()];
 const n = (v) => all.filter((x) => x.verdict === v).length;
-console.log(`✓ findings check passed: ${n("confirmed")} confirmed, ${n("needs_validation")} need validation, ${n("rejected")} rejected; coverage ledger OK`);
+const k = (c) => all.filter((x) => x.verdict !== "rejected" && x.category === c).length;
+console.log(`✓ findings check passed: ${n("confirmed")} confirmed, ${n("needs_validation")} need validation, ${n("rejected")} rejected; ` +
+  `by category: ${k("confirmed_technical")} confirmed technical, ${k("needs_verification")} to verify, ${k("compliance_consideration")} compliance, ` +
+  `${k("professional_advice")} professional advice; coverage ledger OK`);

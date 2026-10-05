@@ -18,5 +18,8 @@ for f in references/legal.md references/countries-apac.md references/countries-a
   t "$f carries the disclaimer" 'grep -qF "$LINE" "$R/$f"'
 done
 t "the old 'aren't responsible if you get hacked' line is gone everywhere outside tests/" '! grep -rlF "aren'"'"'t responsible if you get hacked" --exclude-dir=tests --exclude-dir=.git --exclude-dir=node_modules "$R"'
+for lab in "Confirmed technical issue" "Potential issue requiring verification" "General compliance consideration" "Professional advice recommended"; do
+  t "SKILL.md and the COMPLIANCE template name the category '$lab'" 'grep -qF "$lab" "$R/SKILL.md" && grep -qF "$lab" "$R/templates/COMPLIANCE.md"'
+done
 t "LICENSE keeps MIT's 'AS IS, WITHOUT WARRANTY' wording" 'grep -q "PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND" "$R/LICENSE" && grep -q "IN NO EVENT SHALL THE" "$R/LICENSE"'
 echo; echo "$pass passed, $fail failed"; [ $fail = 0 ]

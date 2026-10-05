@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "findings": [
     {
       "id": "F-001",
@@ -7,6 +7,7 @@
       "area": "database-rules",
       "severity": "high",
       "verdict": "confirmed",
+      "category": "confirmed_technical",
       "evidence": { "file": "supabase/migrations/001_init.sql", "line": 4 },
       "attack": "A logged-out visitor calls /rest/v1/profiles?select=email with the public key and gets every email.",
       "disproof": "Fresh check tried: is the table empty, or is RLS hiding rows? Ran it as anon: 42 rows with emails came back, so it's real.",
@@ -19,6 +20,7 @@
       "area": "database-rules",
       "severity": "hardening",
       "verdict": "confirmed",
+      "category": "confirmed_technical",
       "evidence": { "file": "supabase/migrations/002_code_armour.sql", "line": 1 },
       "attack": "Without column grants a player could try to update is_admin.",
       "disproof": "Tried the update as a player: the trigger already rejects it, so this is a hardening note, not a vulnerability.",
@@ -32,6 +34,30 @@
       "severity": "medium",
       "verdict": "rejected",
       "reason": "Names go through textContent, never innerHTML (src/board.js line 12)."
+    },
+    {
+      "id": "F-004",
+      "title": "EU VAT on digital sales may apply",
+      "area": "countries",
+      "severity": "medium",
+      "verdict": "needs_validation",
+      "category": "compliance_consideration",
+      "basis": "references/legal.md §5 (researched 2026-10-04)",
+      "trigger": "User answered: users in the EU; code has a Stripe checkout (no Merchant of Record).",
+      "fix_status": "open"
+    },
+    {
+      "id": "F-005",
+      "title": "Accounts for under-13s need verified parental consent",
+      "area": "kids-privacy",
+      "severity": "high",
+      "verdict": "needs_validation",
+      "category": "professional_advice",
+      "topics": ["child-under-13-data"],
+      "who": "privacy lawyer",
+      "basis": "references/legal.md §2 (researched 2026-10-04)",
+      "trigger": "User answered: under-13s could use it; signup asks for an email.",
+      "fix_status": "open"
     }
   ]
 }
