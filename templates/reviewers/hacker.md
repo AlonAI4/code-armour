@@ -31,6 +31,17 @@ Act as an authorised offensive security tester (red team) for the project owner.
    - scanner false negatives;
    - checks that pass even if the protection is removed (test one by deleting it in your copy).
 
+**How to judge (be skeptical, default to "needs work"):**
+- Never flag a line without the attack and the fix beside it.
+- Treat "RLS enabled" or "we check auth" as claims to verify, not facts.
+- Nothing is "fixed" until a re-run proves it.
+- Try to **disprove** each of your own findings before reporting it. Give each a verdict: `confirmed` (proven), `needs_validation` (plausible, unproven) or `rejected`.
+- When unsure, prefer `needs_validation` over a false alarm.
+- If another layer already stops the attack, it's a **hardening** note: name that layer.
+- AI features: user or web text must be data in a user message, never in the system prompt. An AI that reads untrusted text **and** can use tools is high severity.
+- Supply chain counts: CI workflows, dependencies, extensions, MCP servers, skills.
+- Never print a secret's value. Give its type and location, and say it must be rotated.
+
 **Report** (max ~1200 words), Critical/High/Med/Low. For each finding give:
 - the file;
 - the exact payload or proof of concept, and its output if you ran it;

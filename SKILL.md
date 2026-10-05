@@ -79,6 +79,24 @@ Skip whole sections that can't apply. For example, no payments means skip Stripe
     (see `references/stacks.md` §1). Firebase: read `firestore.rules` / `storage.rules`, try the Rules Playground. Postgres/Prisma/Drizzle, Convex, Express: read every route or function and confirm it filters by the verified user. PocketBase/Appwrite: check each collection's rules in the admin UI. If Supabase is used, run `recipes/supabase/audit.sql` through whatever you have: the Supabase MCP `execute_sql` tool, the `supabase` CLI, or ask the user to paste it into the SQL Editor and share the output. Also open (or ask for) **Advisors → Security** and explain every warning in plain words.
 4. Go through each applicable item in the references and check it against the code.
 
+## Step 3a: Verify every finding, then record it
+
+One pass finds only part of the problems, and some "findings" are wrong. So:
+1. **Try to disprove each candidate finding first**, with fresh eyes. If your tool can start sub-agents, give each finding to a fresh one whose job is to prove it **wrong**: is the table actually empty, does another layer block it, is the code even reachable? If you can't use sub-agents, do it yourself, and don't rely on what you concluded earlier. Treat "RLS enabled" as a claim to check, not a fact.
+2. **Give every finding a verdict:**
+   - `confirmed` means real, with evidence and a disprove attempt that failed.
+   - `needs_validation` means it might be real but couldn't be proven. It goes in as ❓ and is never presented as fact.
+   - `rejected` means not real, and you write down why.
+
+   When unsure, prefer `needs_validation` over raising a false alarm.
+3. **Severity rule:** if another layer already stops the attack, a missing extra layer is a `hardening` note, not a vulnerability. Name the layer that blocks it in `blocked_by`.
+4. **Every finding states the attack and the fix.** A leaked key isn't handled until it's rotated at the provider, because deleting it from the code doesn't un-leak it.
+5. **Write `.code-armour/findings.json`** (format: `templates/code-armour/findings.example.json`) and the **coverage ledger** `.code-armour/coverage.json` (`templates/code-armour/coverage.example.json`). The ledger says, for every area, whether this run checked it: `checked`, `partial`, `not_checked` or `n/a`.
+   - Areas: auth, database rules, payments, uploads, AI features, prompt injection, supply chain, secrets, hosting/headers, kids/privacy, legal pages, countries.
+   - **Prompt injection** is required whenever the app sends user or web text to an AI model (security.md 8, 15.30–15.31). User text is data and goes in a user message, never in the system prompt. An AI that reads untrusted text **and** can use tools is high severity.
+   - **Supply chain** is required whenever there's CI, dependencies, extensions, MCP servers or skills (security.md 9, 15.1–15.6, 15.32).
+6. **Run `node scripts/validate-findings.mjs <project>`.** It refuses a finding whose evidence file or line doesn't exist, a confirmed finding with no disprove attempt, and a fixed one with no proving test. It also refuses any `COMPLIANCE.md` row that cites a finding which isn't confirmed. Fix what it reports before going on.
+
 ## Step 3b: Show the plan and ask before changing anything
 
 Before editing a single file, show the user what you found and what you'd change. Keep it to one screen, worst first, in plain words:
@@ -86,7 +104,7 @@ Before editing a single file, show the user what you found and what you'd change
 | # | Problem | Fix (files that will change) | Risk if left |
 |---|---|---|---|
 
-Then ask: **"Should I put the armour on?"** Use your question tool if you have one (Claude Code: AskUserQuestion), and offer:
+Build the plan only from **confirmed** findings (needs_validation ones are listed separately as "to check"). Then ask: **"Should I put the armour on?"** Use your question tool if you have one (Claude Code: AskUserQuestion), and offer:
 - **All fixes** (recommended)
 - **Only the critical ones**
 - **Let me pick:** list the numbers
@@ -152,6 +170,7 @@ A fix that worked today can be undone by tomorrow's change (an AI "fixing" an RL
    - `templates/security-tests/attacks.test.mjs` (database projects) **or** `templates/security-tests/plain.test.mjs` (no database: static sites, extensions, MCP servers, tools; plain Node, no packages)
    - `templates/security-tests/run.sh`
    - `scripts/scan.sh`
+   - `scripts/validate-findings.mjs` (run.sh checks `.code-armour/` with it on every re-test)
    - `recipes/supabase/audit.sql` (if Supabase)
 2. Fill `attacks.test.mjs` with **this project's** attacks from Step 5, using its real tables. One `check()` per attack. Each check must fail if the protection disappears. Pin the **exact** protected code, not just a count: e.g. store the reviewed `innerHTML` lines (or a hash of them) so removing one `esc()` fails the test, not only adding a new sink. Where there are two layers (e.g. column permissions + a trigger), test **each layer on its own** too (`canUpdateColumn()` in the harness), or losing one layer goes unnoticed while the other still blocks. Keep the database audit at the top.
 3. If Supabase is used, add the test tool: `npm i -D @electric-sql/pglite`. No database? Skip it; `run.sh` runs plain tests without it.
@@ -180,12 +199,13 @@ End with a short, honest summary:
 2. What you fixed and proved.
 3. What the user must do themselves (accounts, dashboards, parent sign-ups, a lawyer for anything serious).
 
-Don't call the project "secure", "legal" or "compliant". Severity labels mean how likely enforcement is for a small project, not whether the law applies. Say what was checked and what wasn't.
+Don't call the project "secure", "legal" or "compliant", and never give a "% secure" score. Say what was checked, which areas weren't (from the coverage ledger), and that one run finds only part of the problems. Severity labels mean how likely enforcement is for a small project, not whether the law applies. Say what was checked and what wasn't.
 
 ## Re-testing (later runs)
 
 Use this when the user says "re-test", "re-check" or "run code armour again", or when the project already has a `COMPLIANCE.md`.
 
+0. **Read `.code-armour/coverage.json`** and start with the areas marked `not_checked` or `partial`, or that are older than the last big change.
 1. **Run the saved tests first:** `bash security-tests/run.sh [live-url]`. Every ✗ is a fix that broke since last time. That's the top priority: find the change that undid it (`git log -p` on the file), show the user what broke and the fix, ask before changing it (same as Step 3b), then re-run until all pass.
 2. **Check what changed since the date in COMPLIANCE.md** (`git log --since=<date> --stat`):
    - New tables, functions, routes or webhooks? Run Steps 3–5 for them, and add their attacks to `attacks.test.mjs`.

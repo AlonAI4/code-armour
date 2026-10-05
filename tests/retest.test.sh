@@ -26,5 +26,12 @@ echo 'create policy "debug" on public.profiles for select using (true);' > supab
 expect_run "caught: a 'temporary' open policy" 1
 rm supabase/migrations/003_break.sql
 expect_run "passes again once the break is removed" 0
+# findings + coverage ledger are checked on every re-test
+cp "$ROOT/scripts/validate-findings.mjs" security-tests/ && mkdir -p .code-armour
+cp "$ROOT/templates/code-armour/findings.example.json" .code-armour/findings.json
+cp "$ROOT/templates/code-armour/coverage.example.json" .code-armour/coverage.json
+bash security-tests/run.sh > /tmp/ca-retest.txt 2>&1 && grep -q "findings check passed" /tmp/ca-retest.txt && { pass=$((pass+1)); echo "✓ re-test checks the findings and coverage ledger"; } || { fail=$((fail+1)); echo "✗ findings not checked in re-test"; grep -E "✗|findings" /tmp/ca-retest.txt | head; }
+python3 -c "import json;p='.code-armour/findings.json';d=json.load(open(p));d['findings'][0]['evidence']['file']='src/made-up.js';json.dump(d,open(p,'w'))"
+expect_run "re-test fails when a finding's evidence is made up" 1
 cd /; rm -rf "$T"
 echo; echo "$pass passed, $fail failed"; [ $fail = 0 ]

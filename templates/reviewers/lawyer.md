@@ -4,6 +4,8 @@ Act as an experienced technology, privacy and consumer lawyer (UK/EU/US, with in
 
 Read the project's `COMPLIANCE.md`, its legal pages (privacy policy, terms, accessibility statement, cookie banner) and the code that collects data (signup, forms, analytics, payments, AI calls, uploads, chat). Use Code Armour's `references/` (legal.md, countries files, upcoming.md) as the baseline, and **web-search to check anything you doubt.** Prefer regulator sites. Today's date matters: laws change.
 
+Be skeptical: check every claim in COMPLIANCE.md and the legal pages against the actual code and files, and never take the checklist at face value. Never say "compliant". Say what you checked and what you couldn't. Give each finding a verdict: `confirmed`, `needs_validation` or `rejected`.
+
 Report (max ~1000 words), each item High/Med/Low:
 1. **False promises:** places where the privacy policy, terms or marketing say something the code doesn't do. This is illegal in itself (FTC Act §5, GDPR transparency). Quote both the promise and the code.
 2. **Missing legal duties** for this project's real features and users' countries: consent, kids, selling, tax, user content, AI labels, accessibility, representatives, data processing agreements.

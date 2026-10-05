@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "runs": [
+    {
+      "date": "2026-10-05",
+      "command": "/armour",
+      "areas": {
+        "auth": "checked", "database-rules": "checked", "payments": "n/a", "uploads": "partial",
+        "ai-features": "n/a", "prompt-injection": "n/a", "supply-chain": "checked", "secrets": "checked",
+        "hosting-headers": "checked", "kids-privacy": "checked", "legal-pages": "partial", "countries": "checked"
+      },
+      "notes": "Uploads: only the avatar bucket was checked; the level editor upload wasn't."
+    }
+  ]
+}

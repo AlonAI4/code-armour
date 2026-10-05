@@ -15,11 +15,12 @@ Check this project's **Code Armour** using the code-armour skill (SKILL.md in th
 2. **Does it still work?**
    - Run `bash security-tests/run.sh $ARGUMENTS`. If it's missing, run the skill's `scripts/scan.sh . $ARGUMENTS` instead.
    - Every ✗ means a protection broke since the last check. Find the change that caused it with `git log -p`. Not a git repo? Compare file dates with the date in COMPLIANCE.md, and suggest `git init`.
-3. **Is it up to date?** Follow the skill's "Re-testing" and "Staying up to date" sections:
+3. **Coverage gaps:** read `.code-armour/coverage.json` and list the areas that are `not_checked`, `partial`, or that changed since they were checked. Run `node <skill>/scripts/validate-findings.mjs .` and report what it says.
+4. **Is it up to date?** Follow the skill's "Re-testing" and "Staying up to date" sections:
    - the date of the last re-test;
    - open items: rows whose status is ❌ or ❓ (list the worst; owner-only tasks separately);
    - **proof that wasn't saved:** tests or evidence cited in COMPLIANCE.md that aren't in `security-tests/`, and features (functions, webhooks, AI endpoints, uploads, name filter) with no check in `security-tests/`;
    - new tables, routes, payments, chat, AI or kids features added since then without attack tests;
    - stale ✅ items (older than 3 months);
    - dates in `references/upcoming.md` that have passed and affect this project.
-4. **Report** as a short table: Armour present · Re-test result · Coverage gaps · Out of date · Next steps. Worst problems first. End with which fixes to make, and offer to make them.
+5. **Report** as a short table: Armour present · Re-test result · Coverage gaps · Out of date · Next steps. Worst problems first. End with which fixes to make, and offer to make them.

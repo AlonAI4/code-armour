@@ -23,4 +23,5 @@ Stress-test this project's **Code Armour** with two independent reviewers, using
    - what the armour already handles well.
 
    Then offer to fix the confirmed issues. Every fix must come with a new check in `security-tests/` so it stays fixed, then re-run `bash security-tests/run.sh`.
-4. **Be clear:** these are AI reviewers, not a human lawyer or a professional penetration test.
+4. **Record** every finding in `.code-armour/findings.json` with its verdict (`confirmed` / `needs_validation` / `rejected`), add this run to `.code-armour/coverage.json`, and run `scripts/validate-findings.mjs`.
+5. **Be clear:** these are AI reviewers, not a human lawyer or a professional penetration test. One run finds only part of what repeated runs find, so run `/armourtest` again after big changes, and aim each new run at the gaps in the coverage ledger.

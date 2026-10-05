@@ -1,0 +1,37 @@
+{
+  "version": 1,
+  "findings": [
+    {
+      "id": "F-001",
+      "title": "Anyone can read every player's email",
+      "area": "database-rules",
+      "severity": "high",
+      "verdict": "confirmed",
+      "evidence": { "file": "supabase/migrations/001_init.sql", "line": 4 },
+      "attack": "A logged-out visitor calls /rest/v1/profiles?select=email with the public key and gets every email.",
+      "disproof": "Fresh check tried: is the table empty, or is RLS hiding rows? Ran it as anon: 42 rows with emails came back, so it's real.",
+      "fix_status": "fixed",
+      "proof": "security-tests/attacks.test.mjs: \"logged-out visitors see no profiles\""
+    },
+    {
+      "id": "F-002",
+      "title": "No column grants on profiles (extra layer)",
+      "area": "database-rules",
+      "severity": "hardening",
+      "verdict": "confirmed",
+      "evidence": { "file": "supabase/migrations/002_code_armour.sql", "line": 1 },
+      "attack": "Without column grants a player could try to update is_admin.",
+      "disproof": "Tried the update as a player: the trigger already rejects it, so this is a hardening note, not a vulnerability.",
+      "blocked_by": "protect_privileged_columns trigger",
+      "fix_status": "open"
+    },
+    {
+      "id": "F-003",
+      "title": "Possible XSS in the leaderboard",
+      "area": "auth",
+      "severity": "medium",
+      "verdict": "rejected",
+      "reason": "Names go through textContent, never innerHTML (src/board.js line 12)."
+    }
+  ]
+}

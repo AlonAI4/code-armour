@@ -15,5 +15,8 @@ for t in security-tests/*.test.mjs; do
   fi
   echo "-- $t"; node "$t" || status=1
 done
+if [ -f .code-armour/findings.json ] && [ -f security-tests/validate-findings.mjs ]; then
+  echo; echo "== 3. Findings and coverage ledger =="; node security-tests/validate-findings.mjs . || status=1
+fi
 echo; [ $status = 0 ] && echo "RE-TEST PASSED: every saved check still holds." || echo "RE-TEST FAILED: read the ✗ lines above. A fix may have been undone."
 exit $status

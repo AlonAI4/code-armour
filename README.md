@@ -132,6 +132,7 @@ Every recipe is attacked by an automated test suite. [GitHub Actions](https://gi
 | `retest.test.sh` | 9 | A fixed game passes its saved re-test. Four typical AI "quick fixes" that undo security each turn it **red**. |
 | `firestore.test.mjs` | 12 | Firestore rules in the **real Firebase emulator**. |
 | `plain.test.sh` | 5 |
+| `findings.test.mjs` | 19 | The findings validator: refuses made-up evidence (missing files, fake line numbers), unproven or undisproven findings, hardening notes with no blocking layer, and COMPLIANCE.md rows citing rejected or unknown findings. |
 | `probe.test.mjs` | 10 | The Supabase probe against a fake leaky project: it finds every open door, **never writes**, and refuses a secret key. | Projects with no database: git worktrees, monorepo `npm audit`, the slow-regex detector, the scanner ignoring its own copy. |
 
 ### Reviewed and attacked
@@ -158,6 +159,12 @@ These are AI and automated reviews, **not** a human lawyer or a professional pen
 | `templates/` | `COMPLIANCE.md`, a plain-words privacy policy, the re-test kit, lawyer and hacker briefs, the country research template |
 | `tests/` | The suites above, plus the broken and fixed test games |
 
+## Stay safe
+
+- **Never install a skill, plugin or repo from a link someone DMs you.** Fake copies of real repos are a common malware trick. Find it yourself, then check the owner (here: `AlonAI4`), the stars, the licence and the recent commits before installing.
+- Read a skill's scripts before enabling it, or scan it with NVIDIA [SkillSpector](https://github.com/NVIDIA/SkillSpector). Skills can run code on your computer.
+- Pin what you install to a version, and update on purpose, not automatically.
+
 ## Honest limits
 
 - Laws change. Some country details are marked "unverified", and every reference file shows its research date (October 2026).
@@ -165,6 +172,10 @@ These are AI and automated reviews, **not** a human lawyer or a professional pen
 - Recipes need adapting to your app. The two Supabase Edge Functions are type-checked but not run in the suite, because they need a live Supabase project.
 - The name filter can't catch everything (for example, random characters standing in for letters). Keep a report button.
 - Most enforcement risk depends on scale. Severity labels mean "how likely is trouble for a small app", **not** "does the law apply".
+
+## Going deeper
+
+Code Armour is for beginners and covers laws as well as security. It fixes what it finds and keeps re-testing. **For a deep expert audit, also run Cloudflare's [security-audit skill](https://github.com/cloudflare/security-audit-skill).** It sends every finding to fresh agents that try to disprove it, and Code Armour's verdicts and coverage ledger borrow that idea. Their key result: one run finds only about half of what repeated runs find, so run checks again after big changes.
 
 ## Contributing
 
