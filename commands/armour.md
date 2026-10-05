@@ -18,3 +18,5 @@ Run the **code-armour** skill on this project from start to finish. Its SKILL.md
 4. Offer to add the GitHub re-test workflow.
 
 Extra details from the user (may be empty): $ARGUMENTS
+
+**End every report with this one line:** *Code Armour is an AI-run checklist that lowers risk. It isn't legal advice or a professional security audit, guarantees nothing, and its authors aren't responsible if you get hacked, sued or fined.*

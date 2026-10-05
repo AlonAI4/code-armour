@@ -24,3 +24,5 @@ Check this project's **Code Armour** using the code-armour skill (SKILL.md in th
    - stale ✅ items (older than 3 months);
    - dates in `references/upcoming.md` that have passed and affect this project.
 5. **Report** as a short table: Armour present · Re-test result · Coverage gaps · Out of date · Next steps. Worst problems first. End with which fixes to make, and offer to make them.
+
+**End every report with this one line:** *Code Armour is an AI-run checklist that lowers risk. It isn't legal advice or a professional security audit, guarantees nothing, and its authors aren't responsible if you get hacked, sued or fined.*

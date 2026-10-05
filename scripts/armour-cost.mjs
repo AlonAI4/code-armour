@@ -239,3 +239,4 @@ if (secretWarnings.length) {
   for (const w of secretWarnings) console.log("  - " + w);
 }
 console.log(`\nNothing was changed. Ask before turning anything off.`);
+console.log(`\nCode Armour is an AI-run checklist that lowers risk. It isn't legal advice or a professional security audit, guarantees nothing, and its authors aren't responsible if you get hacked, sued or fined.`);

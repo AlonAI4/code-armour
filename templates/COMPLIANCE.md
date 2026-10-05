@@ -1,11 +1,13 @@
 # Code Armour checklist: <project name>
 
+> ⚠️ Code Armour is an AI-run checklist that lowers risk. It isn't legal advice or a professional security audit, guarantees nothing, and its authors aren't responsible if you get hacked, sued or fined.
+
 Checked: <date> · Stack: <e.g. Vite + Supabase + Netlify + Stripe> · Builder in: <country> · Users in: <countries>
 Project type: <site / game / AI app / store> · Logins: <yes/no> · Payments: <yes/no> · Under-13s / under-18s possible: <yes/no>
 
 Re-test any time: `bash security-tests/run.sh [live-url]` (also runs on every push if the GitHub workflow is added). Last re-test: <date> · result: <passed / N failed>
 
-> This is a checklist, not legal advice. Laws differ by country and change often. For anything serious, ask a lawyer.
+> Laws differ by country and change often. For anything serious, ask a lawyer.
 
 Key: ✅ done (with proof) · ❌ not done · ➖ doesn't apply (why) · ❓ needs checking
 Legal rows can never be ✅ from code alone: use 📝 drafted · 👤 reviewed by an adult · ❓ not reviewed.

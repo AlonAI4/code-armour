@@ -8,7 +8,7 @@
 
 Made for vibe coders: solo builders, beginners and teenagers who build with AI and ship fast.
 
-> ⚠️ Code Armour is a checklist run by an AI. It is **not legal advice** and not a professional security audit. It lowers risk; it can't promise you're safe.
+> ⚠️ **Code Armour is an AI-run checklist that lowers risk. It isn't legal advice or a professional security audit, guarantees nothing, and its authors aren't responsible if you get hacked, sued or fined.** Read the [full disclaimer](#disclaimer-and-limitation-of-liability) before using it.
 
 ---
 
@@ -187,6 +187,18 @@ Pull requests are welcome, especially:
 - new countries in `references/countries-extra/` (use `templates/country-research.md`);
 - new recipes, **with a test that attacks them**;
 - corrections with a source link.
+
+## Disclaimer and limitation of liability
+
+By using Code Armour you agree to the following. It applies on top of the [MIT licence](LICENSE), which also says the software comes "as is", without warranty.
+
+1. **No warranty.** Code Armour (the skill, scripts, recipes, templates, references and commands) is provided "as is" and "as available", without warranty of any kind, express or implied. That includes warranties of accuracy, completeness, merchantability, fitness for a particular purpose and non-infringement.
+2. **Not legal or professional advice.** It's general information produced with the help of AI. It isn't legal advice, a security audit, a penetration test or a compliance certification. Using it creates no lawyer–client, consultant or other professional relationship. Laws differ by country and change often, and some content is marked unverified. For anything that matters, ask a qualified lawyer or security professional.
+3. **No guarantee of results.** It can miss problems, report problems that aren't real, and suggest changes that are wrong for your project. A clean result doesn't mean your project is secure, legal or compliant.
+4. **Your responsibility.** You're solely responsible for your project, for reviewing and testing every change before you use it, for backups, and for following the laws that apply to you. Only test systems you own or have permission to test.
+5. **Limitation of liability.** To the fullest extent permitted by applicable law, the authors and contributors aren't liable for any claim, loss or damage of any kind arising from or connected with Code Armour or its use. That covers direct, indirect, incidental, special, consequential or punitive damages, security breaches, data loss, lost profits, fines, penalties and legal costs, even if they were told such loss was possible.
+6. **Where the law doesn't allow this.** Some places don't allow certain warranties or liabilities to be excluded. There, they're excluded or limited only as far as the law allows. Nothing here excludes liability that can't legally be excluded, such as for fraud, or for death or personal injury caused by negligence.
+7. **Third-party tools and links.** Code Armour can run or point to tools and services made by others (for example gitleaks, osv-scanner, Semgrep, zizmor, Supabase, Stripe, Cloudflare). Their makers are responsible for them, under their own terms.
 
 ## About
 

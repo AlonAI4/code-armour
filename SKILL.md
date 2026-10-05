@@ -182,7 +182,7 @@ Not Supabase? Same idea in the project's own test tool: Firebase rules with the 
 
 ## Step 6: Write COMPLIANCE.md
 
-Copy `templates/COMPLIANCE.md` into the project root and fill it in. **Delete whole sections that don't apply** (e.g. no database: replace the data-access and payments tables with one ➖ line saying why) instead of filling them with ➖ rows. Add rows for what this project really has (extension, MCP server, CLI):
+Copy `templates/COMPLIANCE.md` into the project root and fill it in. Keep the disclaimer line at the top exactly as it is. **Delete whole sections that don't apply** (e.g. no database: replace the data-access and payments tables with one ➖ line saying why) instead of filling them with ➖ rows. Add rows for what this project really has (extension, MCP server, CLI):
 
 - ✅ done (with evidence);
 - ❌ not done (with how to fix);
@@ -199,7 +199,7 @@ End with a short, honest summary:
 2. What you fixed and proved.
 3. What the user must do themselves (accounts, dashboards, parent sign-ups, a lawyer for anything serious).
 
-Don't call the project "secure", "legal" or "compliant", and never give a "% secure" score. Say what was checked, which areas weren't (from the coverage ledger), and that one run finds only part of the problems. Severity labels mean how likely enforcement is for a small project, not whether the law applies. Say what was checked and what wasn't.
+Don't call the project "secure", "legal" or "compliant", and never give a "% secure" score. Say what was checked, which areas weren't (from the coverage ledger), and that one run finds only part of the problems. End every report with the one-line disclaimer: *Code Armour is an AI-run checklist that lowers risk. It isn't legal advice or a professional security audit, guarantees nothing, and its authors aren't responsible if you get hacked, sued or fined.* Severity labels mean how likely enforcement is for a small project, not whether the law applies. Say what was checked and what wasn't.
 
 ## Re-testing (later runs)
 

@@ -16,4 +16,4 @@ Show this person what their Claude Code setup sends with **every** message. Skil
 4. **Never turn anything off without asking.** Ask which items, by name. On a yes, change **only** what was named, and show the edited line. For example:
    - a plugin: `"name@marketplace": false` in the settings file the table names;
    - one of your own skills: add `disable-model-invocation: true` to its SKILL.md frontmatter.
-5. End with one line: *Code Armour is an AI-run checklist that lowers risk. It's not legal advice or a professional audit, guarantees nothing, and its makers aren't responsible for what happens after you use it.*
+5. **End with this one line:** *Code Armour is an AI-run checklist that lowers risk. It isn't legal advice or a professional security audit, guarantees nothing, and its authors aren't responsible if you get hacked, sued or fined.*
