@@ -7,7 +7,7 @@
     "test:firebase": "firebase emulators:exec --only firestore --project demo-armour \"node firestore.test.mjs\""
   },
   "devDependencies": {
-    "@electric-sql/pglite": "^0.3.0",
+    "@electric-sql/pglite": "^0.5.8",
     "@firebase/rules-unit-testing": "^5.0.2",
     "@supabase/supabase-js": "^2.45.0",
     "firebase": "^12.19.0",
