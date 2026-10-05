@@ -64,6 +64,7 @@ If a tool isn't installed, the scan says how to get it. On a Mac: `brew install 
 |---|---|
 | `/armour` | **Add the armour.** The full run above. |
 | `/armourcheck` | **Check the armour.** Is it there, do the saved tests still pass, and has anything new been added or gone out of date? Changes nothing unless you ask. |
+| `/armourcost` | **What costs tokens.** A read-only table of what your Claude Code setup sends with every message (skills, plugins, MCP servers, CLAUDE.md, memory, agents), biggest first, with what you could turn off and the saving. All figures are estimates. It warns about secrets in your settings by file and line only, and never changes anything without asking. |
 | `/armourtest` | **Test the armour.** A *lawyer* agent reviews your legal pages and a *hacker* agent attacks local copies of your app (never live systems). Their findings are double-checked, and every real one becomes a new saved test. |
 
 You can also just ask: *"is my project safe to launch?"*
@@ -77,14 +78,14 @@ git clone https://github.com/AlonAI4/code-armour.git ~/code-armour
 **Claude Code**
 ```bash
 ln -s ~/code-armour ~/.claude/skills/code-armour
-mkdir -p ~/.claude/commands && for c in armour armourcheck armourtest; do ln -sfn ~/code-armour/commands/$c.md ~/.claude/commands/$c.md; done
+mkdir -p ~/.claude/commands && for c in armour armourcheck armourtest armourcost; do ln -sfn ~/code-armour/commands/$c.md ~/.claude/commands/$c.md; done
 ```
 Then open your project and type `/armour`.
 
 **Codex**
 ```bash
 ln -s ~/code-armour ~/.codex/skills/code-armour
-mkdir -p ~/.codex/prompts && for c in armour armourcheck armourtest; do ln -sfn ~/code-armour/commands/$c.md ~/.codex/prompts/$c.md; done
+mkdir -p ~/.codex/prompts && for c in armour armourcheck armourtest armourcost; do ln -sfn ~/code-armour/commands/$c.md ~/.codex/prompts/$c.md; done
 ```
 Then type `/prompts:armour` or `$code-armour`.
 
@@ -133,6 +134,7 @@ Every recipe is attacked by an automated test suite. [GitHub Actions](https://gi
 | `firestore.test.mjs` | 12 | Firestore rules in the **real Firebase emulator**. |
 | `plain.test.sh` | 5 |
 | `findings.test.mjs` | 19 | The findings validator: refuses made-up evidence (missing files, fake line numbers), unproven or undisproven findings, hardening notes with no blocking layer, and COMPLIANCE.md rows citing rejected or unknown findings. |
+| `cost.test.mjs` | 21 | `/armourcost` with a fake `~/.claude`: ranking, totals, used/unused guesses, free skills, symlinks, plugins on/off, MCP servers, read-only, and fake secrets **never** appear in the output. |
 | `probe.test.mjs` | 10 | The Supabase probe against a fake leaky project: it finds every open door, **never writes**, and refuses a secret key. | Projects with no database: git worktrees, monorepo `npm audit`, the slow-regex detector, the scanner ignoring its own copy. |
 
 ### Reviewed and attacked
@@ -156,6 +158,8 @@ These are AI and automated reviews, **not** a human lawyer or a professional pen
 | `recipes/` | Ready-to-adapt fixes: Supabase SQL and Edge Functions, Firebase rules, headers for Netlify, Vercel and Cloudflare, Stripe/Lemon Squeezy/Paddle webhooks, Express, Next.js |
 | `scripts/scan.sh` | The scanner: secrets, git history, risky code, GitHub Actions, legal red flags in code, packages, power tools, live-site checks, and whether the project's own armour is set up |
 | `scripts/supabase-probe.mjs` | Read-only Supabase front-door probe |
+| `scripts/armour-cost.mjs` | Read-only token-cost report for `/armourcost` |
+| `scripts/validate-findings.mjs` | Checks findings and the coverage ledger |
 | `templates/` | `COMPLIANCE.md`, a plain-words privacy policy, the re-test kit, lawyer and hacker briefs, the country research template |
 | `tests/` | The suites above, plus the broken and fixed test games |
 

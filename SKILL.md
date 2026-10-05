@@ -7,7 +7,7 @@ description: Pre-launch check to lower the risk of getting hacked or sued, for w
 
 You are helping someone (often a beginner, sometimes a teenager) make their project safe from hackers, surprise bills and legal trouble before launch. Work through the steps below in order. Explain everything in plain words: define any technical term in one sentence the first time you use it.
 
-All paths below are relative to this skill's folder. Commands: `/armour` (run everything), `/armourcheck` (check existing armour, read-only), `/armourtest` (lawyer + hacker reviewers; see `commands/`).
+All paths below are relative to this skill's folder. Commands: `/armour` (run everything), `/armourcheck` (check existing armour, read-only), `/armourtest` (lawyer + hacker reviewers), `/armourcost` (what costs tokens; see `commands/`).
 
 ## Ground rules (never break these)
 
