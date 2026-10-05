@@ -111,7 +111,18 @@ if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then   # works in worktr
   GLOK=""
   if command -v gitleaks >/dev/null; then
     GL=$(mktemp); rm -f "$GL"
-    gitleaks git --no-banner --redact --report-format json --report-path "$GL" . >/dev/null 2>&1
+    # Public-by-design keys (Supabase publishable / anon JWT) aren't leaks; Supabase secret / service_role keys
+    # are, and gitleaks' default rules miss them. Only add this when the project has no gitleaks config of its
+    # own, so we never override the owner's rules.
+    GLC=()
+    if [ ! -f .gitleaks.toml ]; then
+      GLCF=$(mktemp); GLC=(-c "$GLCF")
+      printf '[extend]\nuseDefault = true\n[[rules]]\nid = "supabase-secret-key"\nregex = %s\n[allowlist]\ndescription = "public Supabase keys"\nregexes = [%s]\n' \
+        "'''(sb_secret_[0-9A-Za-z_-]{10,}|eyJ[0-9A-Za-z_-]+\\.[0-9A-Za-z_-]*(InJvbGUiOiJzZXJ2aWNlX3Jv|b2xlIjoic2VydmljZV9yb2xl|cm9sZSI6InNlcnZpY2Vfcm9s)[0-9A-Za-z_-]*\\.[0-9A-Za-z_-]+)'''" \
+        "'''sb_publishable_''', '''InJvbGUiOiJhbm9u''', '''b2xlIjoiYW5v''', '''cm9sZSI6ImFub24i'''" > "$GLCF"
+    fi
+    gitleaks git --no-banner --redact "${GLC[@]}" --report-format json --report-path "$GL" . >/dev/null 2>&1
+    [ -n "${GLCF:-}" ] && rm -f "$GLCF"
     if [ ! -s "$GL" ]; then warn "gitleaks didn't produce a report (error?): relying on the built-in check"
     else
       n=$(grep -o '"RuleID"' "$GL" | wc -l | tr -d ' ')

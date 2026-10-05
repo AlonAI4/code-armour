@@ -175,5 +175,16 @@ OUT=$(bash "$SCAN" . 2>&1 | sed 's/\x1b\[[0-9;]*m//g')
 refuse "node_modules gradle files are skipped" "Android targetSdk 21"
 refuse "--include after the pattern limits file types" "PRICE?"
 
+echo "# git history: public Supabase keys are fine, secret ones are not"
+H=$T/hist; mkdir -p $H; cd $H; git init -q
+echo 'const supabaseKey = "sb_publishable_Qk3vR9xLm2PzT8wYc5NbJ1hF7g"' > client.js
+git add -A && git -c user.email=t@t -c user.name=t commit -qm one
+OUT=$(bash "$SCAN" . 2>&1 | sed 's/\x1b\[[0-9;]*m//g')
+refuse "publishable key in history isn't a leak" "in git history ("
+echo "const admin = \"sb_secret_$(printf 'Qk3vR9xLm2PzT8wYc5NbJ1hF7g')\"" > admin.js
+git add -A && git -c user.email=t@t -c user.name=t commit -qm two
+OUT=$(bash "$SCAN" . 2>&1 | sed 's/\x1b\[[0-9;]*m//g')
+expect "secret key in history is a leak" "in git history ("
+
 rm -rf "$T"
 echo; echo "$pass passed, $fail failed"; [ $fail = 0 ]
