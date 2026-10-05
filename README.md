@@ -32,7 +32,7 @@ You type `/armour` in your project. The agent:
 3. **Scans** the code, the git history, the build and the live site.
 4. **Fixes** problems using tested recipes, adapted to your tables and routes.
 5. **Tests every fix by trying the attack it should stop.** It signs in as a second user and tries to read your data, sends a fake payment, and tries to make itself admin. Each attack must fail.
-6. **Saves those attacks as tests** in `security-tests/`, so `bash security-tests/run.sh` re-runs them whenever you (or GitHub, on every push) run it.
+6. **Saves those attacks as tests** in `security-tests/`, so `bash security-tests/run.sh` re-runs them whenever you run it (or GitHub, on every push, once you add the workflow).
 7. **Writes `COMPLIANCE.md`**, a dated checklist:
    - ✅ this check passed (with proof). It never means "compliant".
    - ❌ not done
@@ -122,7 +122,7 @@ Before launch, or when asked about security, privacy or legal readiness, follow 
 
 ## Tested, not just written
 
-Every recipe is attacked by an automated test suite. [GitHub Actions](https://github.com/AlonAI4/code-armour/actions) runs it on every push. Run it yourself with `cd tests && npm install && npm test`.
+Every recipe is attacked by an automated test suite. [GitHub Actions](https://github.com/AlonAI4/code-armour/actions) is set up to run it on every push (paused right now: Actions is disabled on this account while a GitHub support ticket is open). Run it yourself with `cd tests && npm install && npm test`.
 
 | Suite | Checks | What it proves |
 |---|---|---|
@@ -153,7 +153,7 @@ These are AI and automated reviews, **not** a human lawyer or a professional pen
 | Path | What |
 |---|---|
 | `SKILL.md` | The step-by-step instructions the agent follows |
-| `commands/` | `/armour`, `/armourcheck`, `/armourtest` |
+| `commands/` | `/armour`, `/armourcheck`, `/armourtest`, `/armourcost` |
 | `references/` | Security (~120 risks incl. GitHub Actions, AI agents, extensions, MCP), legal (UK/EU/US incl. lawsuit-heavy US laws, app-store rules, EU 2026 product laws), general notes on 83 countries and on national rules in the 27 EU members (researched Oct 2026) + sanctions, stacks, upcoming-laws watchlist (~60 dated items) |
 | `recipes/` | Ready-to-adapt fixes: Supabase SQL and Edge Functions, Firebase rules, headers for Netlify, Vercel and Cloudflare, Stripe/Lemon Squeezy/Paddle webhooks, Express, Next.js |
 | `scripts/scan.sh` | The scanner: secrets, git history, risky code, GitHub Actions, legal red flags in code, packages, power tools, live-site checks, and whether the project's own armour is set up |

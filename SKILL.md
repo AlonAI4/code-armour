@@ -7,7 +7,7 @@ description: Before you ship your vibe-coded website, Code Armour checks for the
 
 You are helping someone (often a beginner, sometimes a teenager) find and fix common mistakes that can lead to hacks, surprise bills, privacy complaints and legal problems before launch. Work through the steps below in order. Explain everything in plain words: define any technical term in one sentence the first time you use it.
 
-All paths below are relative to this skill's folder. Commands: `/armour` (run everything), `/armourcheck` (check existing armour, read-only), `/armourtest` (lawyer + hacker reviewers), `/armourcost` (what costs tokens; see `commands/`).
+All paths below are relative to this skill's folder. Commands: `/armour` (run everything), `/armourcheck` (check existing armour, read-only), `/armourtest` (AI legal reviewer + AI attacker, not a lawyer or a professional pen test), `/armourcost` (what costs tokens; see `commands/`).
 
 ## Ground rules (never break these)
 
