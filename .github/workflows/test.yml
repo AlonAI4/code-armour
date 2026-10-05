@@ -1,7 +1,10 @@
 # Re-tests Code Armour itself on every push: database recipes vs. real Postgres, webhooks with real
 # signatures, the scanner, and the re-test kit catching undone fixes.
 name: tests
-on: [push, pull_request]
+on:
+  push:
+  pull_request:
+  workflow_dispatch:   # lets you start the tests by hand (Actions tab, or: gh workflow run tests)
 permissions:
   contents: read
 jobs:
