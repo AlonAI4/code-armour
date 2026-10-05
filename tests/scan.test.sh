@@ -166,5 +166,14 @@ S=$T/static; mkdir -p $S; cd $S; echo '<h1>hi</h1>' > index.html
 OUT=$(bash "$SCAN" . 2>&1 | sed 's/\x1b\[[0-9;]*m//g')
 expect "static site recognised" "Static site"
 
+echo "# options written after the pattern still apply (ripgrep shim)"
+O=$T/order; mkdir -p $O/node_modules/lib/android $O/android $O/docs; cd $O
+echo 'android { defaultConfig { targetSdkVersion 36 } }' > android/build.gradle
+echo 'targetSdkVersion 21' > node_modules/lib/android/build.gradle
+echo 'example: amount: req.body.amount' > docs/notes.md
+OUT=$(bash "$SCAN" . 2>&1 | sed 's/\x1b\[[0-9;]*m//g')
+refuse "node_modules gradle files are skipped" "Android targetSdk 21"
+refuse "--include after the pattern limits file types" "PRICE?"
+
 rm -rf "$T"
 echo; echo "$pass passed, $fail failed"; [ $fail = 0 ]

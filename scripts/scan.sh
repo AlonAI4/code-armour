@@ -11,11 +11,14 @@ grep() {
   local a rec=0 havepat=0 pat="" i
   local out=() rest=()
   for a in "$@"; do
+    # grep also accepts these after the pattern, so translate them wherever they appear
+    case "$a" in
+      --exclude-dir=*) out+=(-g "!${a#--exclude-dir=}"); continue;;
+      --exclude=*) out+=(-g "!${a#--exclude=}"); continue;;
+      --include=*) out+=(-g "${a#--include=}"); continue;;
+    esac
     if [ $havepat = 0 ] && [ "${a#-}" != "$a" ]; then
       case "$a" in
-        --exclude-dir=*) out+=(-g "!${a#--exclude-dir=}");;
-        --exclude=*) out+=(-g "!${a#--exclude=}");;
-        --include=*) out+=(-g "${a#--include=}");;
         --*) command grep "$@"; return;;
         -*) for ((i=1; i<${#a}; i++)); do
               case "${a:i:1}" in
@@ -205,7 +208,7 @@ for m in $(find . -name manifest.json -not -path '*/node_modules/*' 2>/dev/null 
   grep -qE '<all_urls>|"\*://\*/\*"|"https?://\*/\*"' "$m" && warn "$m asks for all websites: Chrome Web Store wants the narrowest permissions (14.3, legal 14)"
   grep -qE '"externally_connectable"[^}]*"\*"' "$m" && warn "$m lets any site message the extension (15.29)"
 done
-gr=$(grep -rhoE "targetSdk(Version)? *[=:]? *[0-9]+" --include=*.gradle --include=*.kts --include=app.json . 2>/dev/null | grep -oE "[0-9]+$" | sort -n | head -1)
+gr=$(grep -rhoE "${EXCL[@]}" "targetSdk(Version)? *[=:]? *[0-9]+" --include=*.gradle --include=*.kts --include=app.json . 2>/dev/null | grep -oE "[0-9]+$" | sort -n | head -1)
 [ -n "$gr" ] && [ "$gr" -lt 36 ] && warn "Android targetSdk $gr: Google Play needs 36 for new apps and updates (from 31 Aug 2026)"
 if [ -d ios ]; then
   find ios -name PrivacyInfo.xcprivacy 2>/dev/null | grep -q . || warn "iOS app without PrivacyInfo.xcprivacy: Apple requires privacy manifests (legal 14)"
