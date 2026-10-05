@@ -46,6 +46,8 @@ Load only the reference files you need:
 | Builder or users in Canada, Brazil, Mexico, Argentina, Nigeria, South Africa, Kenya, Egypt, Turkey, Israel, Saudi Arabia, UAE, Russia | `references/countries-americas-africa-mideast.md` |
 | "Worldwide" users | Both country files, but only their "Cross-cutting" sections plus any country the user names |
 | Always | `references/upcoming.md`: compare each date with today (see "Staying up to date") |
+| Users in EU countries | Also `references/countries-extra/eu-national-rules.md` (Germany, France, Italy, Spain, Netherlands, Poland add their own rules) |
+| Users in Switzerland, Norway, Ukraine, Malaysia, Taiwan, Hong Kong, Thailand, New Zealand, Colombia, Chile, Morocco, Ghana | `references/countries-extra/<country>.md` |
 | A country not in the files | Check `references/countries-extra/` first. Not there? Research it with `templates/country-research.md` (needs web search), save it to `references/countries-extra/<country>.md`, and mark its rows ❓. No web search? Say so plainly and apply the general rules (privacy notice, consent, delete-my-data, breach plan, kids' consent, tax via a Merchant of Record), all ❓ |
 
 **Read in tiers to save effort:** start with the "10-minute pre-launch check" at the end of `security.md`, the Top 5 in `legal.md`, and the "Cross-cutting" sections of the country files. Only open a detailed section when the project has that feature (payments, user posts, AI, kids...).

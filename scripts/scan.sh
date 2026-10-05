@@ -119,6 +119,64 @@ sa=$(grep -rlE "${EXCL[@]}" '"type": *"service_account"' . 2>/dev/null | head -5
 [ -n "$sa" ] && bad "Service-account key file(s) in the project (full admin access, never commit or ship): $sa"
 grep -rqE "${EXCL[@]}" --include=*.ts --include=*.tsx --include=*.js '"use server"' . 2>/dev/null && warn "Next.js Server Actions found: each one must check the login inside it (middleware isn't enough)"
 
+echo; echo "-- 6d. GitHub Actions, shortcuts, desktop, bots (security.md section 15) --"
+if ls .github/workflows/*.y*ml >/dev/null 2>&1; then
+  W=.github/workflows
+  prt=$(grep -lE "pull_request_target" $W/*.y*ml 2>/dev/null)
+  for f in $prt; do grep -qE "head\.(sha|ref)" "$f" && bad "$f: pull_request_target + checks out the PR's code = strangers' code runs with your secrets (15.1)" || warn "$f uses pull_request_target: only for labelling/commenting (15.1)"; done
+  inj=$(grep -nE '\$\{\{ *github\.event\.(issue|pull_request|comment|review|head_commit)\.[a-z_.]*(title|body|message|name|label)' $W/*.y*ml 2>/dev/null | grep -E "run:|^\S+:[0-9]+:\s+[^ ]" | head -5)
+  [ -n "$inj" ] && { bad "Workflow puts issue/PR text straight into a script (script injection, 15.2): pass it through env:"; echo "$inj" | cut -c1-160; }
+  unp=$(grep -nE "uses: *[^@ ]+@(v?[0-9]+(\.[0-9]+)*|main|master)\s*$" $W/*.y*ml 2>/dev/null | grep -vE "uses: *(actions|github)/" | head -5)
+  [ -n "$unp" ] && { warn "Third-party actions pinned to a movable tag, not a commit SHA (15.3):"; echo "$unp" | cut -c1-160; } || ok "Third-party actions pinned (or none)"
+fi
+short=$(grep -rnE "${EXCL[@]}" --exclude-dir=dist --exclude-dir=build 'rejectUnauthorized: *false|NODE_TLS_REJECT_UNAUTHORIZED *= *.?0|verify *= *False|InsecureSkipVerify: *true' . 2>/dev/null | grep -vE ':[0-9]+:\s*(//|#)' | head -5)
+[ -n "$short" ] && { bad "Security check turned off to 'make it work' (15.33):"; echo "$short" | cut -c1-160; }
+elec=$(grep -rnE "${EXCL[@]}" --exclude-dir=dist --exclude-dir=build 'nodeIntegration: *true|contextIsolation: *false|webSecurity: *false|exposeInMainWorld\(.*ipcRenderer' . 2>/dev/null | head -5)
+[ -n "$elec" ] && { bad "Unsafe Electron setting: any XSS becomes control of the computer (15.27):"; echo "$elec" | cut -c1-160; }
+bots=$(grep -rnoE "${EXCL[@]}" --exclude-dir=dist --exclude-dir=build '[MN][A-Za-z0-9_-]{23,25}\.[A-Za-z0-9_-]{6}\.[A-Za-z0-9_-]{27,}|[0-9]{8,10}:AA[A-Za-z0-9_-]{33}' . 2>/dev/null | head -3)
+[ -n "$bots" ] && { bad "Discord/Telegram bot token in the code (15.26): move it to an env var and reset it:"; echo "$bots" | mask; }
+if grep -rqlE "${EXCL[@]}" --exclude-dir=dist --exclude-dir=build 'cf-turnstile|h-captcha|hcaptcha\.com/1/api|turnstile\.render|grecaptcha' . 2>/dev/null; then
+  grep -rqE "${EXCL[@]}" 'siteverify|recaptcha/api/siteverify|captchaToken' . 2>/dev/null && ok "CAPTCHA is verified on the server" || bad "CAPTCHA widget found but no server check (siteverify): bots just skip it (15.10)"
+fi
+hosth=$(grep -rnE "${EXCL[@]}" --exclude-dir=dist --exclude-dir=build "(headers\.host|headers\[.x-forwarded-host.\]|req\.get\(.host.\)).*(reset|verify|confirm|magic|link|url)|(reset|verify|confirm|magic).*(headers\.host|req\.get\(.host.\))" . 2>/dev/null | head -3)
+[ -n "$hosth" ] && { bad "Email links built from the request's Host header (password-reset poisoning, 15.7): use a fixed SITE_URL:"; echo "$hosth" | cut -c1-160; }
+
+echo; echo "-- 6e. Legal red flags in the code (legal.md section 14; warnings: check whether the rule applies) --"
+SRC_INC=(--include=*.js --include=*.jsx --include=*.ts --include=*.tsx --include=*.mjs --include=*.vue --include=*.svelte --include=*.html --include=*.py --exclude=*.min.js --exclude=*bundle* --exclude=*-mcp.mjs)
+lgi() { grep -rliE "${EXCL[@]}" --exclude-dir=dist --exclude-dir=build "${SRC_INC[@]}" "$1" . 2>/dev/null | head -3 | tr '\n' ' '; }
+lg() { grep -rlE "${EXCL[@]}" --exclude-dir=dist --exclude-dir=build "${SRC_INC[@]}" "$1" . 2>/dev/null | head -3 | tr '\n' ' '; }
+f=$(lg '<video|youtube\.com/embed|player\.vimeo|mux-player'); p=$(lg 'fbq\(|connect\.facebook\.net|analytics\.tiktok\.com|snaptr\(')
+[ -n "$f" ] && [ -n "$p" ] && warn "Video + ad pixel ($f/ $p): US VPPA class actions. No pixels on video pages, or get opt-in (legal 14)"
+f=$(lgi "from ['\"](twilio|@vonage/server-sdk|messagebird|plivo|telnyx)['\"]|require\(['\"](twilio|plivo|telnyx)['\"]\)|sendSms\(|PhoneNumber:"); [ -n "$f" ] && warn "Sends SMS ($f): US TCPA needs written consent, STOP handling, 8am-9pm only (legal 14)"
+f=$(lg "(from|require\()\s*\(?['\"](face-api(\.js)?|@vladmandic/(human|face-api)|@tensorflow-models/face-(landmarks-detection|detection)|@mediapipe/(face_mesh|tasks-vision))['\"]"); [ -n "$f" ] && warn "Face or voice processing ($f): Illinois BIPA (\$1,000-\$5,000 per person). Keep it on-device, store nothing, or get written consent (legal 14)"
+f=$(lg "from ['\"](ethers|web3|@solana/web3\.js|wagmi|viem)['\"]|require\(['\"](ethers|web3)['\"]\)"); [ -n "$f" ] && warn "Crypto wallet code ($f): MiCA (EU), securities law (US), app-store rules. Teen dev: no tokens, no holding user funds (legal 14)"
+f=$(lgi '(you are|act as|be) (my |their |a |the user.s )?(girlfriend|boyfriend|companion|best friend|lover)'); [ -n "$f" ] && warn "AI companion persona ($f): California SB 243 and New York rules: 'not a human' notices, crisis protocol, minors (legal 9 and 14)"
+f=$(lg 'GatewayIntentBits\.MessageContent|Intents\.FLAGS\.MESSAGE_CONTENT|IntentsBitField\.Flags\.MessageContent'); [ -n "$f" ] && warn "Discord bot uses the privileged message-content intent ($f): justify it or use slash commands (legal 14)"
+for m in $(find . -name manifest.json -not -path '*/node_modules/*' 2>/dev/null | xargs grep -l '"manifest_version"' 2>/dev/null | head -3); do
+  grep -qE '"manifest_version" *: *2' "$m" && bad "$m is Manifest V2: Chrome removed MV2 extensions (legal 14)"
+  grep -qE '<all_urls>|"\*://\*/\*"|"https?://\*/\*"' "$m" && warn "$m asks for all websites: Chrome Web Store wants the narrowest permissions (14.3, legal 14)"
+  grep -qE '"externally_connectable"[^}]*"\*"' "$m" && warn "$m lets any site message the extension (15.29)"
+done
+gr=$(grep -rhoE "targetSdk(Version)? *[=:]? *[0-9]+" --include=*.gradle --include=*.kts --include=app.json . 2>/dev/null | grep -oE "[0-9]+$" | sort -n | head -1)
+[ -n "$gr" ] && [ "$gr" -lt 36 ] && warn "Android targetSdk $gr: Google Play needs 36 for new apps and updates (from 31 Aug 2026)"
+if [ -d ios ]; then
+  find ios -name PrivacyInfo.xcprivacy 2>/dev/null | grep -q . || warn "iOS app without PrivacyInfo.xcprivacy: Apple requires privacy manifests (legal 14)"
+  grep -rqs ITSAppUsesNonExemptEncryption ios/ app.json 2>/dev/null || warn "iOS: ITSAppUsesNonExemptEncryption not set (set false if you only use HTTPS/OS encryption)"
+fi
+
+echo; echo "-- 6f. Third-sweep checks (security.md 16, legal.md 15) --"
+dev=$( { grep -nE '"(start|serve|prod)"\s*:\s*"[^"]*(vite( |$|")|next dev|react-scripts start|--host)' package.json 2>/dev/null; grep -nE "host:\s*(true|['\"]0\.0\.0\.0)" vite.config.* 2>/dev/null; } | head -3)
+[ -n "$dev" ] && { bad "Dev server used as the start command or open to the network (16.1: Vite/Next dev servers leak files):"; echo "$dev" | cut -c1-140; }
+rtc=$(grep -rlE "${EXCL[@]}" --exclude-dir=dist --exclude-dir=build "${SRC_INC[@]}" "new RTCPeerConnection" . 2>/dev/null | xargs grep -L "iceTransportPolicy" 2>/dev/null | head -3 | tr '\n' ' ')
+[ -n "$rtc" ] && warn "WebRTC without iceTransportPolicy 'relay' ($rtc): peer-to-peer reveals players' home IPs (16.6)"
+csvf=$(lg "text/csv|json2csv|csv-stringify|Papa\.unparse"); [ -n "$csvf" ] && warn "CSV export ($csvf): escape cells starting with = + - @ (formula injection, 16.3)"
+urg=$(lgi "(offer|sale|deal|price) ends (in|at|soon)|only [0-9]+ left in stock|selling fast|limited[- ]time offer"); [ -n "$urg" ] && warn "Urgency wording/timers ($urg): only real deadlines and stock (UK CMA, EU; legal 15)"
+for r in public/robots.txt static/robots.txt robots.txt; do [ -f "$r" ] && grep -qiE "disallow:.*(admin|dashboard|internal|private|backup|staging)" "$r" && warn "$r lists private paths: robots.txt is a map for attackers, not protection (16.2)"; done
+gql=$(grep -rnE "${EXCL[@]}" --exclude-dir=dist --exclude-dir=build "introspection:\s*true" . 2>/dev/null | head -2); [ -n "$gql" ] && bad "GraphQL introspection on (16.4): turn it off in production"
+yt=$(lg "youtube\.com/(embed|iframe_api)"); [ -n "$yt" ] && warn "YouTube embeds ($yt): on kids' pages use youtube-nocookie.com behind click-to-load (legal 15)"
+img=$(grep -rlE "${EXCL[@]}" --exclude-dir=dist --exclude-dir=build "${SRC_INC[@]}" "images\.(generate|edit)\(|replicate\.run\(|fal\.(run|subscribe)\(|api\.stability\.ai|/v1/images/(generations|edits)" . 2>/dev/null | xargs grep -L -iE "moderation|moderations\.create|safety_checker|nsfw" 2>/dev/null | head -3 | tr '\n' ' ')
+[ -n "$img" ] && bad "AI image generation with no moderation ($img): CSAM/deepfake law, API bans (16.5, legal 15)"
+
 echo; echo "-- 6c. Trackers and third parties (privacy laws, kids) --"
 grep -rlE "${EXCL[@]}" --exclude-dir=dist --exclude-dir=build 'fonts\.googleapis\.com|fonts\.gstatic\.com' . 2>/dev/null | head -3 | sed 's/^/  ? Google Fonts loaded from Google (self-host them; a German court fined this): /'
 grep -rlE "${EXCL[@]}" --exclude-dir=dist --exclude-dir=build 'googletagmanager\.com|google-analytics\.com|gtag\(|connect\.facebook\.net|fbq\(|analytics\.tiktok\.com|hotjar|clarity\.ms|fullstory' . 2>/dev/null | head -5 | sed 's/^/  ? Tracker or analytics script (needs consent in EU\/UK; risky with kids; US pixel lawsuits): /'
