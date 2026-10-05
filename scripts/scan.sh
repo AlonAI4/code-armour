@@ -3,6 +3,37 @@
 # Usage: bash scan.sh [project-dir] [live-url]
 # A clean result is NOT proof of safety: it only catches known patterns.
 
+# Speed: macOS's built-in grep is very slow on big repos (72 s vs 1 s on a 22,000-file project). If ripgrep
+# (rg) is installed, recursive searches use it, with grep's options translated; everything else uses grep.
+# Set CA_NO_RG=1 to force plain grep.
+if command -v rg >/dev/null 2>&1 && [ -z "${CA_NO_RG:-}" ]; then
+grep() {
+  local a rec=0 havepat=0 pat="" i
+  local out=() rest=()
+  for a in "$@"; do
+    if [ $havepat = 0 ] && [ "${a#-}" != "$a" ]; then
+      case "$a" in
+        --exclude-dir=*) out+=(-g "!${a#--exclude-dir=}");;
+        --exclude=*) out+=(-g "!${a#--exclude=}");;
+        --include=*) out+=(-g "${a#--include=}");;
+        --*) command grep "$@"; return;;
+        -*) for ((i=1; i<${#a}; i++)); do
+              case "${a:i:1}" in
+                r|R) rec=1;; I|E) ;; n) out+=(-n);; o) out+=(-o);; l) out+=(-l);; i) out+=(-i);;
+                q) out+=(-q);; h) out+=(--no-filename);; H) out+=(--with-filename);; s) out+=(--no-messages);;
+                *) command grep "$@"; return;;
+              esac
+            done;;
+      esac
+    elif [ $havepat = 0 ]; then pat="$a"; havepat=1
+    else rest+=("$a"); fi
+  done
+  if [ $rec = 0 ]; then command grep "$@"; return; fi
+  [ ${#rest[@]} = 0 ] && rest=(.)
+  rg --hidden --no-ignore --no-config --no-messages "${out[@]}" -e "$pat" -- "${rest[@]}"
+}
+fi
+
 DIR="${1:-.}"
 URL="${2:-}"
 cd "$DIR" || { echo "Can't open $DIR"; exit 1; }
@@ -19,8 +50,13 @@ SECRETS='(sk_live_[0-9A-Za-z]{10,}|sk_test_[0-9A-Za-z]{10,}|rk_live_[0-9A-Za-z]{
 EXCL=(--exclude-dir=node_modules --exclude-dir=.git --exclude-dir=.netlify --exclude-dir=.next/cache --exclude=*.lock --exclude=package-lock.json --exclude=scan.sh --exclude=audit.sql)
 
 echo "== Code Armour scan: $(pwd) =="
+# Huge files (generated bundles, word lists, data) make every text search crawl. Skip files over 1 MB in the
+# pattern searches and SAY which ones, so nothing is silently ignored.
+BIGF=$(find . -type f -size +1000k -not -path '*/node_modules/*' -not -path '*/.git/*' 2>/dev/null | head -50)
+for b in $BIGF; do EXCL+=(--exclude="$(basename "$b")"); done
 
 echo; echo "-- 1. Secrets in source files --"
+[ -n "$BIGF" ] && warn "Skipped $(echo "$BIGF" | wc -l | tr -d ' ') file(s) over 1 MB in text searches (bundles/data; secrets in them are still caught by gitleaks/semgrep if installed): $(echo $BIGF | cut -c1-160)"
 # -o prints only the matched secret; we then mask it so the scan output never shows a whole key.
 mask() { sed -E 's/^([^:]+:[0-9]+:)(.{0,14}).*/  \1 \2…/'; }
 hits=$(grep -rInoE "${EXCL[@]}" --exclude-dir=dist --exclude-dir=build --exclude-dir=.next --exclude-dir=out \
@@ -67,14 +103,26 @@ if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then   # works in worktr
   [ -n "$tracked" ] && bad ".env files are committed to git: $tracked (remove, add to .gitignore, ROTATE keys)" || ok "No .env files tracked by git"
   grep -qE '^\.env' .gitignore 2>/dev/null && ok ".gitignore covers .env" || bad ".gitignore doesn't list .env*"
   echo; echo "-- 5. Secrets in git history --"
+  # gitleaks reads git's storage directly: fast even on big repos, ~200 key types. Exit 1 means leaks OR an
+  # error, so only trust a written report. Without a working gitleaks, the built-in check runs instead.
+  GLOK=""
   if command -v gitleaks >/dev/null; then
-    gitleaks detect --no-banner --redact -s . >/tmp/ca-gitleaks.txt 2>&1 && ok "gitleaks: no leaks in history" || { bad "gitleaks found leaks:"; tail -20 /tmp/ca-gitleaks.txt; }
-  else
-    # -G lets git skip commits without a match (much faster on big repos).
-# Skip Code Armour's own tool files: they contain the detection patterns themselves (a copy of this
-# scanner in the history would otherwise flag itself forever).
+    GL=$(mktemp); rm -f "$GL"
+    gitleaks git --no-banner --redact --report-format json --report-path "$GL" . >/dev/null 2>&1
+    if [ ! -s "$GL" ]; then warn "gitleaks didn't produce a report (error?): relying on the built-in check"
+    else
+      n=$(grep -o '"RuleID"' "$GL" | wc -l | tr -d ' ')
+      if [ "$n" -gt 0 ]; then bad "gitleaks: $n secret(s) in git history (ROTATE them):"
+        grep -oE '"(RuleID|File|StartLine)": *("[^"]*"|[0-9]+)' "$GL" | paste - - - | head -8 | sed -E 's/"//g; s/^/   /' | cut -c1-140
+      else ok "gitleaks: no secrets in git history"; fi
+      GLOK=1
+    fi
+  fi
+  if [ -z "$GLOK" ]; then
+    # Built-in: -G lets git skip commits without a match. Skips Code Armour's own tool files (they contain the
+    # detection patterns; a copy of this scanner in the history would otherwise flag itself forever).
     hist=$(git log --all -p --extended-regexp -G "$SECRETS" -- . ':(exclude,glob)**/scan.sh' ':(exclude,glob)**/audit.sql' ':(exclude,glob)**/harness.mjs' 2>/dev/null | grep -oE "$SECRETS" | sort -u | head -10 | cut -c1-14 | sed 's/$/…/')
-    [ -n "$hist" ] && { bad "Secret patterns in git history (ROTATE these keys; deleting the file doesn't help):"; echo "$hist"; } || ok "No secret patterns in git history (install gitleaks for a deeper check)"
+    [ -n "$hist" ] && { bad "Secret patterns in git history (ROTATE these keys; deleting the file doesn't help):"; echo "$hist"; } || ok "No secret patterns in git history (built-in check; install gitleaks for a faster, deeper one)"
   fi
 else
   warn "Not a git repo. Use git + GitHub so you have history and secret scanning."
@@ -221,6 +269,52 @@ else warn "No saved re-test (security-tests/run.sh): fixes can be undone without
 ls .github/workflows/*.yml >/dev/null 2>&1 && grep -lq 'security-tests/run.sh' .github/workflows/*.yml 2>/dev/null \
   && ok "GitHub re-tests every push" || warn "GitHub doesn't re-test on push (add templates/security-tests/github-workflow.yml)"
 
+# Reads a JSON file with node (or python3) and prints summary lines.
+jsum() { if command -v node >/dev/null; then node -e "$1" "$2"; else echo "? ?"; fi; }
+
+echo; echo "-- 10. Power tools (used automatically when installed; CA_FAST=1 skips them) --"
+if [ -n "${CA_FAST:-}" ]; then warn "Skipped (CA_FAST set)"; else
+  tips=""
+  # Dependencies in every ecosystem (npm, pnpm, yarn, bun, pip, poetry, go, cargo...) + known malicious packages (MAL-)
+  if command -v osv-scanner >/dev/null; then
+    O=$(mktemp); osv-scanner scan source -r --format json . > "$O" 2>/dev/null; oc=$?
+    if [ $oc = 128 ]; then ok "osv-scanner: no lockfiles to check"
+    elif [ -s "$O" ]; then
+      res=$(jsum 'const d=JSON.parse(require("fs").readFileSync(process.argv[1]));let mal=[],hi=[],lo=[];for(const r of d.results||[])for(const p of r.packages||[]){const ids=(p.vulnerabilities||[]).map(v=>v.id);const sev=Math.max(0,...(p.groups||[]).map(g=>parseFloat(g.max_severity)||0));const t=p.package.name+"@"+p.package.version+"("+ids.slice(0,2).join(",")+(sev?";"+sev:"")+")";if(ids.some(i=>i.startsWith("MAL-")))mal.push(t);else if(sev>=7)hi.push(t);else lo.push(t)}console.log("MAL "+mal.length+" "+mal.slice(0,5).join(" "));console.log("HIGH "+hi.length+" "+hi.slice(0,6).join(" "));console.log("LOW "+lo.length)' "$O")
+      m=$(echo "$res" | awk '/^MAL/{print $2}'); h=$(echo "$res" | awk '/^HIGH/{print $2}'); l=$(echo "$res" | awk '/^LOW/{print $2}')
+      [ "${m:-0}" != 0 ] && bad "osv-scanner: MALICIOUS package(s): $(echo "$res" | grep ^MAL | cut -d' ' -f3-) (remove now, rotate secrets on this machine)"
+      [ "${h:-0}" != 0 ] && bad "osv-scanner: $h package(s) with high/critical vulnerabilities: $(echo "$res" | grep ^HIGH | cut -d' ' -f3- | cut -c1-220)"
+      [ "${m:-0}" = 0 ] && [ "${h:-0}" = 0 ] && ok "osv-scanner: no malicious or high-severity packages (${l:-0} lower-severity)"
+      [ "${l:-0}" != 0 ] && [ "${h:-0}" = 0 ] && warn "osv-scanner: $l lower-severity issue(s): update when you can (accepted ones go in osv-scanner.toml with a reason)"
+    else warn "osv-scanner ran but wrote no report (error?)"; fi
+  else tips="$tips osv-scanner"; fi
+  # Code analysis: Semgrep CE with free registry rules, no account, metrics off
+  if command -v semgrep >/dev/null; then
+    S=$(mktemp); semgrep scan --metrics off --quiet --max-target-bytes 300000 --timeout 5 --exclude dist --exclude build --exclude .next --exclude "*.min.js" --config p/javascript --config p/typescript --config p/react --config p/nextjs --config p/secrets --json -o "$S" . >/dev/null 2>&1
+    if [ -s "$S" ]; then
+      res=$(jsum 'const d=JSON.parse(require("fs").readFileSync(process.argv[1]));const r=(d.results||[]).filter(x=>!/security-tests\/|scan\.sh/.test(x.path));const e=r.filter(x=>x.extra.severity==="ERROR"),w=r.filter(x=>x.extra.severity==="WARNING");console.log("E "+e.length);console.log("W "+w.length);for(const x of e.concat(w).slice(0,8))console.log("   "+x.extra.severity[0]+" "+x.check_id.split(".").pop()+" "+x.path+":"+x.start.line)' "$S")
+      e=$(echo "$res" | awk '/^E /{print $2}'); w=$(echo "$res" | awk '/^W /{print $2}')
+      if [ "${e:-0}" != 0 ]; then bad "semgrep: $e error-level finding(s), $w warning(s):"; echo "$res" | grep '^   ' | cut -c1-150
+      elif [ "${w:-0}" != 0 ]; then warn "semgrep: $w warning(s) to review:"; echo "$res" | grep '^   ' | cut -c1-150
+      else ok "semgrep: no findings (javascript, typescript, react, nextjs, secrets rules; files over 300 KB skipped)"; fi
+    else warn "semgrep ran but wrote no report (offline? its rules download from semgrep.dev)"; fi
+  else tips="$tips semgrep"; fi
+  # GitHub Actions: zizmor, offline
+  if ls .github/workflows/*.y*ml >/dev/null 2>&1; then
+    if command -v zizmor >/dev/null; then
+      Z=$(mktemp); zizmor --offline --format json-v1 --min-severity medium .github/workflows > "$Z" 2>/dev/null
+      res=$(jsum 'const d=JSON.parse(require("fs").readFileSync(process.argv[1]));const sv=x=>String(x.determinations&&x.determinations.severity||"");const hi=d.filter(x=>/high/i.test(sv(x))),me=d.filter(x=>/medium/i.test(sv(x)));console.log("H "+hi.length);console.log("M "+me.length);for(const x of hi.concat(me).slice(0,6))console.log("   "+sv(x)+" "+x.ident+": "+x.desc)' "$Z")
+      zh=$(echo "$res" | awk '/^H /{print $2}'); zm=$(echo "$res" | awk '/^M /{print $2}')
+      if [ "${zh:-0}" != 0 ]; then bad "zizmor: $zh high-severity GitHub Actions issue(s):"; echo "$res" | grep '^   ' | cut -c1-150
+      elif [ "${zm:-0}" != 0 ]; then warn "zizmor: $zm medium GitHub Actions issue(s):"; echo "$res" | grep '^   ' | cut -c1-150
+      else ok "zizmor: GitHub Actions workflows look safe"; fi
+    else tips="$tips zizmor"; fi
+  fi
+  command -v gitleaks >/dev/null || tips="$tips gitleaks"
+  [ -n "$tips" ] && warn "For a much deeper scan install:$tips (Mac: brew install$tips). Code Armour uses them automatically."
+  command -v sfw >/dev/null || echo "  Tip: Socket Firewall Free (npm i -g sfw, then: sfw npm install) blocks malicious packages before they install."
+fi
+
 if [ -n "$URL" ]; then
   echo; echo "-- 9. Live site: $URL --"
   H=$(curl -sIL --max-time 15 "$URL")
@@ -230,13 +324,69 @@ if [ -n "$URL" ]; then
     done
     echo "$H" | grep -qiE '^(x-frame-options:|content-security-policy:.*frame-ancestors)' && ok "framing blocked" || bad "Missing X-Frame-Options or CSP frame-ancestors (clickjacking)"
   fi
-  for p in .env .git/config .env.local backup.sql; do
-    code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 10 "${URL%/}/$p")
-    body=$(curl -s --max-time 10 "${URL%/}/$p" | head -c 200)
-    if [ "$code" = 200 ] && ! echo "$body" | grep -qi '<html'; then bad "/$p is downloadable!"; else ok "/$p not exposed ($code)"; fi
+  # Commonly leaked files. Single-page apps answer 200 with their HTML page for everything, so only a
+  # non-HTML 200 counts as a leak.
+  for p in .env .env.local .env.production .git/config .git/HEAD .DS_Store .vscode/settings.json .npmrc \
+           backup.sql dump.sql db.sqlite backup.zip site.zip config.json firebase-debug.log \
+           server-status phpinfo.php wp-config.php.bak .well-known/../.env docker-compose.yml; do
+    code=$(curl -s -o /tmp/ca-live-body --max-time 10 -w '%{http_code}' "${URL%/}/$p")
+    if [ "$code" = 200 ] && ! head -c 400 /tmp/ca-live-body | grep -qiE '<(!doctype|html|head|body)'; then bad "/$p is downloadable!"; fi
   done
+  ok "Checked 20 commonly leaked files"
+  host=$(echo "$URL" | sed -E 's#^https?://##; s#/.*##; s#:.*##')
+  # HTTP should redirect to HTTPS
+  hcode=$(curl -s -o /dev/null -w '%{http_code} %{redirect_url}' --max-time 10 "http://$host/")
+  echo "$hcode" | grep -qE '^30[1278] https://' && ok "http:// redirects to https://" || warn "http://$host doesn't redirect to https:// ($hcode)"
+  # Certificate expiry
+  if command -v openssl >/dev/null; then
+    end=$(echo | openssl s_client -servername "$host" -connect "$host:443" 2>/dev/null | openssl x509 -noout -enddate 2>/dev/null | cut -d= -f2)
+    if [ -n "$end" ]; then
+      endts=$(date -j -f "%b %e %T %Y %Z" "$end" +%s 2>/dev/null || date -d "$end" +%s 2>/dev/null)
+      [ -n "$endts" ] && { days=$(( (endts - $(date +%s)) / 86400 )); [ "$days" -lt 14 ] && bad "HTTPS certificate expires in $days days" || { [ "$days" -lt 30 ] && warn "HTTPS certificate expires in $days days" || ok "HTTPS certificate valid for $days more days"; }; }
+    fi
+  fi
+  # Cookies set by the page must be Secure + HttpOnly (session cookies) + SameSite
+  echo "$H" | grep -i '^set-cookie:' | while read -r c; do
+    n=$(echo "$c" | sed -E 's/^set-cookie: *([^=]+)=.*/\1/I')
+    echo "$c" | grep -qi 'secure' || echo "  ? cookie $n has no Secure flag"
+    echo "$c" | grep -qi 'samesite' || echo "  ? cookie $n has no SameSite"
+    echo "$n" | grep -qiE 'sess|auth|token|sid' && ! echo "$c" | grep -qi 'httponly' && echo "  ? cookie $n looks like a login cookie but isn't HttpOnly (scripts can steal it)"
+  done
+  # CORS: can a random website read your responses?
+  ch=$(curl -sI --max-time 10 -H "Origin: https://evil.example" "$URL")
+  if echo "$ch" | grep -qi '^access-control-allow-origin: *https://evil\.example'; then
+    echo "$ch" | grep -qi '^access-control-allow-credentials: *true' && bad "CORS reflects any origin WITH credentials: any website can read logged-in users' data" || warn "CORS reflects any origin (any website can read these responses)"
+  else ok "CORS doesn't trust a random website"; fi
+  # Server/framework version leaks
+  ver=$(echo "$H" | grep -iE '^(server|x-powered-by|x-aspnet-version): .*[0-9]+\.[0-9]+' | head -2 | tr -d '\r')
+  [ -n "$ver" ] && warn "Server version shown in headers (helps attackers pick exploits): $ver"
+  # security.txt (how researchers report bugs; expected under the EU Cyber Resilience Act)
+  st=$(curl -s --max-time 10 "${URL%/}/.well-known/security.txt" | head -c 300)
+  echo "$st" | grep -qi '^contact:' && ok "security.txt present" || warn "No /.well-known/security.txt (add Contact: and Expires:, see securitytxt.org)"
+  # Page content: mixed content, public source maps, folder listings
+  page=$(curl -sL --max-time 15 "$URL" | head -c 400000)
+  echo "$page" | grep -qiE '<(script|iframe)[^>]+src=["'"'"']http://' && bad "Page loads scripts/frames over plain http:// (mixed content)"
+  js=$(echo "$page" | grep -oiE '<script[^>]+src=["'"'"'][^"'"'"']+\.js' | head -1 | sed -E 's/.*src=["'"'"']//')
+  if [ -n "$js" ]; then
+    case "$js" in http*) jsurl="$js";; //*) jsurl="https:$js";; /*) jsurl="${URL%/}$js";; *) jsurl="${URL%/}/$js";; esac
+    map=$(curl -s --max-time 10 "$jsurl" | tail -c 300 | grep -oE 'sourceMappingURL=[^ ]+' | cut -d= -f2)
+    if [ -n "$map" ] && [ "${map#data:}" = "$map" ]; then
+      mapurl="${jsurl%/*}/$map"; mc=$(curl -s -o /dev/null -w '%{http_code}' --max-time 10 "$mapurl")
+      [ "$mc" = 200 ] && warn "Source map is public ($mapurl): anyone can read your original source code"
+    fi
+  fi
+  for d in uploads images files static assets backup; do
+    curl -s --max-time 8 "${URL%/}/$d/" | head -c 2000 | grep -qiE '<title>Index of /|Directory listing for' && bad "/$d/ shows a folder listing"
+  done
+  # Email spoofing protection on your own domain (skip shared hosting domains)
+  case "$host" in *.netlify.app|*.pages.dev|*.vercel.app|*.github.io|*.web.app|*.firebaseapp.com|localhost|127.*) ;;
+    *) if command -v dig >/dev/null; then
+         dom=$(echo "$host" | sed -E 's/^www\.//')
+         dig +short TXT "$dom" | grep -qi 'v=spf1' && ok "SPF record present" || warn "No SPF record on $dom: anyone can send email pretending to be you (15.15)"
+         dig +short TXT "_dmarc.$dom" | grep -qi 'v=DMARC1' && ok "DMARC record present" || warn "No DMARC record on $dom (15.15)"
+       fi;;
+  esac
 fi
-
 echo
 [ $problems = 0 ] && echo "${GRN}No problems found by the scan. Now do the manual checks in SKILL.md.${RST}" || echo "${RED}$problems problem(s) found.${RST} Fix them, then run again."
 [ $problems = 0 ]   # exit code 1 when problems were found, so re-tests and GitHub checks fail

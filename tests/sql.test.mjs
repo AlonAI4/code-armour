@@ -218,6 +218,36 @@ async function as(db, role, user, sql, params = []) {
   check("visitors can't write Stripe events", !!ev.error, JSON.stringify(ev));
 }
 
+{
+  console.log("\n# spend-coins.sql + rate-limit.sql");
+  const db = await supabaseLikeDb();
+  await db.exec(`create table public.profiles (id uuid primary key references auth.users(id) on delete cascade, coins int not null default 0);
+    insert into public.profiles values ('${A}', 100), ('${B}', 5);`);
+  await db.exec(recipe("spend-coins.sql"));
+  await db.exec(recipe("rate-limit.sql"));
+  const spend = async (u, n) => (await as(db, "service_role", null, `select public.spend_coins($1, $2) as b`, [u, n])).rows?.[0]?.b;
+  const results = [];
+  for (let i = 0; i < 12; i++) results.push(await spend(A, 10));   // 12 attempts at 10 coins with only 100
+  const left = (await db.query(`select coins from public.profiles where id = $1`, [A])).rows[0].coins;
+  check("can't overspend: 10 of 12 purchases succeed, balance ends at exactly 0", results.filter((x) => x !== null).length === 10 && left === 0, `${JSON.stringify(results)} left=${left}`);
+  check("refused purchases return null and change nothing", results.slice(10).every((x) => x === null));
+  const neg = await as(db, "service_role", null, `select public.spend_coins($1, -50)`, [B]);
+  check("a negative amount (to GAIN coins) is rejected", !!neg.error, JSON.stringify(neg));
+  const self = await as(db, "authenticated", A, `select public.spend_coins($1, 1)`, [B]);
+  check("players can't call spend_coins (or spend someone else's)", !!self.error, JSON.stringify(self));
+  const c1 = (await as(db, "service_role", null, `select public.claim_once($1, 'coupon:WELCOME10') as ok`, [A])).rows[0].ok;
+  const c2 = (await as(db, "service_role", null, `select public.claim_once($1, 'coupon:WELCOME10') as ok`, [A])).rows[0].ok;
+  const c3 = (await as(db, "service_role", null, `select public.claim_once($1, 'coupon:WELCOME10') as ok`, [B])).rows[0].ok;
+  check("a coupon works once per player, then never again", c1 === true && c2 === false && c3 === true, `${c1} ${c2} ${c3}`);
+  const hits = [];
+  for (let i = 0; i < 7; i++) hits.push((await as(db, "service_role", null, `select public.rate_limit_hit('login:1.2.3.4', 60, 5) as ok`)).rows[0].ok);
+  check("rate limit: 5 allowed, then blocked", JSON.stringify(hits) === "[true,true,true,true,true,false,false]", JSON.stringify(hits));
+  const other = (await as(db, "service_role", null, `select public.rate_limit_hit('login:5.6.7.8', 60, 5) as ok`)).rows[0].ok;
+  check("rate limit: a different visitor isn't affected", other === true);
+  const ru = await as(db, "anon", null, `select public.rate_limit_hit('x', 60, 1000000)`);
+  check("visitors can't call the rate limiter to reset or inflate it", !!ru.error, JSON.stringify(ru));
+}
+
 // ---------- audit.sql: finds the planted problems, and is quiet after the fixes ----------
 {
   console.log("\n# audit.sql on the vulnerable test game");
@@ -236,7 +266,7 @@ async function as(db, role, user, sql, params = []) {
       is_admin boolean default false, credits int default 0, is_pro boolean default false);
     alter table public.profiles enable row level security;
     create policy "read own profile" on public.profiles for select to authenticated using ((select auth.uid()) = id);`);
-  for (const f of ["rls-owner-only.sql", "protect-privileged-columns.sql", "name-filter.sql", "new-user-profile.sql", "safe-leaderboard.sql",
+  for (const f of ["rls-owner-only.sql", "protect-privileged-columns.sql", "name-filter.sql", "new-user-profile.sql", "safe-leaderboard.sql", "spend-coins.sql", "rate-limit.sql",
                    "ai-quota.sql", "game-runs.sql", "stripe-events.sql"]) await clean.exec(recipe(f));
   const after = (await clean.query(recipe("audit.sql"))).rows.map((r) => `${r.problem} | ${r.object}`);
   const serious = after.filter((f) => !/no policies \(server-only\?\)/.test(f) && !/allows everyone: SELECT .*\| public\.leaderboard/.test(f)

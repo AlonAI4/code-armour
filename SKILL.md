@@ -46,8 +46,9 @@ Load only the reference files you need:
 | Builder or users in Canada, Brazil, Mexico, Argentina, Nigeria, South Africa, Kenya, Egypt, Turkey, Israel, Saudi Arabia, UAE, Russia | `references/countries-americas-africa-mideast.md` |
 | "Worldwide" users | Both country files, but only their "Cross-cutting" sections plus any country the user names |
 | Always | `references/upcoming.md`: compare each date with today (see "Staying up to date") |
-| Users in EU countries | Also `references/countries-extra/eu-national-rules.md` (Germany, France, Italy, Spain, Netherlands, Poland add their own rules) |
-| Users in Switzerland, Norway, Ukraine, Malaysia, Taiwan, Hong Kong, Thailand, New Zealand, Colombia, Chile, Morocco, Ghana | `references/countries-extra/<country>.md` |
+| Users anywhere sanctioned (Iran, North Korea, Cuba, occupied regions, Russia/Belarus limits; Syria changed in 2025–26) | `references/countries-extra/sanctioned-places.md` |
+| Users in EU countries | Also `references/countries-extra/eu-national-rules.md` and `eu-national-rules-2.md` (Germany, France, Italy, Spain, Netherlands, Poland add their own rules) |
+| Users in Switzerland, Norway, Ukraine, Malaysia, Taiwan, Hong Kong, Thailand, New Zealand, Colombia, Chile, Morocco, Ghana, Peru, Ecuador, Kazakhstan, Sri Lanka, Nepal, Ethiopia, Tanzania, Uganda, Rwanda, Qatar | `references/countries-extra/<country>.md` |
 | A country not in the files | Check `references/countries-extra/` first. Not there? Research it with `templates/country-research.md` (needs web search), save it to `references/countries-extra/<country>.md`, and mark its rows ❓. No web search? Say so plainly and apply the general rules (privacy notice, consent, delete-my-data, breach plan, kids' consent, tax via a Merchant of Record), all ❓ |
 
 **Read in tiers to save effort:** start with the "10-minute pre-launch check" at the end of `security.md`, the Top 5 in `legal.md`, and the "Cross-cutting" sections of the country files. Only open a detailed section when the project has that feature (payments, user posts, AI, kids...).
@@ -71,9 +72,12 @@ Skip whole sections that can't apply. For example, no payments means skip Stripe
    - exposed `/.env` and `/.git`.
 
    Read every line it prints. It only finds patterns, so a clean scan isn't proof of safety.
-2. Check the data rules for the stack. Also check: a profile row is created at signup (`recipes/supabase/new-user-profile.sql`), every table linked to users deletes with them (`on delete cascade`), and the banned-word list isn't empty (an empty list means the swear filter is OFF).
+   - **Power tools:** if gitleaks, osv-scanner, Semgrep or zizmor are installed, the scan runs them automatically: secrets in history, vulnerable and **malicious** packages in every ecosystem, real code analysis, and GitHub Actions attacks. If they're missing, the scan prints the install line. Suggest installing them, but ask first (Mac: `brew install gitleaks osv-scanner semgrep zizmor`). Never send code to an online service without asking.
+   - **With a live URL**, it also checks HTTPS and certificate expiry, cookie flags, CORS from a random website, ~20 commonly leaked files, server version leaks, public source maps, folder listings, `security.txt`, and SPF/DMARC on a custom domain. These are read-only requests.
+2. **Supabase front-door probe** (ask first; only the user's own project): `node scripts/supabase-probe.mjs <project URL> <anon/publishable key>`. With only the public key, it shows which tables anyone can read, callable functions, public buckets, whether email confirmation is off, and whether GraphQL shows the schema. It's read-only and refuses a secret key.
+3. Check the data rules for the stack. Also check: a profile row is created at signup (`recipes/supabase/new-user-profile.sql`), every table linked to users deletes with them (`on delete cascade`), and the banned-word list isn't empty (an empty list means the swear filter is OFF).
     (see `references/stacks.md` §1). Firebase: read `firestore.rules` / `storage.rules`, try the Rules Playground. Postgres/Prisma/Drizzle, Convex, Express: read every route or function and confirm it filters by the verified user. PocketBase/Appwrite: check each collection's rules in the admin UI. If Supabase is used, run `recipes/supabase/audit.sql` through whatever you have: the Supabase MCP `execute_sql` tool, the `supabase` CLI, or ask the user to paste it into the SQL Editor and share the output. Also open (or ask for) **Advisors → Security** and explain every warning in plain words.
-3. Go through each applicable item in the references and check it against the code.
+4. Go through each applicable item in the references and check it against the code.
 
 ## Step 3b: Show the plan and ask before changing anything
 
@@ -110,6 +114,11 @@ Use the recipes in `recipes/` as starting points. Each one marks the names you m
 | Firebase rules open / test mode / users editing admin fields | `recipes/firebase/firestore.rules`, `recipes/firebase/storage.rules` |
 | Express server with no headers, rate limit, auth check or safe errors | `recipes/node/express-security.mjs` |
 | Stripe webhook on Next.js | `recipes/nextjs/stripe-webhook-route.ts` |
+| Coins/credits spent twice by parallel requests; coupons or trials claimed twice | `recipes/supabase/spend-coins.sql` (`spend_coins`, `claim_once`) |
+| No rate limit on login, sign-up, forms or "generate" buttons | `recipes/supabase/rate-limit.sql` |
+| CAPTCHA shown but never checked | `recipes/netlify/turnstile-verify.mjs` |
+| Cron or "internal" endpoints anyone can call | `recipes/netlify/cron-auth.mjs` |
+| GitHub workflow with unpinned actions or dangerous triggers | `templates/security-tests/github-workflow.yml` (pinned, read-only, no stored credentials) |
 | Lemon Squeezy / Paddle webhook not verified | `recipes/payments/mor-webhooks.mjs` |
 | Privacy page, terms, accessibility statement | `templates/privacy-policy.md` (fill from what the code really collects) |
 

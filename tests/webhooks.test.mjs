@@ -26,6 +26,7 @@ Object.assign(process.env, {
 const seenEvents = new Set();
 const calls = [];
 let quotaAllowed = true;
+let captchaDown = false;
 let creditsGiven = 0;
 const seenWebhooks = new Set();
 globalThis.fetch = async (url, init = {}) => {
@@ -53,6 +54,11 @@ globalThis.fetch = async (url, init = {}) => {
     seenWebhooks.add(id); return json(201);
   }
   if (url.includes("/rest/v1/rpc/use_ai_quota")) return json(200, quotaAllowed);
+  if (url.includes("challenges.cloudflare.com/turnstile/v0/siteverify")) {
+    if (captchaDown) throw new Error("network down");
+    const token = new URLSearchParams(String(init.body)).get("response");
+    return json(200, { success: token === "good-captcha" });
+  }
   return json(500, { message: "unexpected call " + url });
 };
 
@@ -135,6 +141,25 @@ check("Paddle: wrong signature rejected", mor.verifyPaddle(body, post("/", body,
 const old = ts - 3600, oldH = createHmac("sha256", "pdl_secret").update(`${old}:${body}`).digest("hex");
 check("Paddle: 1-hour-old (replayed) event rejected", mor.verifyPaddle(body, post("/", body, { "paddle-signature": `ts=${old};h1=${oldH}` })) === false);
 check("Paddle: missing header rejected", mor.verifyPaddle(body, post("/", body)) === false);
+
+// ---------- CAPTCHA + cron ----------
+console.log("\n# netlify/turnstile-verify.mjs + cron-auth.mjs");
+process.env.TURNSTILE_SECRET_KEY = "ts_secret"; process.env.CRON_SECRET = "a-long-random-cron-secret-123";
+const turnstile = await import(new URL("turnstile-verify.mjs", tmp));
+const form = (tok) => { const f = new FormData(); if (tok) f.set("cf-turnstile-response", tok); f.set("email", "a@b.c"); return new Request("https://site.example/api/signup", { method: "POST", body: f }); };
+check("no CAPTCHA token -> 403", (await turnstile.default(form())).status === 403);
+check("fake CAPTCHA token -> 403", (await turnstile.default(form("bot-token"))).status === 403);
+check("real CAPTCHA token -> 200", (await turnstile.default(form("good-captcha"))).status === 200);
+captchaDown = true;
+check("Cloudflare unreachable -> refused (fails closed)", (await turnstile.default(form("good-captcha"))).status === 403);
+captchaDown = false;
+const cron = await import(new URL("cron-auth.mjs", tmp));
+const creq = (h) => new Request("https://site.example/api/cron", { headers: h });
+check("cron with no secret -> 401", (await cron.default(creq({}))).status === 401);
+check("cron with a wrong secret -> 401", (await cron.default(creq({ authorization: "Bearer guess" }))).status === 401);
+check("cron with the right secret -> 200", (await cron.default(creq({ authorization: "Bearer a-long-random-cron-secret-123" }))).status === 200);
+process.env.CRON_SECRET = "";
+check("cron secret not configured -> everyone refused (fails closed)", (await cron.default(creq({ authorization: "Bearer " }))).status === 401);
 
 rmSync(tmp, { recursive: true, force: true });
 console.log(`\n${passed} passed, ${failed} failed`);

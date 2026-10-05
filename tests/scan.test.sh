@@ -113,6 +113,21 @@ OUT=$(bash "$SCAN" . 2>&1 | sed 's/\x1b\[[0-9;]*m//g')
 refuse "a prompt tool naming image models isn't flagged" "AI image generation with no moderation"
 refuse "the word countdown alone isn't flagged" "Urgency wording"
 
+echo "# power tools (only when installed)"
+if command -v gitleaks >/dev/null && command -v zizmor >/dev/null && command -v osv-scanner >/dev/null && command -v node >/dev/null; then
+  PT=$T/power; mkdir -p $PT/.github/workflows; cd $PT; git init -q
+  printf 'on: pull_request_target\njobs:\n  t:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - run: echo "${{ github.event.issue.title }}"\n' > .github/workflows/ci.yml
+  K1="sk_live_51NotReal"; K2="ButLooksLike0123456789abcdefABCDEF"; printf 'STRIPE=%s%s\n' "$K1" "$K2" > leaked.env
+  cp "$HERE/package-lock.json" . ; git add -A && git -c user.email=t@t -c user.name=t commit -qm x
+  OUT=$(bash "$SCAN" . 2>&1 | sed 's/\x1b\[[0-9;]*m//g')
+  expect "gitleaks finds the key in history" "gitleaks: 1 secret"
+  expect "zizmor finds the dangerous workflow" "zizmor:"
+  expect "osv-scanner reads the lockfile" "osv-scanner:"
+  refuse "found secrets are never printed in full" "ButLooksLike0123456789"
+  OUT=$(CA_FAST=1 bash "$SCAN" . 2>&1 | sed 's/\x1b\[[0-9;]*m//g')
+  expect "CA_FAST skips the power tools" "Skipped (CA_FAST set)"
+else echo "  (power tools not installed: skipped)"; fi
+
 echo "# clean app"
 C=$T/clean; mkdir -p $C/src $C/dist; cd $C; git init -q
 printf '.env*\n!.env.example\nnode_modules/\n' > .gitignore

@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node sql.test.mjs && node webhooks.test.mjs && bash scan.test.sh && bash retest.test.sh && bash plain.test.sh",
+    "test": "node sql.test.mjs && node webhooks.test.mjs && node probe.test.mjs && bash scan.test.sh && bash retest.test.sh && bash plain.test.sh",
     "test:firebase": "firebase emulators:exec --only firestore --project demo-armour \"node firestore.test.mjs\""
   },
   "devDependencies": {

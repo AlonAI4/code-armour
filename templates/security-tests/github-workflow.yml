@@ -1,4 +1,5 @@
 # Code Armour: re-test on every push and pull request. Copy to .github/workflows/security-tests.yml
+# Actions are pinned to exact commit IDs (a tag like @v4 can be moved by an attacker); Dependabot can update them.
 # If a change undoes a security fix, GitHub shows a red ✗ on that commit.
 name: security-tests
 on: [push, pull_request]
@@ -8,10 +9,11 @@ jobs:
   retest:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
+          persist-credentials: false
           fetch-depth: 0          # full history, so the scanner can check old commits for leaked keys
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: 22
       - run: npm ci || npm i

@@ -41,6 +41,23 @@ You type `/armour` in your project. The agent:
 
    Legal items never get an automatic ✅, because code can't prove a law is followed: a person has to review them.
 
+## Power tools mode
+
+Code Armour doesn't try to replace the best free security tools. It **runs them for you** and explains the results in plain words:
+
+| Tool | What it adds |
+|---|---|
+| [gitleaks](https://github.com/gitleaks/gitleaks) | ~200 kinds of secret keys, across all git history |
+| [osv-scanner](https://github.com/google/osv-scanner) | Vulnerable **and malicious** packages in every ecosystem (npm, pnpm, yarn, bun, pip, Go, Rust…) |
+| [Semgrep](https://semgrep.dev) CE | Real code analysis (JavaScript, TypeScript, React, Next.js, secrets), with telemetry off |
+| [zizmor](https://docs.zizmor.sh) | GitHub Actions attacks (pwn requests, injection, unpinned actions) |
+
+If a tool isn't installed, the scan says how to get it. On a Mac: `brew install gitleaks osv-scanner semgrep zizmor`. If [ripgrep](https://github.com/BurntSushi/ripgrep) is installed, searches run up to 70× faster on big repos.
+
+**Also built in:**
+- Live-site checks: HTTPS and certificate expiry, cookies, CORS, ~20 commonly leaked files, source maps, `security.txt`, SPF/DMARC.
+- A **Supabase front-door probe** (`scripts/supabase-probe.mjs`). It looks at your project with only the public key, the way an attacker would, and shows which tables anyone can read. It's read-only.
+
 ## Commands
 
 | Command | What it does |
@@ -97,7 +114,7 @@ Before launch, or when asked about security, privacy or legal readiness, follow 
 **Countries:**
 - In depth: UK, EU, US.
 - Summarised: 24 more (India, China, Brazil, Japan, Korea, Indonesia, Nigeria, Canada, Australia and others).
-- Researched with the skill's own template: Thailand, Switzerland, Norway, Ukraine, Malaysia, Taiwan, Hong Kong, New Zealand, Colombia, Chile, Morocco, Ghana, plus what Germany, France, Italy, Spain, the Netherlands and Poland add on top of EU law.
+- Researched with the skill's own template: 22 more (Thailand, Switzerland, Norway, Ukraine, Malaysia, Taiwan, Hong Kong, New Zealand, Colombia, Chile, Morocco, Ghana, Peru, Ecuador, Kazakhstan, Sri Lanka, Nepal, Ethiopia, Tanzania, Uganda, Rwanda, Qatar), plus what 17 EU countries add on top of EU law, and a guide to sanctioned places.
 - Any other country: the skill researches it with a fixed template and saves it for next time.
 - **Upcoming laws:** a watchlist of laws with future dates, compared with today on every run.
 
@@ -109,12 +126,13 @@ Every recipe is attacked by an automated test suite. [GitHub Actions](https://gi
 
 | Suite | Checks | What it proves |
 |---|---|---|
-| `sql.test.mjs` | 75 | Database recipes on **real Postgres** (PGlite) with Supabase-style roles. Attacks include: reading other users' rows, self-admin, free coins at signup, look-alike swear words, farmed scores, double payouts. |
-| `webhooks.test.mjs` | 23 | Payment and AI endpoints with **real Stripe signatures** and Lemon Squeezy/Paddle HMACs: fake, tampered, replayed and duplicate events rejected; logged-out users refused; daily AI limits hold. |
-| `scan.test.sh` | 62 | The scanner catches planted leaks, risky GitHub workflows, legal red flags in code (SMS, face AI, crypto, extension manifests…) and the deliberately broken test game, and gives **no false alarms** on a clean app or on real patterns that caused false alarms before. |
+| `sql.test.mjs` | 83 | Database recipes on **real Postgres** (PGlite) with Supabase-style roles. Attacks include: reading other users' rows, self-admin, free coins at signup, look-alike swear words, farmed scores, double payouts, double-spending coins, reusing coupons, rate limits. |
+| `webhooks.test.mjs` | 31 | Payment and AI endpoints with **real Stripe signatures** and Lemon Squeezy/Paddle HMACs: fake, tampered, replayed and duplicate events rejected; logged-out users refused; daily AI limits hold, CAPTCHAs are really verified (even when Cloudflare is down), cron endpoints need their secret. |
+| `scan.test.sh` | 67 | The scanner catches planted leaks, risky GitHub workflows, legal red flags in code (SMS, face AI, crypto, extension manifests…) and the deliberately broken test game, and gives **no false alarms** on a clean app or on real patterns that caused false alarms before. |
 | `retest.test.sh` | 9 | A fixed game passes its saved re-test. Four typical AI "quick fixes" that undo security each turn it **red**. |
 | `firestore.test.mjs` | 12 | Firestore rules in the **real Firebase emulator**. |
-| `plain.test.sh` | 5 | Projects with no database: git worktrees, monorepo `npm audit`, the slow-regex detector, the scanner ignoring its own copy. |
+| `plain.test.sh` | 5 |
+| `probe.test.mjs` | 10 | The Supabase probe against a fake leaky project: it finds every open door, **never writes**, and refuses a secret key. | Projects with no database: git worktrees, monorepo `npm audit`, the slow-regex detector, the scanner ignoring its own copy. |
 
 ### Reviewed and attacked
 
@@ -133,9 +151,10 @@ These are AI and automated reviews, **not** a human lawyer or a professional pen
 |---|---|
 | `SKILL.md` | The step-by-step instructions the agent follows |
 | `commands/` | `/armour`, `/armourcheck`, `/armourtest` |
-| `references/` | Security (~120 risks incl. GitHub Actions, AI agents, extensions, MCP), legal (UK/EU/US incl. lawsuit-heavy US laws, app-store rules, EU 2026 product laws), 37 countries + EU national rules, stacks, upcoming-laws watchlist (~60 dated items) |
+| `references/` | Security (~120 risks incl. GitHub Actions, AI agents, extensions, MCP), legal (UK/EU/US incl. lawsuit-heavy US laws, app-store rules, EU 2026 product laws), 59 countries + 17 EU national rule sets + sanctions, stacks, upcoming-laws watchlist (~60 dated items) |
 | `recipes/` | Ready-to-adapt fixes: Supabase SQL and Edge Functions, Firebase rules, headers for Netlify, Vercel and Cloudflare, Stripe/Lemon Squeezy/Paddle webhooks, Express, Next.js |
-| `scripts/scan.sh` | Quick scanner: secrets, git history, risky code, packages, live headers, and whether the project's own armour is set up |
+| `scripts/scan.sh` | The scanner: secrets, git history, risky code, GitHub Actions, legal red flags in code, packages, power tools, live-site checks, and whether the project's own armour is set up |
+| `scripts/supabase-probe.mjs` | Read-only Supabase front-door probe |
 | `templates/` | `COMPLIANCE.md`, a plain-words privacy policy, the re-test kit, lawyer and hacker briefs, the country research template |
 | `tests/` | The suites above, plus the broken and fixed test games |
 

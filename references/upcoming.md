@@ -44,6 +44,15 @@ Last full update: 2026-10-05. Status: ⏳ coming · ✅ confirmed started · ⚠
 | open | EU | Digital Fairness Act proposal (loot boxes, dark patterns, subscriptions) | Games, stores | ⏳ |
 | open | Taiwan, Hong Kong, Colombia, Ghana, Ukraine, Morocco | Privacy-law reforms pending (see each countries-extra file) | Apps with users there | ⏳ |
 | open | Malaysia, New Zealand, Colombia | Under-16 / under-14 social media rules pending | Social apps | ⏳ |
+| 2026-04-29 | Rwanda | 18% VAT on foreign digital services (registration window ~3 months) | Selling to Rwanda | ✅ |
+| 2026 (expected) | Denmark | Likeness/deepfake right in copyright law; under-15 social media ban (adoption unconfirmed) | AI images/voice, social apps | ⏳ |
+| 2027-01-01 | Sri Lanka | Personal Data Protection Act main duties | Apps with Sri Lankan users | ⏳ |
+| 2027-01-01 | Greece | Under-15 social media ban, platforms must verify age | Social apps / games with chat | ⏳ |
+| 2027 (planned) | Tanzania (Zanzibar) | Digital services VAT | Selling there | ⏳ |
+| 2026–2028 | Peru | AI regulation duties phase in (different dates by company size) | AI apps | ⏳ |
+| open | Kazakhstan, Austria, Portugal | Under-16 / under-14 / 13–16 social media rules (drafts) | Social apps | ⏳ |
+| open | Sweden | Loot-box and gambling inquiry (started 3 Sep 2026) | Games with loot boxes | ⏳ |
+| open | Syria | US sanctions programme ended (Jun 2025) but Stripe still lists Syria: check payment providers before serving users there | Paid apps | ⏳ |
 | open | Canada | Bill C-36 (privacy reform) — not law yet; check its status | Apps with Canadian users | ⏳ |
 | open | Brazil | AI bill PL 2338/2023 — not law yet | AI apps | ⏳ |
 | open | Australia | Privacy Act "tranche 2" may remove the small-business exemption | Apps with Australian users | ⏳ |
