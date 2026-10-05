@@ -1,4 +1,5 @@
 # North Macedonia (researched 2026-10-05, by Claude Sonnet 5.5 with web search)
+General notes, not legal advice. See the disclaimer in README.md in this folder.
 Severity: Low-Med for a small foreign-run app. VAT is the real cost if you sell direct.
 Note: no regulator site (dzlp.mk, ujp.gov.mk) was read; all lines are secondary or memory.
 

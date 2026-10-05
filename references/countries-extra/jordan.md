@@ -1,4 +1,5 @@
 # Jordan (researched 2026-10-05, by Claude Sonnet 5.5 with web search)
+General notes, not legal advice. See the disclaimer in README.md in this folder.
 Severity: Low-Med for a small foreign-run app. Content/cybercrime law is the sharper risk; sales over the VAT threshold is the main money duty.
 Note: no regulator site fetched (istd.gov.jo / pdp authority not read). [V-sec] = seen in a law-firm/news/vendor page today; [K] = memory.
 

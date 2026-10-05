@@ -1,4 +1,5 @@
 # Georgia, the country (researched 2026-10-05, by Claude Sonnet 5.5 with web search)
+General notes, not legal advice. See the disclaimer in README.md in this folder.
 Severity: Low-Med for a small foreign-run app. Not US state Georgia (one search result was about that and was ignored).
 Note: no regulator site (personaldata.ge, rs.ge) was read; lines are secondary or memory.
 

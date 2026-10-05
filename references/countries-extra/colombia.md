@@ -1,4 +1,5 @@
 # Colombia (researched 2026-10-05, by Claude Opus 5.5 with web search)
+General notes, not legal advice. See the disclaimer in README.md in this folder.
 Severity: Med for a small foreign-run app with a few users here. The SIC is one of Latin America's most active privacy enforcers (cookie fines, orders against foreign platforms). VAT has no threshold.
 Note: no regulator site was read (sic.gov.co, dian.gov.co not fetched). Marks: [V-reg] regulator/law text today, [V-sec] law firm/news today, [K] memory.
 

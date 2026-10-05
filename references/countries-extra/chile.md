@@ -1,4 +1,5 @@
 # Chile (researched 2026-10-05, by Claude Opus 5.5 with web search)
+General notes, not legal advice. See the disclaimer in README.md in this folder.
 Severity: Low today, Med from 1 Dec 2026 (or 2027 if postponed) when Law 21.719 and its Agency start. The new law reaches foreign apps that offer services to people in Chile, free or paid.
 Note: bcn.cl (LeyChile) did not load (JS timeout); the Diario Oficial PDF of Law 21.719 was read directly. Marks: [V-reg] law text today, [V-sec] law firm/news today, [K] memory.
 

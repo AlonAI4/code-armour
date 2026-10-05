@@ -1,4 +1,5 @@
 # Hong Kong (researched 2026-10-05, by Claude Opus 5.5 with web search)
+General notes, not legal advice. See the disclaimer in README.md in this folder.
 Severity: Low for a small foreign-run app with a few users here. PDPO mostly reaches data users controlling data in or from Hong Kong; no sales tax.
 Marks: [V-reg] regulator/law text today, [V-sec] law firm/news today, [K] memory.
 

@@ -53,6 +53,7 @@ SECRETS='(sk_live_[0-9A-Za-z]{10,}|sk_test_[0-9A-Za-z]{10,}|rk_live_[0-9A-Za-z]{
 EXCL=(--exclude-dir=node_modules --exclude-dir=.git --exclude-dir=.netlify --exclude-dir=.next/cache --exclude=*.lock --exclude=package-lock.json --exclude=scan.sh --exclude=audit.sql)
 
 echo "== Code Armour scan: $(pwd) =="
+echo "Pattern scan: it finds known patterns only. A clean result isn't proof of safety."
 # Huge files (generated bundles, word lists, data) make every text search crawl. Skip files over 1 MB in the
 # pattern searches and SAY which ones, so nothing is silently ignored.
 BIGF=$(find . -type f -size +1000k -not -path '*/node_modules/*' -not -path '*/.git/*' 2>/dev/null | head -50)
@@ -403,4 +404,5 @@ if [ -n "$URL" ]; then
 fi
 echo
 [ $problems = 0 ] && echo "${GRN}No problems found by the scan. Now do the manual checks in SKILL.md.${RST}" || echo "${RED}$problems problem(s) found.${RST} Fix them, then run again."
+echo; echo "Code Armour provides automated technical checks and general compliance information. It does not provide legal advice, certify compliance, guarantee security or identify every possible risk. Results may be incomplete or incorrect. Users remain responsible for testing their websites, reviewing applicable requirements and obtaining professional advice where appropriate."
 [ $problems = 0 ]   # exit code 1 when problems were found, so re-tests and GitHub checks fail

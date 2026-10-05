@@ -1,4 +1,5 @@
 # Cambodia (researched 2026-10-05, by Claude Sonnet 5.5 with web search)
+General notes, not legal advice. See the disclaimer in README.md in this folder.
 Severity: Low for a small foreign-run app with a few users here. Med if you sell more than about USD 61k/yr to Cambodians (VAT).
 Note: only search snippets and summaries were read; no regulator site (tax.gov.kh, mptc.gov.kh) was opened. [V-sec] = seen in law-firm/news text, [K] = memory.
 

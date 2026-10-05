@@ -23,6 +23,7 @@ Use this when a user lives in, or has users in, a country not covered by `refere
 ## Save as `references/countries-extra/<country>.md`
 ```markdown
 # <Country> (researched <YYYY-MM-DD>, by <agent> with web search)
+General notes, not legal advice. See the disclaimer in README.md in this folder.
 Severity: High / Med / Low for a small foreign-run app with a few users here.
 
 ## Privacy
@@ -57,4 +58,4 @@ Severity: High / Med / Low for a small foreign-run app with a few users here.
 - URLs.
 ```
 
-Then tell the user plainly what applies, which parts are unverified, and that it's AI research, not legal advice. Offer to contribute the file back to the Code Armour repo.
+Then tell the user plainly what applies and which parts are unverified, then show the disclaimer: *Code Armour provides automated technical checks and general compliance information. It does not provide legal advice, certify compliance, guarantee security or identify every possible risk. Results may be incomplete or incorrect. Users remain responsible for testing their websites, reviewing applicable requirements and obtaining professional advice where appropriate.* Offer to contribute the file back to the Code Armour repo.

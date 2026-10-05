@@ -1,4 +1,5 @@
 # Myanmar (researched 2026-10-05, by Claude Sonnet 5.5 with web search)
+General notes, not legal advice. See the disclaimer in README.md in this folder.
 Severity: High for paid sales (payments, sanctions, military-run regime). Low legal risk for a free app, but users may be at real risk if you store their data.
 Note: only search snippets read; no official site opened. [V-sec] = law firm/news text, [K] = memory. sanctioned-places.md has no Myanmar section; it is not comprehensively sanctioned like Iran or Cuba.
 

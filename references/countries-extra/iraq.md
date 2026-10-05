@@ -1,4 +1,5 @@
 # Iraq (researched 2026-10-05, by Claude Sonnet 5.5 with web search)
+General notes, not legal advice. See the disclaimer in README.md in this folder.
 Severity: Low legal risk from privacy/tax; High practical risk for payments (sanctions, no Stripe/PayPal) and sudden platform blocks.
 Note: no regulator site fetched (CMC not read). [V-sec] = secondary page seen today; [K] = memory.
 

@@ -1,4 +1,5 @@
 # Peru (researched 2026-10-05, by Claude Opus 5.5 with web search)
+General notes, not legal advice. See the disclaimer in README.md in this folder.
 Severity: Med for a small foreign-run app with a few users here. Privacy law reaches you and VAT has NO threshold.
 Note: gob.pe / elperuano.pe not fetched (snippets only). Marks: [V-reg] regulator/official text, [V-sec] law firm/news, [K] memory.
 

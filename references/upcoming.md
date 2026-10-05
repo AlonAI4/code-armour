@@ -1,5 +1,7 @@
 # Upcoming changes watchlist
 
+Code Armour provides automated technical checks and general compliance information. It does not provide legal advice, certify compliance, guarantee security or identify every possible risk. Results may be incomplete or incorrect. Users remain responsible for testing their websites, reviewing applicable requirements and obtaining professional advice where appropriate.
+
 Laws that change on a known future date. Compare each date with **today** on every run:
 - **Date passed:** web-search whether it really started (dates often slip). Then update the matching reference file, change the status here, and tell the user.
 - **Due within 6 months:** tell the user if it applies to their project, so they can prepare.

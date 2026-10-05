@@ -1,4 +1,5 @@
 # Kuwait (researched 2026-10-05, by Claude Sonnet 5.5 with web search)
+General notes, not legal advice. See the disclaimer in README.md in this folder.
 Severity: Low for a small foreign-run app. No VAT; privacy rules are a telecom-regulator regulation, not a full law.
 Note: no regulator site fetched (citra.gov.kw not read). [V-sec] = secondary page seen today; [K] = memory.
 

@@ -1,4 +1,5 @@
 # Taiwan (researched 2026-10-05, by Claude Opus 5.5 with web search)
+General notes, not legal advice. See the disclaimer in README.md in this folder.
 Severity: Low-Med for a small foreign-run app with a few users here. Higher for games with loot boxes (strict odds rules) or once sales pass NT$480,000/yr.
 Note: no regulator site was read (moj.gov.tw, pdpc, mof not fetched). Marks: [V-reg] regulator/law text today, [V-sec] law firm/news today, [K] memory.
 

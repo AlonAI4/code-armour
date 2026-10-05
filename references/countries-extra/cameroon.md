@@ -1,4 +1,5 @@
 # Cameroon (researched 2026-10-05, by Claude Sonnet 5.5 with web search)
+General notes, not legal advice. See the disclaimer in README.md in this folder.
 Severity: Med for a small foreign-run app: new privacy law just took effect, authority not yet running; foreign VAT plus a new 2026 income tax rule.
 Note: no regulator site fetched. [V-sec] = secondary page seen today; [K] = memory.
 

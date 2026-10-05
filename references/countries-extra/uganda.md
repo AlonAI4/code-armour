@@ -1,4 +1,5 @@
 # Uganda (researched 2026-10-05, by Claude Opus 5.5 with web search)
+General notes, not legal advice. See the disclaimer in README.md in this folder.
 Severity: Med. The regulator has said offshore companies must register, and it has acted against foreign firms (Meta/WhatsApp order).
 Marks: [V-reg] regulator/official text, [V-sec] law firm/news/tax vendor, [K] memory.
 

@@ -1,4 +1,5 @@
 # Uruguay (researched 2026-10-05, by Claude Sonnet 5.5 with web search)
+General notes, not legal advice. See the disclaimer in README.md in this folder.
 Severity: Med for a small foreign-run app with a few users here (EU-adequate privacy regime, active regulator, VAT with no threshold).
 Note: only search snippets read; gub.uy/URCDP and DGI pages were not opened. [V-sec] = law-firm/news text, [K] = memory.
 

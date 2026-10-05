@@ -1,4 +1,5 @@
 # Switzerland (researched 2026-10-05, by Claude Opus 5.5 with web search)
+General notes, not legal advice. See the disclaimer in README.md in this folder.
 Severity: Low-Med for a small foreign-run app with a few users here. Switzerland is NOT in the EU: GDPR does not apply because of Swiss users alone, but the Swiss FADP is close to it. Fines hit individuals (not companies), and only for intentional breaches.
 
 ## Privacy

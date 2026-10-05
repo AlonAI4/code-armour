@@ -1,4 +1,5 @@
 # Ukraine (researched 2026-10-05, by Claude Opus 5.5 with web search)
+General notes, not legal advice. See the disclaimer in README.md in this folder.
 Severity: Low for a small foreign-run app with a few users here. Today's privacy law does not reach foreign companies, enforcement against small foreign apps is near zero (the country is under martial law), and the main digital tax only starts above UAH 1M/yr. The big real-world risk is SANCTIONS on Russian-occupied regions, not Ukrainian law.
 
 ## Privacy

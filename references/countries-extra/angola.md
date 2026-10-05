@@ -1,4 +1,5 @@
 # Angola (researched 2026-10-05, by Claude Sonnet 5.5 with web search)
+General notes, not legal advice. See the disclaimer in README.md in this folder.
 Severity: Low-Med for a small foreign-run app: old law with large fines on paper; foreign digital VAT with no threshold.
 Note: no regulator site fetched (apd.ao not read). [V-sec] = secondary page seen today; [K] = memory.
 

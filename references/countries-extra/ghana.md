@@ -1,4 +1,5 @@
 # Ghana (researched 2026-10-05, by Claude Opus 5.5 with web search)
+General notes, not legal advice. See the disclaimer in README.md in this folder.
 Severity: Low for a small foreign-run app with a few users here on privacy. VAT is the real issue: non-residents selling digital services must register with no threshold.
 Note: no regulator site was read (dataprotection.org.gh, gra.gov.gh not fetched). Marks: [V-reg] regulator/law text today, [V-sec] law firm/news today, [K] memory.
 

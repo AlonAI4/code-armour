@@ -1,3 +1,5 @@
+DRAFT made with Code Armour: check it with an adult or a professional, then delete this line.
+
 # Privacy policy for <app name>
 
 Last updated: <date>
@@ -5,7 +7,7 @@ Last updated: <date>
 <!-- Code Armour: fill this ONLY with what the code really does, and delete anything that isn't true.
      A false promise here is itself illegal (FTC Act §5 in the US, GDPR transparency in the UK/EU).
      Builder under 18: a parent should be the named controller and must read this before it goes live.
-     This template is not legal advice. -->
+     Code Armour provides automated technical checks and general compliance information. It does not provide legal advice, certify compliance, guarantee security or identify every possible risk. Results may be incomplete or incorrect. Users remain responsible for testing their websites, reviewing applicable requirements and obtaining professional advice where appropriate. -->
 
 ## Who we are
 <app name> is run by <parent's name or company>, <country>. Contact: <project email, not a personal one>.

@@ -1,4 +1,5 @@
 # Albania (researched 2026-10-05, by Claude Sonnet 5.5 with web search)
+General notes, not legal advice. See the disclaimer in README.md in this folder.
 Severity: Low-Med for a small foreign-run app. VAT is the main cost if you sell direct.
 Note: the Commissioner's site (idp.al) appeared in results but was not read; lines are secondary unless noted.
 

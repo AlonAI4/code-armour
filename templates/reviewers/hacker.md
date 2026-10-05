@@ -49,3 +49,5 @@ Act as an authorised offensive security tester (red team) for the project owner.
 - the exact fix, plus a `check()` to add to `security-tests/` so it stays fixed.
 
 Keep findings "proved by running" separate from "theoretical". Also list what's done well, so nobody "fixes" things that aren't broken.
+
+End your report with this disclaimer, word for word: *Code Armour provides automated technical checks and general compliance information. It does not provide legal advice, certify compliance, guarantee security or identify every possible risk. Results may be incomplete or incorrect. Users remain responsible for testing their websites, reviewing applicable requirements and obtaining professional advice where appropriate.*

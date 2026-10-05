@@ -1,4 +1,5 @@
 # EU national rules 2: Ireland, Sweden, Denmark, Finland, Belgium, Austria, Portugal, Czechia, Romania, Greece, Hungary (researched 2026-10-05, by Claude Opus 5.5 with web search)
+General notes, not legal advice. See the disclaimer in README.md in this folder.
 What each country ADDS on top of EU-wide law. GDPR, ePrivacy cookie consent, DSA, AI Act, EU VAT/OSS, the 14-day withdrawal right, the EAA, CRA and PLD are in references/legal.md; Germany, France, Italy, Spain, Netherlands and Poland are in eu-national-rules.md. Neither is repeated here. VAT: all eleven use EU OSS, so there are no national VAT thresholds for a foreign digital seller to track; a Merchant of Record removes the problem.
 
 Severity for a small foreign-run app with a few users: Belgium Med-High (only if your game has paid loot boxes), Ireland Low-Med (High if you are a video-sharing platform), Austria Med (Impressum even for private sites), Czechia Med (cookie fines), Romania/Hungary/Greece Low-Med, Sweden/Denmark/Finland/Portugal Low.

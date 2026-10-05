@@ -1,4 +1,5 @@
 # Lebanon (researched 2026-10-05, by Claude Sonnet 5.5 with web search)
+General notes, not legal advice. See the disclaimer in README.md in this folder.
 Severity: Low for a small foreign-run app (weak enforcement, narrow reach). Payments and banking are the real practical problem.
 Note: no regulator site fetched. [V-sec] = secondary page seen today; [K] = memory.
 

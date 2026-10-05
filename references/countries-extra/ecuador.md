@@ -1,4 +1,5 @@
 # Ecuador (researched 2026-10-05, by Claude Opus 5.5 with web search)
+General notes, not legal advice. See the disclaimer in README.md in this folder.
 Severity: Low-Med for a small foreign-run app. VAT is mostly withheld by card issuers if you don't register.
 Note: SRI and Superintendencia sites not fetched. Marks: [V-reg] regulator/official text, [V-sec] law firm/news/tax vendor, [K] memory.
 

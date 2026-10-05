@@ -1,4 +1,5 @@
 # Nepal (researched 2026-10-05, by Claude Opus 5.5 with web search)
+General notes, not legal advice. See the disclaimer in README.md in this folder.
 Severity: Low for a small foreign-run app. Main real-world risk: the government blocking unregistered platforms (it did in Sep 2025).
 Marks: [V-reg] regulator/official text, [V-sec] law firm/news/tax vendor, [K] memory.
 

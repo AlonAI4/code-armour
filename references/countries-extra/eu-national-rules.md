@@ -1,4 +1,5 @@
 # EU national rules: Germany, France, Italy, Spain, Netherlands, Poland (researched 2026-10-05, by Claude Opus 5.5 with web search)
+General notes, not legal advice. See the disclaimer in README.md in this folder.
 What each country ADDS on top of EU-wide law. GDPR, ePrivacy cookie consent, DSA, AI Act, EU VAT/OSS, the 14-day withdrawal right and the EAA are in references/legal.md and are not repeated here. VAT: all six use EU OSS; a non-EU seller owes VAT from the first sale and an EU seller after EUR 10k cross-border, so there are no national VAT thresholds for a foreign digital seller to track. A Merchant of Record removes that problem.
 
 Severity for a small foreign-run app with a few users: Germany High (private warning letters), France Med (CNIL fines small sites), Spain Med (AEPD fines often), Italy Med (Garante active on AI), Netherlands Low-Med, Poland Low-Med.

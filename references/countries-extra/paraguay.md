@@ -1,4 +1,5 @@
 # Paraguay (researched 2026-10-05, by Claude Sonnet 5.5 with web search)
+General notes, not legal advice. See the disclaimer in README.md in this folder.
 Severity: Low for a small foreign-run app with a few users here. The new privacy law is not in force yet.
 Note: only search snippets read; dnit.gov.py and the new data agency were not opened. [V-sec] = law-firm/news text, [K] = memory.
 

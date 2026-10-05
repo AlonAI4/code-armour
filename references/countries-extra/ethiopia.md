@@ -1,4 +1,5 @@
 # Ethiopia (researched 2026-10-05, by Claude Opus 5.5 with web search)
+General notes, not legal advice. See the disclaimer in README.md in this folder.
 Severity: Low for a small foreign-run app (enforcement capacity is limited), but the privacy law is strict on paper.
 Marks: [V-reg] regulator/official text, [V-sec] law firm/news/tax vendor, [K] memory.
 

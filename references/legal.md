@@ -1,6 +1,7 @@
 # Legal: ways a vibe coder gets sued, fined or blocked (UK/EU/US focus)
 
-Researched 2026-10-04. NOT legal advice. Laws differ by country and change often: every rule must be filtered by
+Researched 2026-10-04. Code Armour provides automated technical checks and general compliance information. It does not provide legal advice, certify compliance, guarantee security or identify every possible risk. Results may be incomplete or incorrect. Users remain responsible for testing their websites, reviewing applicable requirements and obtaining professional advice where appropriate.
+Laws differ by country and change often: every rule must be filtered by
 where the builder lives, where users are, and what the project does. Key: S site, G game, A AI app, St store.
 Severity = how likely enforcement or a lawsuit is for a small indie project, NOT whether the law applies. A "Low" law still applies. Re-verify anything marked unverified.
 
@@ -163,4 +164,4 @@ Stripe dispute threshold; California ARL details; Netherlands loot-box status; A
 - Working "delete my account" that removes EVERYTHING (auth user, profile, scores, uploads in storage); required by GDPR right to erasure and by Apple/Google for apps with accounts. Test it, then check the rows are really gone. (all, High)
 - No trackers or ads (especially with kids); self-host fonts (see Germany/Google Fonts). (all, Med)
 - Legal pages set: Terms, Privacy, and an accessibility statement (what level you aim for, known gaps, how to report a problem). The statement is good practice and lowers ADA lawsuit risk for US stores; the EAA usually does not apply to microenterprises. (all, Med)
-- Always state: this is a checklist, not legal advice; laws differ by country and change.
+- Always show the standard disclaimer (SKILL.md Ground rule 1).

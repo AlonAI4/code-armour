@@ -1,4 +1,5 @@
 # Cote d'Ivoire (researched 2026-10-05, by Claude Sonnet 5.5 with web search)
+General notes, not legal advice. See the disclaimer in README.md in this folder.
 Severity: Med for a small foreign-run app: foreign digital VAT with no threshold; ARTCI wants prior declarations.
 Note: no regulator site fetched (artci.ci, dgi.gouv.ci not read). [V-sec] = secondary page seen today; [K] = memory.
 

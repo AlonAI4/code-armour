@@ -1,4 +1,5 @@
 # Moldova (researched 2026-10-05, by Claude Sonnet 5.5 with web search)
+General notes, not legal advice. See the disclaimer in README.md in this folder.
 Severity: Low-Med for a small foreign-run app. New privacy law only started applying on 23 Aug 2026, so enforcement practice is untested.
 Note: no regulator site (datepersonale.md, fisc.md) was read; lines are secondary or memory.
 

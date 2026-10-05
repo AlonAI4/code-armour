@@ -1,4 +1,5 @@
 # Algeria (researched 2026-10-05, by Claude Sonnet 5.5 with web search)
+General notes, not legal advice. See the disclaimer in README.md in this folder.
 Severity: Med for a small foreign-run app: foreign-digital VAT is on paper at 19% with a fiscal representative, but status is contested.
 Note: no regulator site fetched (anpdp.dz, mfdgi.gov.dz not read). [V-sec] = secondary page seen today; [K] = memory.
 

@@ -14,3 +14,5 @@ Report (max ~1000 words), each item High/Med/Low:
 5. **Exact fixes:** replacement text or the step to take, for the top items.
 
 Say when you're unsure. Mark [V] (checked in a source today, with URL) or [K] (from memory).
+
+End your report with this disclaimer, word for word: *Code Armour provides automated technical checks and general compliance information. It does not provide legal advice, certify compliance, guarantee security or identify every possible risk. Results may be incomplete or incorrect. Users remain responsible for testing their websites, reviewing applicable requirements and obtaining professional advice where appropriate.*

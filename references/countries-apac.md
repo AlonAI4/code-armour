@@ -1,6 +1,6 @@
 # Countries: Asia-Pacific (as of Oct 2026)
 
-[V] = confirmed in a source; [K] = background knowledge, re-verify. Not legal advice.
+[V] = confirmed in a source; [K] = background knowledge, re-verify. Code Armour provides automated technical checks and general compliance information. It does not provide legal advice, certify compliance, guarantee security or identify every possible risk. Results may be incomplete or incorrect. Users remain responsible for testing their websites, reviewing applicable requirements and obtaining professional advice where appropriate.
 Cheapest tax fix everywhere: sell through a Merchant of Record (Paddle, Lemon Squeezy, app stores). Stripe Tax only calculates; you still register and file.
 
 ## India (Med; High with kids or digital sales)

@@ -11,7 +11,7 @@ All paths below are relative to this skill's folder. Commands: `/armour` (run ev
 
 ## Ground rules (never break these)
 
-1. **Say it up front:** "I'm an AI using a checklist. This is not legal advice, not a compliance certificate, and there's no lawyer-client relationship. Laws differ by country and change often. If you're under 18, a parent must read any legal page before it goes live. For anything serious, ask a lawyer."
+1. **Say it up front.** Show this disclaimer before you start: *Code Armour provides automated technical checks and general compliance information. It does not provide legal advice, certify compliance, guarantee security or identify every possible risk. Results may be incomplete or incorrect. Users remain responsible for testing their websites, reviewing applicable requirements and obtaining professional advice where appropriate.* Also say: there's no lawyer–client relationship, laws differ by country and change often, and if you're under 18 a parent must read any legal page before it goes live.
 2. **Rules may not apply.** Every rule depends on where the builder lives, where users are, and what the project does. Mark each one as applies / doesn't apply (with the reason) / not sure.
 3. **No tick without proof.** Mark an item ✅ only after you've checked the real code, config or live site, or tried the attack and watched it fail. Write the evidence next to the tick. **Legal rows (policies, tax, age, licences, assessments) can never be ✅ from code alone:** mark them 📝 drafted, 👤 reviewed by an adult, or ❓ not reviewed.
 4. **Never make things less safe to make an error go away.** Don't turn off RLS (Row Level Security: the database rules for who can see each row), don't add `using (true)`, don't delete a signature check, don't silence a secret scanner, don't add `SECURITY DEFINER` to dodge a permission error. Fix the real cause.
@@ -19,6 +19,7 @@ All paths below are relative to this skill's folder. Commands: `/armour` (run ev
 6. **Leaked secret = rotate it.** Deleting it from the code isn't enough once it's been pushed or deployed; make a new key and revoke the old one.
 7. **Items marked "unverified" in the references** go in the checklist as ❓ "check this", never stated as fact.
 8. **Builder under 18?** Live Stripe, Apple/Google developer and most AI API accounts must be owned by a parent or guardian. Raise this kindly but clearly. The parent (or their company) should also be the named data controller (the person legally responsible for the data) and the privacy-policy contact, using a project email. Never publish a minor's full name, home address or phone number (watch out for Impressum/Japan seller-address rules: use a Merchant of Record instead). Merchants of Record (Paddle, Lemon Squeezy) also need an adult account holder.
+9. **Legal guidance always comes with the disclaimer.** Whenever you show legal, privacy, tax, kids', AI-law or country guidance (the Step 2 rule list, legal rows in COMPLIANCE.md, a drafted privacy policy or terms, country research), show it right there, not only at the end: *Code Armour provides automated technical checks and general compliance information. It does not provide legal advice, certify compliance, guarantee security or identify every possible risk. Results may be incomplete or incorrect. Users remain responsible for testing their websites, reviewing applicable requirements and obtaining professional advice where appropriate.*
 
 ## Step 1: Find out what you're dealing with
 
@@ -182,7 +183,7 @@ Not Supabase? Same idea in the project's own test tool: Firebase rules with the 
 
 ## Step 6: Write COMPLIANCE.md
 
-Copy `templates/COMPLIANCE.md` into the project root and fill it in. Keep the disclaimer line at the top exactly as it is. **Delete whole sections that don't apply** (e.g. no database: replace the data-access and payments tables with one ➖ line saying why) instead of filling them with ➖ rows. Add rows for what this project really has (extension, MCP server, CLI):
+Copy `templates/COMPLIANCE.md` into the project root and fill it in. Keep the disclaimer block at the top exactly as it is. **Delete whole sections that don't apply** (e.g. no database: replace the data-access and payments tables with one ➖ line saying why) instead of filling them with ➖ rows. Add rows for what this project really has (extension, MCP server, CLI):
 
 - ✅ done (with evidence);
 - ❌ not done (with how to fix);
@@ -199,7 +200,7 @@ End with a short, honest summary:
 2. What you fixed and proved.
 3. What the user must do themselves (accounts, dashboards, parent sign-ups, a lawyer for anything serious).
 
-Don't call the project "secure", "legal" or "compliant", and never give a "% secure" score. Say what was checked, which areas weren't (from the coverage ledger), and that one run finds only part of the problems. End every report with the one-line disclaimer: *Code Armour is an AI-run checklist that lowers risk. It isn't legal advice or a professional security audit, guarantees nothing, and its authors aren't responsible if you get hacked, sued or fined.* Severity labels mean how likely enforcement is for a small project, not whether the law applies. Say what was checked and what wasn't.
+Don't call the project "secure", "legal" or "compliant", and never give a "% secure" score. Say what was checked, which areas weren't (from the coverage ledger), and that one run finds only part of the problems. End every report with this disclaimer, word for word: *Code Armour provides automated technical checks and general compliance information. It does not provide legal advice, certify compliance, guarantee security or identify every possible risk. Results may be incomplete or incorrect. Users remain responsible for testing their websites, reviewing applicable requirements and obtaining professional advice where appropriate.* Severity labels mean how likely enforcement is for a small project, not whether the law applies. Say what was checked and what wasn't.
 
 ## Re-testing (later runs)
 

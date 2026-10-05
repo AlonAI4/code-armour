@@ -1,4 +1,5 @@
 # Bolivia (researched 2026-10-05, by Claude Sonnet 5.5 with web search)
+General notes, not legal advice. See the disclaimer in README.md in this folder.
 Severity: Low for a small foreign-run app with a few users here.
 Note: only search snippets read; no Bolivian official site opened. [V-sec] = news/aggregator text, [K] = memory.
 

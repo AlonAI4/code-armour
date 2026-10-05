@@ -1,4 +1,5 @@
 # EU national rules 3: Estonia, Latvia, Lithuania, Slovakia, Slovenia, Croatia, Bulgaria, Cyprus, Malta, Luxembourg (researched 2026-10-05, by Claude Sonnet 5.5 with web search)
+General notes, not legal advice. See the disclaimer in README.md in this folder.
 What each country ADDS on top of EU-wide law. GDPR, ePrivacy cookie consent, DSA, AI Act, EU VAT/OSS, the 14-day withdrawal right, the EAA, CRA and PLD are in references/legal.md; other countries are in eu-national-rules.md and eu-national-rules-2.md. Not repeated here. VAT: all ten use EU OSS, so no national VAT threshold to track; a Merchant of Record removes the problem.
 
 Severity for a small foreign-run app with a few users: Malta Med (only if you offer real-money or gambling-like features), Croatia/Luxembourg/Lithuania Low-Med (DPA fines exist, but not aimed at tiny foreign apps), the rest Low.

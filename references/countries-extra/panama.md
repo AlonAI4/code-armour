@@ -1,4 +1,5 @@
 # Panama (researched 2026-10-05, by Claude Sonnet 5.5 with web search)
+General notes, not legal advice. See the disclaimer in README.md in this folder.
 Severity: Low-Med for a small foreign-run app with a few users here. The digital ITBMS bill could change that.
 Note: one news page opened (La Estrella); everything else is search snippets. antai.gob.pa and dgi.mef.gob.pa not opened. [V-sec] = news/law-firm text, [K] = memory.
 

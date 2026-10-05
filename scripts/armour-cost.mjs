@@ -13,6 +13,7 @@ const HOME = resolve(arg("--home") || homedir());
 const CLAUDE = process.env.CLAUDE_CONFIG_DIR && !arg("--home") ? resolve(process.env.CLAUDE_CONFIG_DIR) : join(HOME, ".claude");
 const PROJECT = resolve(arg("--project") || process.cwd());
 const JSON_OUT = process.argv.includes("--json");
+const DISCLAIMER = "Code Armour provides automated technical checks and general compliance information. It does not provide legal advice, certify compliance, guarantee security or identify every possible risk. Results may be incomplete or incorrect. Users remain responsible for testing their websites, reviewing applicable requirements and obtaining professional advice where appropriate.";
 const tok = (s) => Math.ceil(String(s || "").length / 4);
 const read = (p) => { try { return readFileSync(p, "utf8"); } catch { return null; } };
 const readJson = (p) => { const t = read(p); if (t == null) return null; try { return JSON.parse(t); } catch { return null; } };
@@ -217,7 +218,7 @@ const total = perMsg.reduce((s, x) => s + x.tokens, 0);
 const saving = perMsg.reduce((s, x) => s + (x.saving || 0), 0);
 if (JSON_OUT) {
   console.log(JSON.stringify({ estimate: "characters / 4", total, after: total - saving, saving, items: perMsg, unknown, freeSkills, secretWarnings,
-    biggestFiles: big.slice(0, 10).map((b) => ({ file: relative(PROJECT, b.p), tokensIfRead: Math.ceil(b.size / 4) })) }, null, 1));
+    biggestFiles: big.slice(0, 10).map((b) => ({ file: relative(PROJECT, b.p), tokensIfRead: Math.ceil(b.size / 4) })), disclaimer: DISCLAIMER }, null, 1));
   process.exit(0);
 }
 const fmt = (n) => "~" + n.toLocaleString("en-GB");
@@ -239,4 +240,4 @@ if (secretWarnings.length) {
   for (const w of secretWarnings) console.log("  - " + w);
 }
 console.log(`\nNothing was changed. Ask before turning anything off.`);
-console.log(`\nCode Armour is an AI-run checklist that lowers risk. It isn't legal advice or a professional security audit, guarantees nothing, and its authors aren't responsible if you get hacked, sued or fined.`);
+console.log(`\n${DISCLAIMER}`);

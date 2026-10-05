@@ -19,4 +19,4 @@ Run the **code-armour** skill on this project from start to finish. Its SKILL.md
 
 Extra details from the user (may be empty): $ARGUMENTS
 
-**End every report with this one line:** *Code Armour is an AI-run checklist that lowers risk. It isn't legal advice or a professional security audit, guarantees nothing, and its authors aren't responsible if you get hacked, sued or fined.*
+**End every report with this disclaimer, word for word:** *Code Armour provides automated technical checks and general compliance information. It does not provide legal advice, certify compliance, guarantee security or identify every possible risk. Results may be incomplete or incorrect. Users remain responsible for testing their websites, reviewing applicable requirements and obtaining professional advice where appropriate.*

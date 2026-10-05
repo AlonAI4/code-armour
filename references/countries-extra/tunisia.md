@@ -1,4 +1,5 @@
 # Tunisia (researched 2026-10-05, by Claude Sonnet 5.5 with web search)
+General notes, not legal advice. See the disclaimer in README.md in this folder.
 Severity: Low-Med for a small foreign-run app. Content law (Decree 54) is a real risk for chat; VAT is collected via payer withholding.
 Note: no regulator site fetched (inpdp.nat.tn not read). [V-sec] = secondary page seen today; [K] = memory.
 

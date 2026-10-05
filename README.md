@@ -8,7 +8,7 @@
 
 Made for vibe coders: solo builders, beginners and teenagers who build with AI and ship fast.
 
-> ⚠️ **Code Armour is an AI-run checklist that lowers risk. It isn't legal advice or a professional security audit, guarantees nothing, and its authors aren't responsible if you get hacked, sued or fined.** Read the [full disclaimer](#disclaimer-and-limitation-of-liability) before using it.
+> ⚠️ **Code Armour provides automated technical checks and general compliance information. It does not provide legal advice, certify compliance, guarantee security or identify every possible risk. Results may be incomplete or incorrect. Users remain responsible for testing their websites, reviewing applicable requirements and obtaining professional advice where appropriate.** The full [disclaimer and limitation of liability](#disclaimer-and-limitation-of-liability) below applies, as far as the law allows.
 
 ---
 
@@ -189,6 +189,8 @@ Pull requests are welcome, especially:
 - corrections with a source link.
 
 ## Disclaimer and limitation of liability
+
+In short: Code Armour provides automated technical checks and general compliance information. It does not provide legal advice, certify compliance, guarantee security or identify every possible risk. Results may be incomplete or incorrect. Users remain responsible for testing their websites, reviewing applicable requirements and obtaining professional advice where appropriate.
 
 By using Code Armour you agree to the following. It applies on top of the [MIT licence](LICENSE), which also says the software comes "as is", without warranty.
 

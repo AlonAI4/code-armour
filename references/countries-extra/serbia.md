@@ -1,4 +1,5 @@
 # Serbia (researched 2026-10-05, by Claude Sonnet 5.5 with web search)
+General notes, not legal advice. See the disclaimer in README.md in this folder.
 Severity: Low-Med for a small foreign-run app. VAT is the real cost if you sell directly to Serbian consumers.
 Note: poverenik.rs fetched but only navigation text came back, so no regulator confirmation. [V-sec] = secondary source (law firm / tax guide), [K] = memory.
 

@@ -1,4 +1,5 @@
 # Norway (researched 2026-10-05, by Claude Opus 5.5 with web search)
+General notes, not legal advice. See the disclaimer in README.md in this folder.
 Severity: Med for a small foreign-run app with a few users here. Norway is in the EEA, so GDPR applies in full (see references/legal.md). Its regulators (Datatilsynet, Forbrukertilsynet, Forbrukerrådet) are active, especially on tracking, kids and game monetisation. EU laws (DSA, AI Act) arrive later here than in the EU.
 
 ## Privacy

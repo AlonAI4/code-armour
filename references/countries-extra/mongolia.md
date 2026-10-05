@@ -1,4 +1,5 @@
 # Mongolia (researched 2026-10-05, by Claude Sonnet 5.5 with web search)
+General notes, not legal advice. See the disclaimer in README.md in this folder.
 Severity: Low for a small foreign-run app with a few users here.
 Note: only search snippets were read; mta.gov.mn, legalinfo.mn and the data regulator were not opened. [V-sec] = law-firm/news/aggregator text, [K] = memory. Sources conflict on the privacy law (see Unverified).
 

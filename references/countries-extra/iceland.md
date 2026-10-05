@@ -1,4 +1,5 @@
 # Iceland (researched 2026-10-05, by Claude Sonnet 5.5 with web search)
+General notes, not legal advice. See the disclaimer in README.md in this folder.
 Severity: Low for a small foreign-run app. Iceland is in the EEA, so GDPR applies as in the EU. This file only lists what Iceland adds.
 Note: no regulator site (personuvernd.is, rsk.is) read; island.is and law-firm pages seen only as snippets.
 

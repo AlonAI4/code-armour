@@ -1,4 +1,5 @@
 # Senegal (researched 2026-10-05, by Claude Sonnet 5.5 with web search)
+General notes, not legal advice. See the disclaimer in README.md in this folder.
 Severity: Med for a small foreign-run app: foreign digital VAT with no threshold since Jul 2024.
 Note: no regulator site fetched (cdp.sn, dgid.sn not read). [V-sec] = secondary page seen today; [K] = memory.
 

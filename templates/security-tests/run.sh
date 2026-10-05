@@ -18,5 +18,5 @@ done
 if [ -f .code-armour/findings.json ] && [ -f security-tests/validate-findings.mjs ]; then
   echo; echo "== 3. Findings and coverage ledger =="; node security-tests/validate-findings.mjs . || status=1
 fi
-echo; [ $status = 0 ] && echo "RE-TEST PASSED: every saved check still holds." || echo "RE-TEST FAILED: read the ✗ lines above. A fix may have been undone."
+echo; [ $status = 0 ] && echo "RE-TEST PASSED: every saved check still passes (they only cover what they test)." || echo "RE-TEST FAILED: read the ✗ lines above. A fix may have been undone."
 exit $status

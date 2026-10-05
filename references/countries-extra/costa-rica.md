@@ -1,4 +1,5 @@
 # Costa Rica (researched 2026-10-05, by Claude Sonnet 5.5 with web search)
+General notes, not legal advice. See the disclaimer in README.md in this folder.
 Severity: Med for a small foreign-run app with a few users here (digital IVA with no threshold; under-14 social-media bill moving).
 Note: only search snippets read; prodhab.go.cr and hacienda.go.cr were not opened. [V-sec] = law-firm/news text, [K] = memory.
 

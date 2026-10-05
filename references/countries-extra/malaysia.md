@@ -1,4 +1,5 @@
 # Malaysia (researched 2026-10-05, by Claude Opus 5.5 with web search)
+General notes, not legal advice. See the disclaimer in README.md in this folder.
 Severity: Low-Med for a small foreign-run app with a few users here. Most new laws hit Malaysian-established firms or platforms with 8M+ Malaysian users.
 Note: pdp.gov.my loaded but had no amendment detail; no other regulator page was read. Marks: [V-reg] regulator/law text today, [V-sec] law firm/news today, [K] memory.
 

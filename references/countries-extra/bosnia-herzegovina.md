@@ -1,4 +1,5 @@
 # Bosnia and Herzegovina (researched 2026-10-05, by Claude Sonnet 5.5 with web search)
+General notes, not legal advice. See the disclaimer in README.md in this folder.
 Severity: Low for a small foreign-run app. Med if you sell direct (VAT + fiscal representative).
 Note: no regulator or tax-authority site read; all lines below are secondary sources or memory.
 

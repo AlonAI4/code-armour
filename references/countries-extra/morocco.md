@@ -1,4 +1,5 @@
 # Morocco (researched 2026-10-05, by Claude Opus 5.5 with web search)
+General notes, not legal advice. See the disclaimer in README.md in this folder.
 Severity: Low for a small foreign-run app with a few users here. Law 09-08 mainly reaches controllers established in Morocco or using means there; VAT on foreign digital services is now enforced.
 Note: no regulator site was read (cndp.ma, tax.gov.ma not fetched). Marks: [V-reg] regulator/law text today, [V-sec] law firm/news today, [K] memory.
 

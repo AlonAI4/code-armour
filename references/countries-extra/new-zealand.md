@@ -1,4 +1,5 @@
 # New Zealand (researched 2026-10-05, by Claude Opus 5.5 with web search)
+General notes, not legal advice. See the disclaimer in README.md in this folder.
 Severity: Med for a small foreign-run app with a few users here. The Privacy Act reaches overseas businesses; regulator is active but mostly guides small players.
 Note: ird.govt.nz page returned 404 (moved). Marks: [V-reg] regulator/law text today, [V-sec] law firm/news today, [K] memory.
 

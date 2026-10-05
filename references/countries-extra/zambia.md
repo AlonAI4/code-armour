@@ -1,4 +1,5 @@
 # Zambia (researched 2026-10-05, by Claude Sonnet 5.5 with web search)
+General notes, not legal advice. See the disclaimer in README.md in this folder.
 Severity: Med for a small foreign-run app: controller registration is mandatory and fines are real; foreign VAT above a threshold.
 Note: no regulator site fetched (zra.org.zm failed with a certificate error; ODPC not read). [V-sec] = secondary page seen today; [K] = memory.
 

@@ -1,4 +1,5 @@
 # Bahrain (researched 2026-10-05, by Claude Sonnet 5.5 with web search)
+General notes, not legal advice. See the disclaimer in README.md in this folder.
 Severity: Med for a small foreign-run app: PDPL has foreign reach and VAT has no threshold for non-residents.
 Note: no regulator site fetched (pdp.gov.bh, nbr.gov.bh not read). [V-sec] = secondary page seen today; [K] = memory.
 

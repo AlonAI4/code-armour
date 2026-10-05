@@ -1,4 +1,5 @@
 # Tanzania (researched 2026-10-05, by Claude Opus 5.5 with web search)
+General notes, not legal advice. See the disclaimer in README.md in this folder.
 Severity: Med if you host user content (strict online-content rules); Low for a plain site or game.
 Note: tcra.go.tz PDF found but not read. Marks: [V-reg] regulator/official text, [V-sec] law firm/news/tax vendor, [K] memory.
 

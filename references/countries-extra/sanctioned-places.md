@@ -1,4 +1,5 @@
 # Users in sanctioned places (researched 2026-10-05, by Claude Opus 5.5 with web search)
+General notes, not legal advice. See the disclaimer in README.md in this folder.
 For a small dev based in the UK/EU/US, or anywhere using Stripe, GitHub, Cloudflare or US clouds.
 Severity: HIGH for paid sales to comprehensively sanctioned places (strict liability in the US; your payment provider will close your account). Low for a free, public website.
 Marks: [V-reg] regulator/official text, [V-sec] law firm/news/company docs, [K] memory. Not legal advice.

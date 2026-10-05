@@ -1,4 +1,5 @@
 # Rwanda (researched 2026-10-05, by Claude Opus 5.5 with web search)
+General notes, not legal advice. See the disclaimer in README.md in this folder.
 Severity: Med on paper (registration + data stored in Rwanda unless authorised), Low in practice for a tiny foreign app.
 Marks: [V-reg] regulator/official text, [V-sec] law firm/news/tax vendor, [K] memory.
 

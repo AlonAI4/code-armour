@@ -1,4 +1,5 @@
 # Thailand (researched 2026-10-04, by Claude Sonnet 5.5 with web search)
+General notes, not legal advice. See the disclaimer in README.md in this folder.
 Severity: Med for a small foreign-run app with a few users here. High if it grows (5,000+ Thai users/month, or sales over THB 1.8M/yr).
 Note: no regulator site could be fetched (pdpc.or.th returned 403). [V] lines below are confirmed from law-firm / news pages (Tilleke & Gibbins, Bangkok Post etc.), not the regulator. Marked [V] = seen in a source today, [K] = memory, unconfirmed.
 

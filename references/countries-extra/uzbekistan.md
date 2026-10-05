@@ -1,4 +1,5 @@
 # Uzbekistan (researched 2026-10-05, by Claude Sonnet 5.5 with web search)
+General notes, not legal advice. See the disclaimer in README.md in this folder.
 Severity: Med for a small foreign-run app. Localisation was the big barrier and was eased in Mar 2026; foreign VAT and AI labelling are new.
 Note: tax.uz, lex.uz and regulator sites were not read; lines are secondary or memory.
 

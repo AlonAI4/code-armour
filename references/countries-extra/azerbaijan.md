@@ -1,4 +1,5 @@
 # Azerbaijan (researched 2026-10-05, by Claude Sonnet 5.5 with web search)
+General notes, not legal advice. See the disclaimer in README.md in this folder.
 Severity: Med for a small foreign-run app: new VAT duty (23 Aug 2026), a coming under-16 social media ban, and a state-run privacy regime.
 Note: taxes.gov.az and regulator sites were not read; lines are secondary or memory.
 

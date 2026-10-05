@@ -1,6 +1,6 @@
 # Countries: Americas, Africa, Middle East, Russia (as of Oct 2026)
 
-[V] = confirmed in a source; [K] = background knowledge, re-verify. Not legal advice.
+[V] = confirmed in a source; [K] = background knowledge, re-verify. Code Armour provides automated technical checks and general compliance information. It does not provide legal advice, certify compliance, guarantee security or identify every possible risk. Results may be incomplete or incorrect. Users remain responsible for testing their websites, reviewing applicable requirements and obtaining professional advice where appropriate.
 A Merchant of Record (Paddle, Lemon Squeezy, app stores) removes most foreign VAT/GST lines below.
 
 ## Canada (Med)
