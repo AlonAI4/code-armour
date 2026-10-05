@@ -15,3 +15,14 @@ Contributions welcome: a pull request to github.com/AlonAI4/code-armour adds a c
 | `morocco.md`, `ghana.md` | Africa |
 
 Most lines are [V-sec] (law firm or news) or [K] (memory): regulator sites often blocked automated reading. Treat them as ❓ until checked.
+
+## Added 2026-10-05 (round 3)
+| File | Countries |
+|---|---|
+| `eu-national-rules-2.md`, `eu-national-rules-3.md` | Ireland, Sweden, Denmark, Finland, Belgium, Austria, Portugal, Czechia, Romania, Greece, Hungary · Estonia, Latvia, Lithuania, Slovakia, Slovenia, Croatia, Bulgaria, Cyprus, Malta, Luxembourg (with `eu-national-rules.md`: all 27 EU members) |
+| `serbia.md` … `iceland.md` | Serbia, Bosnia and Herzegovina, Albania, North Macedonia, Moldova, Georgia, Armenia, Azerbaijan, Uzbekistan, Iceland |
+| `jordan.md` … `angola.md` | Jordan, Lebanon, Kuwait, Oman, Bahrain, Iraq, Algeria, Tunisia, Senegal, Côte d'Ivoire, Cameroon, Zambia, Zimbabwe, Angola |
+| `cambodia.md` … `jamaica.md` | Cambodia, Mongolia, Myanmar, Uruguay, Paraguay, Bolivia, Costa Rica, Panama, Guatemala, Dominican Republic, Jamaica |
+| `peru.md` … `qatar.md`, `sanctioned-places.md` | Peru, Ecuador, Kazakhstan, Sri Lanka, Nepal, Ethiopia, Tanzania, Uganda, Rwanda, Qatar; sanctioned places |
+
+Honest note: the round-3 files are mostly [V-sec] (search snippets, law-firm or news sources) and [K]. No regulator page could be read directly for most of them, so the skill treats them as ❓ "check this".

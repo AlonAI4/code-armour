@@ -115,7 +115,7 @@ Before launch, or when asked about security, privacy or legal readiness, follow 
 **Countries:**
 - In depth: UK, EU, US.
 - Summarised: 24 more (India, China, Brazil, Japan, Korea, Indonesia, Nigeria, Canada, Australia and others).
-- Researched with the skill's own template: 22 more (Thailand, Switzerland, Norway, Ukraine, Malaysia, Taiwan, Hong Kong, New Zealand, Colombia, Chile, Morocco, Ghana, Peru, Ecuador, Kazakhstan, Sri Lanka, Nepal, Ethiopia, Tanzania, Uganda, Rwanda, Qatar), plus what 17 EU countries add on top of EU law, and a guide to sanctioned places.
+- Researched with the skill's own template: 57 more countries across Europe, Asia, Africa, the Middle East and the Americas, what **all 27 EU members** add on top of EU law, and a guide to sanctioned places. See `references/countries-extra/README.md`.
 - Any other country: the skill researches it with a fixed template and saves it for next time.
 - **Upcoming laws:** a watchlist of laws with future dates, compared with today on every run.
 
@@ -154,7 +154,7 @@ These are AI and automated reviews, **not** a human lawyer or a professional pen
 |---|---|
 | `SKILL.md` | The step-by-step instructions the agent follows |
 | `commands/` | `/armour`, `/armourcheck`, `/armourtest` |
-| `references/` | Security (~120 risks incl. GitHub Actions, AI agents, extensions, MCP), legal (UK/EU/US incl. lawsuit-heavy US laws, app-store rules, EU 2026 product laws), 59 countries + 17 EU national rule sets + sanctions, stacks, upcoming-laws watchlist (~60 dated items) |
+| `references/` | Security (~120 risks incl. GitHub Actions, AI agents, extensions, MCP), legal (UK/EU/US incl. lawsuit-heavy US laws, app-store rules, EU 2026 product laws), 83 countries + all 27 EU members' own rules + sanctions, stacks, upcoming-laws watchlist (~60 dated items) |
 | `recipes/` | Ready-to-adapt fixes: Supabase SQL and Edge Functions, Firebase rules, headers for Netlify, Vercel and Cloudflare, Stripe/Lemon Squeezy/Paddle webhooks, Express, Next.js |
 | `scripts/scan.sh` | The scanner: secrets, git history, risky code, GitHub Actions, legal red flags in code, packages, power tools, live-site checks, and whether the project's own armour is set up |
 | `scripts/supabase-probe.mjs` | Read-only Supabase front-door probe |

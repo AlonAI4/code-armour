@@ -47,8 +47,8 @@ Load only the reference files you need:
 | "Worldwide" users | Both country files, but only their "Cross-cutting" sections plus any country the user names |
 | Always | `references/upcoming.md`: compare each date with today (see "Staying up to date") |
 | Users anywhere sanctioned (Iran, North Korea, Cuba, occupied regions, Russia/Belarus limits; Syria changed in 2025–26) | `references/countries-extra/sanctioned-places.md` |
-| Users in EU countries | Also `references/countries-extra/eu-national-rules.md` and `eu-national-rules-2.md` (Germany, France, Italy, Spain, Netherlands, Poland add their own rules) |
-| Users in Switzerland, Norway, Ukraine, Malaysia, Taiwan, Hong Kong, Thailand, New Zealand, Colombia, Chile, Morocco, Ghana, Peru, Ecuador, Kazakhstan, Sri Lanka, Nepal, Ethiopia, Tanzania, Uganda, Rwanda, Qatar | `references/countries-extra/<country>.md` |
+| Users in EU countries | Also `references/countries-extra/eu-national-rules*.md` (all 27 EU members' own rules) (Germany, France, Italy, Spain, Netherlands, Poland add their own rules) |
+| Users in any other country | `references/countries-extra/<country>.md` if it exists (about 60 countries; list in its README) |
 | A country not in the files | Check `references/countries-extra/` first. Not there? Research it with `templates/country-research.md` (needs web search), save it to `references/countries-extra/<country>.md`, and mark its rows ❓. No web search? Say so plainly and apply the general rules (privacy notice, consent, delete-my-data, breach plan, kids' consent, tax via a Merchant of Record), all ❓ |
 
 **Read in tiers to save effort:** start with the "10-minute pre-launch check" at the end of `security.md`, the Top 5 in `legal.md`, and the "Cross-cutting" sections of the country files. Only open a detailed section when the project has that feature (payments, user posts, AI, kids...).

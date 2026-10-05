@@ -57,3 +57,8 @@ Marks: [V-reg] regulator/official text, [V-sec] law firm/news/company docs, [K] 
 - https://docs.github.com/en/site-policy/other-site-policies/github-and-trade-controls
 - https://www.newarab.com/news/apple-products-app-store-return-syria-amid-sanctions-lift ; https://developer.apple.com/forums/thread/791726
 - https://www.revera.legal/?p=8162 ; https://blog.cloudflare.com/the-challenges-of-sanctioning-the-internet
+
+## Myanmar (added 2026-10-05)
+- [K] Not a full embargo: US (OFAC Burma program), UK and EU sanctions are **list-based** (named people, military-owned companies, some state firms), plus some sector bans (e.g. jet fuel). Serving ordinary users is generally allowed; dealing with listed parties isn't.
+- Payments are hard: many card networks and payment providers don't serve Myanmar. Check Stripe/Paddle/app-store availability before selling.
+- See `myanmar.md` for local rules. Re-check the lists before any business deal there.
