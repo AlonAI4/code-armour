@@ -152,7 +152,7 @@ f=$(lg "(from|require\()\s*\(?['\"](face-api(\.js)?|@vladmandic/(human|face-api)
 f=$(lg "from ['\"](ethers|web3|@solana/web3\.js|wagmi|viem)['\"]|require\(['\"](ethers|web3)['\"]\)"); [ -n "$f" ] && warn "Crypto wallet code ($f): MiCA (EU), securities law (US), app-store rules. Teen dev: no tokens, no holding user funds (legal 14)"
 f=$(lgi '(you are|act as|be) (my |their |a |the user.s )?(girlfriend|boyfriend|companion|best friend|lover)'); [ -n "$f" ] && warn "AI companion persona ($f): California SB 243 and New York rules: 'not a human' notices, crisis protocol, minors (legal 9 and 14)"
 f=$(lg 'GatewayIntentBits\.MessageContent|Intents\.FLAGS\.MESSAGE_CONTENT|IntentsBitField\.Flags\.MessageContent'); [ -n "$f" ] && warn "Discord bot uses the privileged message-content intent ($f): justify it or use slash commands (legal 14)"
-for m in $(find . -name manifest.json -not -path '*/node_modules/*' 2>/dev/null | xargs grep -l '"manifest_version"' 2>/dev/null | head -3); do
+for m in $(find . -name manifest.json -not -path '*/node_modules/*' 2>/dev/null | while read -r f; do grep -q '"manifest_version"' "$f" && echo "$f"; done | head -3); do
   grep -qE '"manifest_version" *: *2' "$m" && bad "$m is Manifest V2: Chrome removed MV2 extensions (legal 14)"
   grep -qE '<all_urls>|"\*://\*/\*"|"https?://\*/\*"' "$m" && warn "$m asks for all websites: Chrome Web Store wants the narrowest permissions (14.3, legal 14)"
   grep -qE '"externally_connectable"[^}]*"\*"' "$m" && warn "$m lets any site message the extension (15.29)"
@@ -167,14 +167,15 @@ fi
 echo; echo "-- 6f. Third-sweep checks (security.md 16, legal.md 15) --"
 dev=$( { grep -nE '"(start|serve|prod)"\s*:\s*"[^"]*(vite( |$|")|next dev|react-scripts start|--host)' package.json 2>/dev/null; grep -nE "host:\s*(true|['\"]0\.0\.0\.0)" vite.config.* 2>/dev/null; } | head -3)
 [ -n "$dev" ] && { bad "Dev server used as the start command or open to the network (16.1: Vite/Next dev servers leak files):"; echo "$dev" | cut -c1-140; }
-rtc=$(grep -rlE "${EXCL[@]}" --exclude-dir=dist --exclude-dir=build "${SRC_INC[@]}" "new RTCPeerConnection" . 2>/dev/null | xargs grep -L "iceTransportPolicy" 2>/dev/null | head -3 | tr '\n' ' ')
+# (loops, not xargs: GNU xargs runs grep on empty input and reports "(standard input)")
+rtc=$(grep -rlE "${EXCL[@]}" --exclude-dir=dist --exclude-dir=build "${SRC_INC[@]}" "new RTCPeerConnection" . 2>/dev/null | while read -r f; do grep -q "iceTransportPolicy" "$f" || echo "$f"; done | head -3 | tr '\n' ' ')
 [ -n "$rtc" ] && warn "WebRTC without iceTransportPolicy 'relay' ($rtc): peer-to-peer reveals players' home IPs (16.6)"
 csvf=$(lg "text/csv|json2csv|csv-stringify|Papa\.unparse"); [ -n "$csvf" ] && warn "CSV export ($csvf): escape cells starting with = + - @ (formula injection, 16.3)"
 urg=$(lgi "(offer|sale|deal|price) ends (in|at|soon)|only [0-9]+ left in stock|selling fast|limited[- ]time offer"); [ -n "$urg" ] && warn "Urgency wording/timers ($urg): only real deadlines and stock (UK CMA, EU; legal 15)"
 for r in public/robots.txt static/robots.txt robots.txt; do [ -f "$r" ] && grep -qiE "disallow:.*(admin|dashboard|internal|private|backup|staging)" "$r" && warn "$r lists private paths: robots.txt is a map for attackers, not protection (16.2)"; done
 gql=$(grep -rnE "${EXCL[@]}" --exclude-dir=dist --exclude-dir=build "introspection:\s*true" . 2>/dev/null | head -2); [ -n "$gql" ] && bad "GraphQL introspection on (16.4): turn it off in production"
 yt=$(lg "youtube\.com/(embed|iframe_api)"); [ -n "$yt" ] && warn "YouTube embeds ($yt): on kids' pages use youtube-nocookie.com behind click-to-load (legal 15)"
-img=$(grep -rlE "${EXCL[@]}" --exclude-dir=dist --exclude-dir=build "${SRC_INC[@]}" "images\.(generate|edit)\(|replicate\.run\(|fal\.(run|subscribe)\(|api\.stability\.ai|/v1/images/(generations|edits)" . 2>/dev/null | xargs grep -L -iE "moderation|moderations\.create|safety_checker|nsfw" 2>/dev/null | head -3 | tr '\n' ' ')
+img=$(grep -rlE "${EXCL[@]}" --exclude-dir=dist --exclude-dir=build "${SRC_INC[@]}" "images\.(generate|edit)\(|replicate\.run\(|fal\.(run|subscribe)\(|api\.stability\.ai|/v1/images/(generations|edits)" . 2>/dev/null | while read -r f; do grep -qiE "moderation|moderations\.create|safety_checker|nsfw" "$f" || echo "$f"; done | head -3 | tr '\n' ' ')
 [ -n "$img" ] && bad "AI image generation with no moderation ($img): CSAM/deepfake law, API bans (16.5, legal 15)"
 
 echo; echo "-- 6c. Trackers and third parties (privacy laws, kids) --"
