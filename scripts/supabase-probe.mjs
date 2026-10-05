@@ -76,7 +76,7 @@ if (tables) {
     const okStatus = r.status === 200 || r.status === 206; // 206 = "partial content": rows came back
     if (okStatus && Array.isArray(r.body) && r.body.length > 0) {
       const cols = Object.keys(r.body[0]);
-      const sensitive = cols.filter((c) => /email|phone|address|birth|password|token|secret|key|ip|stripe|admin|role|credit|coins|balance/i.test(c));
+      const sensitive = cols.filter((c) => /email|phone|address|birth|password|token|secret|(api|secret|private|access|service)_?key|^ip$|_ip$|ip_addr|stripe|admin|role|credit|coins|balance/i.test(c));
       bad(`ANYONE can read "${t}" (${total && total !== "*" ? total + " rows" : "rows"}; columns: ${cols.slice(0, 10).join(", ")}${cols.length > 10 ? ", …" : ""})` +
         (sensitive.length ? `\n    including sensitive-looking columns: ${sensitive.join(", ")}` : "") +
         `\n    If this is meant to be public, make sure ONLY public columns are readable (security.md 2.5, safe-leaderboard.sql).`);

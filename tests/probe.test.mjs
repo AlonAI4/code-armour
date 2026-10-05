@@ -15,7 +15,8 @@ const server = http.createServer((req, res) => {
   seen.push(`${req.method} ${req.url.split("?")[0]}`);
   const json = (code, body, h = {}) => { res.writeHead(code, { "content-type": "application/json", ...h }); res.end(JSON.stringify(body)); };
   const u = req.url.split("?")[0];
-  if (u === "/rest/v1/") return hidden ? json(401, { message: "hidden" }) : json(200, { paths: { "/": {}, "/profiles": {}, "/scores": {}, "/secrets": {}, "/players": {}, "/rpc/add_coins": {} } });
+  if (u === "/rest/v1/") return hidden ? json(401, { message: "hidden" }) : json(200, { paths: { "/": {}, "/profiles": {}, "/scores": {}, "/secrets": {}, "/players": {}, "/settings": {}, "/rpc/add_coins": {} } });
+  if (u === "/rest/v1/settings") return json(200, [{ key: "shop", description: "x", membership: "y", ip_address: "1.2.3.4" }]);
   if (u === "/rest/v1/players") return json(206, [{ id: 7, name: "Striker" }], { "content-range": "0-0/900" });
   if (u === "/rest/v1/profiles") return json(200, [{ id: 1, email: "kid@school.com", coins: 5 }], { "content-range": "0-0/42" });
   if (u === "/rest/v1/scores") return json(200, []);
@@ -40,6 +41,7 @@ check("exit code 1 when doors are open", code === 1, code);
 const writes = seen.filter((s) => /^(PATCH|PUT|DELETE)/.test(s) || (s.startsWith("POST") && s !== "POST /graphql/v1"));
 check("read-only: never sends a write request", writes.length === 0, writes.join(", "));
 
+check("sensitive columns: a plain 'key' or words containing 'ip' aren't flagged", /"settings"[\s\S]*?sensitive-looking columns: ip_address\n/.test(out), out);
 check("HTTP 206 (partial content) counts as readable, not blocked", /ANYONE can read "players"/.test(out), out);
 
 hidden = true;
