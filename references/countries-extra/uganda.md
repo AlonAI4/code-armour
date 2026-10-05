@@ -22,7 +22,7 @@ Marks: [V-reg] regulator/official text, [V-sec] law firm/news/tax vendor, [K] me
 - [K] No AI law. Facebook has been blocked since 2021; the Computer Misuse Act punishes "hate speech" and misleading info, used against critics.
 - [K] UCC licensing applies to online broadcasters, not small apps.
 
-## What a small foreign dev realistically must do
+## What a small foreign dev should consider
 - If you actively collect data from Ugandan users: consider the cheap PDPO registration.
 - Parent consent for under-18 data; never post info about children without consent.
 - Keep a simple record of where your data goes (Supabase/Vercel region + DPA).

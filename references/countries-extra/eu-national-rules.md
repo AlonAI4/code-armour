@@ -48,7 +48,7 @@ Severity for a small foreign-run app with a few users: Germany High (private war
 - Kids: [V-sec] Government plans a social media ban for under-15s with platforms doing the age checks, aimed for early 2027. Not law. https://www.polskieradio.pl/395/7784/Artykul/3653732,poland-plans-social-media-ban-for-under15s-with-platforms-to-verify-age-minister-says
 - [K] Polish Language Act: consumer-facing offers, terms and info in Poland must be in Polish (other languages allowed alongside). UOKiK (consumer authority) actively targets dark patterns and subscriptions.
 
-## What a small foreign dev realistically must do
+## What a small foreign dev should consider
 - Ask for the birth year and set the consent age per country: DE/NL/PL 16, FR 15, IT/ES 14 (ES likely moving to 16). Simplest: treat under-16s as needing a parent everywhere in the EU.
 - Germany (if you sell): full Impressum, correct withdrawal text, cancel button for subscriptions, consent before ANY tracker.
 - France (if you sell): French text for product descriptions, terms and receipts; cookie banner with an easy "reject".

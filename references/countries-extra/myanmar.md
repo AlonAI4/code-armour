@@ -20,7 +20,7 @@ Note: only search snippets read; no official site opened. [V-sec] = law firm/new
 ## AI, content and platforms
 - [K] No AI law. See Cybersecurity Law above for content duties.
 
-## What a small foreign dev realistically must do
+## What a small foreign dev should consider
 - Free app: serve Myanmar users but collect almost nothing; no real names, phone numbers or location unless needed.
 - Paid: use app stores or a Merchant of Record, not your own Stripe flow; screen out sanctioned names and military-linked buyers.
 - Under 100k Myanmar users, the licence/local-company rule does not apply.

@@ -37,7 +37,7 @@ Note: no regulator site could be fetched (pdpc.or.th returned 403). [V] lines be
 ## Accessibility and other
 - [K] No real accessibility enforcement for small apps in Thailand.
 
-## What a small foreign dev realistically must do
+## What a small foreign dev should consider
 - Treat Thai players like EU/UK ones for privacy: privacy policy in plain language (Thai version is smart), explicit consent for non-essential data, a way to delete/export data, 72h breach plan.
 - Under-10s: get parental consent or block under 10. 10-19: safest is parent consent for payments and chat.
 - Coins: never allow cash-out or real-money trading; this keeps loot boxes outside gambling law (per the March 2026 ruling).

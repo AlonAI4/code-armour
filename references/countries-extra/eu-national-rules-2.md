@@ -80,7 +80,7 @@ Digital-consent ages (GDPR Art. 8) [V-sec] https://childreninthedigitalworld.two
 - Content: [K] The 2021 child protection law restricts showing content that "promotes" LGBTQ topics to under-18s; the EU Commission took Hungary to the CJEU over it. Relevant to content/ad targeting, not most small apps.
 - Selling: [K] Consumer contract info must be in Hungarian; NMHH is the DSA coordinator.
 
-## What a small foreign dev realistically must do
+## What a small foreign dev should consider
 - Ask for birth year and apply the right consent age: 13 BE/DK/FI/PT/SE, 14 AT, 15 CZ/GR, 16 IE/RO/HU. Simplest: treat under-16s as needing a parent EU-wide.
 - Belgium: switch off paid loot boxes for Belgian users (criminal law, and Apple can be liable).
 - Austria: add a short imprint (name + city) even on a free, private site.

@@ -27,7 +27,7 @@ Note: no regulator site was read (cndp.ma, tax.gov.ma not fetched). Marks: [V-re
 - [V-sec] Draft AI law No. 396 (introduced 31 Dec 2024): 4-tier risk system, right to opt out of interacting with AI. Not law. Government "Digital X.0" law and National AI Agency planned under Maroc Digital 2030. (Hespress, Africa Arbitration)
 - [K] Press and Penal Code apply to user content (insulting monarchy, religion, territorial integrity): moderate chat.
 
-## What a small foreign dev realistically must do
+## What a small foreign dev should consider
 - Privacy policy (French/Arabic is a plus); don't host servers in Morocco unless you're ready for CNDP declarations.
 - 7-day withdrawal: show it, or get consent to immediate digital delivery.
 - 20% VAT, no threshold: use a Merchant of Record.

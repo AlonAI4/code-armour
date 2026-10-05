@@ -32,7 +32,7 @@ Severity: Low-Med for a small foreign-run app with a few users here. Switzerland
 ## Accessibility and other
 - [K] Disability Discrimination Act (BehiG) binds federal authorities, not private small websites. No real enforcement against small private apps.
 
-## What a small foreign dev realistically must do
+## What a small foreign dev should consider
 - Have an honest privacy notice (what, why, who, where data goes); intentional lies are what get punished.
 - Answer access/deletion requests within 30 days.
 - Explain cookies and give an easy way to refuse them (a GDPR-style banner covers this).

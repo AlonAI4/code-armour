@@ -20,7 +20,7 @@ Note: no regulator site (dzlp.mk, ujp.gov.mk) was read; all lines are secondary 
 ## AI, content and platforms
 - [V-sec] No AI law and no AI oversight body today. (CMS AI scanner)
 
-## What a small foreign dev realistically must do
+## What a small foreign dev should consider
 - EU-style privacy; parent consent for under-14s; 72h breach plan; delete/export on request.
 - Selling directly triggers 18% VAT from sale one; use a merchant of record or app stores.
 - Free app: only the privacy basics.

@@ -29,7 +29,7 @@ Severity: Med for a small foreign-run app with a few users here. Norway is in th
 ## Accessibility and other
 - [K] Norway has its own universal-design rules (likestillings- og diskrimineringsloven + regulations, enforced by Digdir/Tilsynet for universell utforming) that already cover PRIVATE websites (WCAG 2.1 AA). Enforcement mostly targets bigger businesses; low risk for a hobby project, but higher than most countries.
 
-## What a small foreign dev realistically must do
+## What a small foreign dev should consider
 - GDPR basics (privacy notice, delete account, security).
 - Strict cookie opt-in for analytics too: no GA/pixels before consent.
 - Treat users under 15 as needing parental consent if you rely on consent.

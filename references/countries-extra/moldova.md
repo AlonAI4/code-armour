@@ -19,7 +19,7 @@ Note: no regulator site (datepersonale.md, fisc.md) was read; lines are secondar
 ## AI, content and platforms
 - [V-sec] No AI law. National AI Programme 2026-2030 concept being drafted to align with the EU AI Act; an inter-ministerial AI sub-council was set up Apr 2026. (Logos Press)
 
-## What a small foreign dev realistically must do
+## What a small foreign dev should consider
 - EU-style privacy: explicit consent (also for cookies), deletion, 72h breach plan, parent consent for minors.
 - Selling direct means 20% VAT from sale one via the e-portal; or use a merchant of record.
 - Free app: privacy basics only.

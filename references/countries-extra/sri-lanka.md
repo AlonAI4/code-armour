@@ -23,7 +23,7 @@ Marks: [V-reg] regulator/official text, [V-sec] law firm/news/tax vendor, [K] me
 - [V-sec] Online Safety Act No. 9 of 2024: 24-hour takedown orders, can require platforms to register. The Online Safety Commission is reported as not functioning / amendments under way; enforcement against small apps unlikely.
 - [K] No AI law; a national AI strategy exists (draft).
 
-## What a small foreign dev realistically must do
+## What a small foreign dev should consider
 - Treat users like GDPR users now so you're ready for 1 Jan 2027.
 - Parent consent (or block) under 16.
 - Have a report/takedown button for user content.

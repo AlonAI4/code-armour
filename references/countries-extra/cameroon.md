@@ -21,7 +21,7 @@ Note: no regulator site fetched. [V-sec] = secondary page seen today; [K] = memo
 ## AI, content and platforms
 - [K] 2010 cybersecurity and cybercrime law covers online content; no AI law.
 
-## What a small foreign dev realistically must do
+## What a small foreign dev should consider
 - Privacy policy (French and English), consent, parent consent under 18, deletion route, no transfers without safeguards.
 - Selling to Cameroonians: Merchant of Record or app stores; direct selling at scale means VAT plus the 3% rule.
 - Moderate chat; report button.

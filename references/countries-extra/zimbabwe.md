@@ -21,7 +21,7 @@ Note: no regulator site fetched (potraz.gov.zw, zimra.co.zw not read). [V-sec] =
 - [V-sec] The same Act has cybercrime offences (the "cyber" half). (Michalsons)
 - [K] No AI law; MISA criticises SI 155 of 2024 as heavy for small actors.
 
-## What a small foreign dev realistically must do
+## What a small foreign dev should consider
 - Privacy policy, consent, parent consent for kids, deletion route, 24h breach plan.
 - If you have meaningful Zimbabwean users, check POTRAZ licensing and local representative; expect friction.
 - Sales: stay low or use a Merchant of Record; do not guess the VAT threshold.

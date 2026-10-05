@@ -21,7 +21,7 @@ Note: only search snippets read; dnit.gov.py and the new data agency were not op
 ## AI, content and platforms
 - [K] No AI law found. [V-sec] AI-content risks are named in the children's bill.
 
-## What a small foreign dev realistically must do
+## What a small foreign dev should consider
 - Nothing mandatory on privacy today, but build to the 2027 law: policy, consent, deletion, breach plan, extra care with under-18s.
 - Selling: use a Merchant of Record or app stores; they deal with the 10% IVA and 4.5% retention.
 - Add a report/remove option for chat.

@@ -107,10 +107,10 @@ expect "fake urgency" "Urgency wording"
 expect "robots.txt lists admin" "robots.txt is a map"
 expect "GraphQL introspection" "GraphQL introspection on"
 expect "YouTube embed" "youtube-nocookie"
-expect "AI images without moderation" "AI image generation with no moderation"
+expect "AI images without moderation" "AI image generation found"
 mkdir -p $T/promptool && cd $T/promptool && echo 'const MODELS = ["dall-e-3", "gpt-image-1"]; const words = ["countdown", "clock"]' > tool.js
 OUT=$(bash "$SCAN" . 2>&1 | sed 's/\x1b\[[0-9;]*m//g')
-refuse "a prompt tool naming image models isn't flagged" "AI image generation with no moderation"
+refuse "a prompt tool naming image models isn't flagged" "AI image generation found"
 refuse "the word countdown alone isn't flagged" "Urgency wording"
 
 echo "# power tools (only when installed)"
@@ -138,7 +138,7 @@ echo '{"name":"clean","private":true}' > package.json
 echo '{"name":"clean","lockfileVersion":3,"requires":true,"packages":{"":{"name":"clean"}}}' > package-lock.json
 git add -A && git -c user.email=t@t -c user.name=t commit -qm init
 OUT=$(bash "$SCAN" . 2>&1 | sed 's/\x1b\[[0-9;]*m//g')
-expect "clean app passes" "No problems found by the scan"
+expect "clean app passes" "pattern checks found no problems"
 refuse "no false secret alarm" "✗"
 mkdir -p supabase && cp "$HERE"/../recipes/supabase/*.sql supabase/
 OUT=$(bash "$SCAN" . 2>&1 | sed 's/\x1b\[[0-9;]*m//g')

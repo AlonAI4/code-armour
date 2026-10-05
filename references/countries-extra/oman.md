@@ -21,7 +21,7 @@ Note: no regulator site fetched (MTCIT, tms.gov.om not read). [V-sec] = law firm
 ## AI, content and platforms
 - [K] No AI law; Cyber Crime Law RD 12/2011 covers online content. No takedown deadline found.
 
-## What a small foreign dev realistically must do
+## What a small foreign dev should consider
 - Privacy notice, explicit consent, guardian consent for under-18s, 72h breach plan, consent before sending data out of Oman.
 - Selling digital goods to Omanis directly = register for 5% VAT; a Merchant of Record handles it.
 - Moderate chat; report button.

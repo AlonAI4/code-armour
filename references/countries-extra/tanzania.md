@@ -23,7 +23,7 @@ Note: tcra.go.tz PDF found but not read. Marks: [V-reg] regulator/official text,
 - [V-sec] Online Content Regulations amended 28 Jan 2025 (GN 57): wider banned-content list incl. "unethical, fabricated and AI-generated" videos/audio/pictures; duties on platform owners to remove content (Bowmans).
 - [K] Running an online TV/radio/blog for Tanzanians can need a TCRA licence; X has been blocked in Tanzania since 2025.
 
-## What a small foreign dev realistically must do
+## What a small foreign dev should consider
 - Parent consent for kids' data; privacy notice.
 - If users post content: fast report/remove; don't allow deceptive AI media of real people.
 - Use a Merchant of Record for sales.

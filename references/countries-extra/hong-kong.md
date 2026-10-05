@@ -24,7 +24,7 @@ Marks: [V-reg] regulator/law text today, [V-sec] law firm/news today, [K] memory
 - [V-sec] PCPD's AI Model Personal Data Protection Framework (11 June 2024): governance, risk assessment, human oversight, telling users. Guidance, not binding. (HFW)
 - [K] National Security Law and Safeguarding National Security Ordinance (2024) can reach online content; keep moderation for user posts.
 
-## What a small foreign dev realistically must do
+## What a small foreign dev should consider
 - Follow the six DPPs (privacy notice at collection, use only for stated purpose, secure it, let users see/fix data). Easy if you already do GDPR-lite.
 - Don't use personal data for marketing without explicit opt-in.
 - Moderate user content; remove doxxing posts fast.

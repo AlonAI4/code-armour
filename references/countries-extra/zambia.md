@@ -20,7 +20,7 @@ Note: no regulator site fetched (zra.org.zm failed with a certificate error; ODP
 - [V-sec] Cyber Security Act and Cyber Crimes Act signed 8 Apr 2025, replacing the 2021 laws; broad extraterritorial reach where conduct has effects in Zambia; rights groups raised speech concerns. (Afriwise, GNI, TechPolicy.Press)
 - [K] No AI law.
 
-## What a small foreign dev realistically must do
+## What a small foreign dev should consider
 - Privacy policy, consent, parent consent for kids with some age check, deletion route, 24h breach plan.
 - Consider registering with the ODPC if you hold Zambian users' data at scale; risk is low for tiny apps but the penalty is real.
 - Stay under ZMW 800,000/yr Zambian sales or use a Merchant of Record.

@@ -28,7 +28,7 @@ Note: pdp.gov.my loaded but had no amendment detail; no other regulator page was
 - [V-sec] ONSA takedown deadlines for licensed platforms: CSAM/financial fraud blocked within 24h; other harmful content 4h then removal within 12h; fines up to RM10M. (Mayer Brown)
 - [K] Communications and Multimedia Act s.233 (offensive content) still applies to anyone posting; user chat needs report + remove.
 
-## What a small foreign dev realistically must do
+## What a small foreign dev should consider
 - Have a plain privacy policy (Malay version is a plus), a contact/DPO-style email, and a 72h breach plan; you are probably outside PDPA, but this is cheap insurance.
 - Do not build "social media" for under-16s without parent consent; ONSA targets big platforms but the norm is set.
 - Show seller name, contact, price and terms clearly on checkout.

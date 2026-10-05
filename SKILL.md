@@ -1,19 +1,19 @@
 ---
 name: code-armour
-description: Pre-launch check to lower the risk of getting hacked or sued, for web apps, games, AI apps and stores by solo or beginner devs, on any stack (Supabase, Firebase, Next.js, Netlify, Vercel, Stripe...). Use when asked if a project is safe, secure, legal or ready to launch, or about leaked keys, RLS, privacy policy, GDPR, COPPA, kids, cookies, VAT, loot boxes or AI labels. Scans the code, fixes with tested recipes, proves each fix, writes COMPLIANCE.md. A checklist, not legal advice.
+description: Before you ship your vibe-coded website, Code Armour checks for the mistakes that can lead to hacks, privacy complaints and legal problems. For web apps, games, AI apps and stores on any stack (Supabase, Firebase, Next.js, Netlify, Vercel, Stripe...). Use when asked if a project is safe, secure, legal or ready to launch, or about leaked keys, RLS, privacy policy, GDPR, COPPA, kids, cookies, VAT, loot boxes or AI labels. Scans, fixes, re-tests, writes COMPLIANCE.md. Not legal advice.
 ---
 
 # Code Armour
 
-You are helping someone (often a beginner, sometimes a teenager) make their project safe from hackers, surprise bills and legal trouble before launch. Work through the steps below in order. Explain everything in plain words: define any technical term in one sentence the first time you use it.
+You are helping someone (often a beginner, sometimes a teenager) find and fix common mistakes that can lead to hacks, surprise bills, privacy complaints and legal problems before launch. Work through the steps below in order. Explain everything in plain words: define any technical term in one sentence the first time you use it.
 
 All paths below are relative to this skill's folder. Commands: `/armour` (run everything), `/armourcheck` (check existing armour, read-only), `/armourtest` (lawyer + hacker reviewers), `/armourcost` (what costs tokens; see `commands/`).
 
 ## Ground rules (never break these)
 
 1. **Say it up front.** Show this disclaimer before you start: *Code Armour provides automated technical checks and general compliance information. It does not provide legal advice, certify compliance, guarantee security or identify every possible risk. Results may be incomplete or incorrect. Users remain responsible for testing their websites, reviewing applicable requirements and obtaining professional advice where appropriate.* Also say: there's no lawyer–client relationship, laws differ by country and change often, and if you're under 18 a parent must read any legal page before it goes live.
-2. **Rules may not apply.** Every rule depends on where the builder lives, where users are, and what the project does. Mark each one as applies / doesn't apply (with the reason) / not sure.
-3. **No tick without proof.** Mark an item ✅ only after you've checked the real code, config or live site, or tried the attack and watched it fail. Write the evidence next to the tick. **Legal rows (policies, tax, age, licences, assessments) can never be ✅ from code alone:** mark them 📝 drafted, 👤 reviewed by an adult, or ❓ not reviewed.
+2. **Rules may not apply.** Every rule depends on where the builder lives, where users are, and what the project does. Mark each one as likely applies / likely doesn't apply (with the reason) / not sure.
+3. **No tick without proof.** Mark an item ✅ only after you've checked the real code, config or live site, or tried the attack and watched it fail. Write the evidence next to the tick. **Legal rows (policies, tax, age, licences, assessments) can never be ✅ from code alone:** mark them 📝 drafted, 👤 reviewed by an adult, or ❓ not reviewed. ✅ means this check passed. Never write or say 'compliant', 'secure', 'safe', 'protected', 'covered' or 'bulletproof' about the project.
 4. **Never make things less safe to make an error go away.** Don't turn off RLS (Row Level Security: the database rules for who can see each row), don't add `using (true)`, don't delete a signature check, don't silence a secret scanner, don't add `SECURITY DEFINER` to dodge a permission error. Fix the real cause.
 5. **Ask before risky actions.** Get a clear yes before running anything against a live (production) database, deleting data, rotating keys or changing account settings. Prefer a dev project or branch.
 6. **Leaked secret = rotate it.** Deleting it from the code isn't enough once it's been pushed or deployed; make a new key and revoke the old one.
@@ -34,7 +34,7 @@ Read the project first and answer what you can yourself: the **stack** (look for
 - Can users post anything others see (chat, names, uploads, comments)?
 - How old are you? (only if payments, app stores or AI API accounts are involved)
 
-## Step 2: Choose the rules that apply
+## Step 2: Choose the rules that may apply
 
 Load only the reference files you need:
 
@@ -48,8 +48,8 @@ Load only the reference files you need:
 | "Worldwide" users | Both country files, but only their "Cross-cutting" sections plus any country the user names |
 | Always | `references/upcoming.md`: compare each date with today (see "Staying up to date") |
 | Users anywhere sanctioned (Iran, North Korea, Cuba, occupied regions, Russia/Belarus limits; Syria changed in 2025–26) | `references/countries-extra/sanctioned-places.md` |
-| Users in EU countries | Also `references/countries-extra/eu-national-rules*.md` (all 27 EU members' own rules) (Germany, France, Italy, Spain, Netherlands, Poland add their own rules) |
-| Users in any other country | `references/countries-extra/<country>.md` if it exists (about 60 countries; list in its README) |
+| Users in EU countries | Also `references/countries-extra/eu-national-rules*.md` (general notes on national rules in all 27 EU members) |
+| Users in any other country | `references/countries-extra/<country>.md` if it exists (57 countries, general notes; list in its README) |
 | A country not in the files | Check `references/countries-extra/` first. Not there? Research it with `templates/country-research.md` (needs web search), save it to `references/countries-extra/<country>.md`, and mark its rows ❓. No web search? Say so plainly and apply the general rules (privacy notice, consent, delete-my-data, breach plan, kids' consent, tax via a Merchant of Record), all ❓ |
 
 **Read in tiers to save effort:** start with the "10-minute pre-launch check" at the end of `security.md`, the Top 5 in `legal.md`, and the "Cross-cutting" sections of the country files. Only open a detailed section when the project has that feature (payments, user posts, AI, kids...).
@@ -58,7 +58,7 @@ Load only the reference files you need:
 - Under 13: guest only (no email, no public name, no chat).
 - Under 18: no loot boxes or paid random items, no targeted ads, no profiling, chat with strangers off. Parental consent for accounts if users are in India, Brazil, Indonesia, Vietnam, Korea (under 14) or China (under 14).
 
-**Features that are promised but missing** (the README or page mentions chat, loot boxes, ads, etc., but there's no code yet): mark them ❌ **decision needed**, explain the legal duties they would bring, and suggest either removing the promise or building it with the duties included.
+**Features that are promised but missing** (the README or page mentions chat, loot boxes, ads, etc., but there's no code yet): mark them ❌ **decision needed**, explain the legal duties they may bring, and suggest either removing the promise or building it with the duties included.
 
 Skip whole sections that can't apply. For example, no payments means skip Stripe and tax; no user content means skip moderation laws.
 
@@ -113,7 +113,7 @@ Before editing a single file, show the user what you found and what you'd change
 | # | Problem | Fix (files that will change) | Risk if left |
 |---|---|---|---|
 
-Build the plan only from 🔧 **confirmed technical** findings. List the other three categories separately: 🔍 to verify, 📋 compliance considerations, ⚖️ where to get professional advice. Then ask: **"Should I put the armour on?"** Use your question tool if you have one (Claude Code: AskUserQuestion), and offer:
+Build the plan only from 🔧 **confirmed technical** findings. List the other three categories separately: 🔍 to verify, 📋 compliance considerations, ⚖️ where to get professional advice. Then ask: **"Should I apply these fixes?"** Use your question tool if you have one (Claude Code: AskUserQuestion), and offer:
 - **All fixes** (recommended)
 - **Only the critical ones**
 - **Let me pick:** list the numbers
@@ -153,7 +153,7 @@ For any database change, give the user the migration and say what it does before
 
 ## Step 5: Test for real
 
-Prove each fix by attacking it, and show the output. Examples:
+Test each fix by trying the attack, and show the output. Examples:
 
 - **Another user's data:** sign in as user B and try to read or edit user A's row. It must fail.
 - **No login:** call the API with no token, e.g. `curl -i https://site/api/chat`. It must return 401.
@@ -213,7 +213,7 @@ End with a short, honest summary, in this order:
 
 Rejected candidates get one line: "N candidate findings checked and rejected."
 
-Don't call the project "secure", "legal" or "compliant", and never give a "% secure" score. Say what was checked, which areas weren't (from the coverage ledger), and that one run finds only part of the problems. End every report with this disclaimer, word for word: *Code Armour provides automated technical checks and general compliance information. It does not provide legal advice, certify compliance, guarantee security or identify every possible risk. Results may be incomplete or incorrect. Users remain responsible for testing their websites, reviewing applicable requirements and obtaining professional advice where appropriate.* Severity labels mean how likely enforcement is for a small project, not whether the law applies. Say what was checked and what wasn't.
+Don't call the project "secure", "legal", "compliant", "safe", "protected", "covered", "bulletproof" or "armoured", and never give a "% secure" score. Never say the scan "found no problems" without "with its pattern checks". Say what was checked, which areas weren't (from the coverage ledger), and that one run finds only part of the problems. End every report with this disclaimer, word for word: *Code Armour provides automated technical checks and general compliance information. It does not provide legal advice, certify compliance, guarantee security or identify every possible risk. Results may be incomplete or incorrect. Users remain responsible for testing their websites, reviewing applicable requirements and obtaining professional advice where appropriate.* Severity labels mean how likely enforcement is for a small project, not whether the law applies. Say what was checked and what wasn't.
 
 ## Re-testing (later runs)
 

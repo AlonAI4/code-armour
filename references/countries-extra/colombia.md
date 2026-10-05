@@ -27,7 +27,7 @@ Note: no regulator site was read (sic.gov.co, dian.gov.co not fetched). Marks: [
 - [V-sec] Constitutional Court T-323/2024: AI use principles (transparency, human oversight, child protection). SIC joined Feb 2026 multi-regulator statement on generative AI: transparency, remove harmful content, extra protection for minors. (Holland & Knight)
 - [K] SIC Circular on AI and personal data (2024): privacy impact assessment before AI processing personal data.
 
-## What a small foreign dev realistically must do
+## What a small foreign dev should consider
 - Spanish privacy policy (tratamiento policy), explicit opt-in incl. non-essential cookies.
 - Don't collect under-18 data without parent authorisation; avoid targeting kids.
 - 5-business-day withdrawal: honour refunds or get explicit consent to immediate delivery for digital items.

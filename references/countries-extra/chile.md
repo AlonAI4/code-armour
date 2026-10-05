@@ -28,7 +28,7 @@ Note: bcn.cl (LeyChile) did not load (JS timeout); the Diario Oficial PDF of Law
 - [V-sec] AI bill (Boletines 15869/16821): risk-based (unacceptable, high, limited, no evident risk), passed the Chamber of Deputies 13 Oct 2025, now in the Senate. Not law. (CMS, Diario Constitucional Feb 2026)
 - [K] Expected duties: transparency when people interact with AI; labelling of synthetic content for limited-risk systems.
 
-## What a small foreign dev realistically must do
+## What a small foreign dev should consider
 - Before 1 Dec 2026: privacy policy in Spanish, a contact email for users and the Agency, deletion/export flow.
 - Under-14 users: get parent consent or block them; no sensitive data from under-16s without parents.
 - Breach plan: tell the Agency fast; tell users directly if kids/sensitive/payment data is hit.

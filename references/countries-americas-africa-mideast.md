@@ -1,7 +1,7 @@
 # Countries: Americas, Africa, Middle East, Russia (as of Oct 2026)
 
 [V] = confirmed in a source; [K] = background knowledge, re-verify. Code Armour provides automated technical checks and general compliance information. It does not provide legal advice, certify compliance, guarantee security or identify every possible risk. Results may be incomplete or incorrect. Users remain responsible for testing their websites, reviewing applicable requirements and obtaining professional advice where appropriate.
-A Merchant of Record (Paddle, Lemon Squeezy, app stores) removes most foreign VAT/GST lines below.
+A Merchant of Record (Paddle, Lemon Squeezy, app stores) usually handles most foreign VAT/GST below.
 
 ## Canada (Med)
 - PIPEDA reaches foreign sites with a "real and substantial connection" [K]; no small-business exemption; report breaches with real risk of significant harm "as soon as feasible" + keep a breach log [K].

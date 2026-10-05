@@ -21,7 +21,7 @@ Note: no regulator site fetched (CMC not read). [V-sec] = secondary page seen to
 - [V-sec] The Communications and Media Commission blocked Telegram in Apr-May 2026 and lifted it on 9 May 2026 after the platform agreed to comply. Shows blocks can come fast. (Rudaw, TechRadar)
 - [K] No AI law.
 
-## What a small foreign dev realistically must do
+## What a small foreign dev should consider
 - Treat Iraq like a low-regulation market: basic privacy policy and consent; parent consent for kids as a default.
 - Take payments via app stores or a Merchant of Record; do not rely on card payments from Iraqi banks.
 - Moderate chat for religion, sectarian and political content.

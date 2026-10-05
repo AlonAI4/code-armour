@@ -1,5 +1,5 @@
 ---
-description: Test whether this project's Code Armour really works. A lawyer agent reviews it and a hacker agent attacks it.
+description: Stress-test this project's Code Armour checks with an AI legal reviewer and an AI attacker (not a lawyer or a professional pen test).
 argument-hint: "[live-url or focus]"
 ---
 Stress-test this project's **Code Armour** with two independent reviewers, using the code-armour skill (SKILL.md in the skill folder, usually `~/code-armour/`). If the project has no armour yet, say so and suggest `/armour` first.

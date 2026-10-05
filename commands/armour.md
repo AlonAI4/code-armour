@@ -1,5 +1,5 @@
 ---
-description: Add Code Armour to this project. Finds and fixes security and legal risks, proves each fix, saves re-tests.
+description: Add Code Armour to this project. Checks for common security, privacy and legal mistakes, fixes what you approve, re-tests each fix.
 argument-hint: "[live-url] [anything to focus on]"
 ---
 Run the **code-armour** skill on this project from start to finish. Its SKILL.md is in the skill folder (usually `~/code-armour/` or the skills folder of this tool).
@@ -8,7 +8,7 @@ Run the **code-armour** skill on this project from start to finish. Its SKILL.md
    - ask what you need;
    - choose the rules that apply;
    - scan;
-   - **show the plan and ask "Should I put the armour on?"** (Step 3b), then fix only what was approved;
+   - **show the plan and ask "Should I apply these fixes?"** (Step 3b), then fix only what was approved;
    - test each fix for real;
    - save the tests in `security-tests/` (Step 5b), and prove they can fail;
    - write `COMPLIANCE.md`;

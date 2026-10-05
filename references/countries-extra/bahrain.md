@@ -21,7 +21,7 @@ Note: no regulator site fetched (pdp.gov.bh, nbr.gov.bh not read). [V-sec] = sec
 - [V-sec] National AI Policy launched Jul 2025 plus GCC AI ethics manual: policy only, not a law. (iGA)
 - [K] Cybercrime Law 60/2014; strict on religion and the monarchy.
 
-## What a small foreign dev realistically must do
+## What a small foreign dev should consider
 - Privacy notice, consent, guardian consent for kids, deletion route.
 - Direct digital sales to Bahrainis = register for 10% VAT; a Merchant of Record avoids it.
 - Moderate chat; report button.

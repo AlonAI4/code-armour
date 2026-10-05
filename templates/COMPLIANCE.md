@@ -1,4 +1,4 @@
-# Code Armour checklist: <project name>
+# Code Armour pre-launch checks: <project name> (not a compliance certificate)
 
 > ⚠️ Code Armour provides automated technical checks and general compliance information. It does not provide legal advice, certify compliance, guarantee security or identify every possible risk. Results may be incomplete or incorrect. Users remain responsible for testing their websites, reviewing applicable requirements and obtaining professional advice where appropriate. Laws differ by country and change often.
 
@@ -110,5 +110,5 @@ If the builder is under 18, a parent reads every legal page before launch.
 | 📋 AI content labelled where required | | |
 | ⚖️ Loot boxes: odds shown / not sold to minors / geo-blocked where banned | | |
 
-## Not checked
+## Not checked (coverage gaps: problems here may be missed)
 <anything you couldn't verify, and the exact command or step for the owner to do it>

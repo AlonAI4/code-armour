@@ -25,7 +25,7 @@ Note: no regulator site was read (dataprotection.org.gh, gra.gov.gh not fetched)
 - [K] No AI law; National AI Strategy in progress. CSA amendment would let it set AI security standards (pending).
 - [K] Electronic Communications / Cybersecurity Act: false-news and harassment offences can affect user-content platforms; keep a report-and-remove path.
 
-## What a small foreign dev realistically must do
+## What a small foreign dev should consider
 - Simple privacy policy; parent consent for under-18s if you knowingly collect their data.
 - VAT: 20% with no threshold. Use a Merchant of Record (Paddle, Lemon Squeezy, app stores) rather than registering yourself.
 - 7-day cancel: show it, or get explicit consent to start the digital service immediately.

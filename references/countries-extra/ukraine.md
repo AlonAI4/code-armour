@@ -7,7 +7,7 @@ Severity: Low for a small foreign-run app with a few users here. Today's privacy
 - [V-sec] Draft Law No. 8153 (GDPR-style rewrite) passed first reading 20 Nov 2024 and was still awaiting second reading in mid-2026. It would add reach abroad, a local representative for non-residents, 72h-style breach notice and fines up to a % of turnover. Not law today. https://sk.ua/gdpr-size-penalties-for-personal-data-protection-violations-what-can-individuals-and-businesses-expect-in-ukraine/
 - [K] Regulator today is the Parliament Commissioner for Human Rights (Ombudsman); the draft would create a new independent authority.
 - [K] Children: no GDPR Art. 8-style digital-consent age. Under civil law, children 14-18 have partial capacity and can make small everyday deals; under 14 a parent acts.
-- [K] No specific cookie law; consent rules of the general data law apply loosely. If you already follow GDPR, you are covered.
+- [K] No specific cookie law; consent rules of the general data law apply loosely. Following GDPR is likely to cover most of this.
 
 ## Kids and games
 - [K] No national game-time limits or game-specific age-rating law found. Loot boxes are not specifically regulated; real-money gambling needs a licence (PlayCity regulator), so never allow cash-out.
@@ -28,7 +28,7 @@ Severity: Low for a small foreign-run app with a few users here. Today's privacy
 ## Accessibility and other
 - [K] No real enforcement against small foreign websites.
 
-## What a small foreign dev realistically must do
+## What a small foreign dev should consider
 - Block sales/paid services to occupied regions (Crimea, DNR, LNR; check your payment provider does).
 - Follow your GDPR setup; that already exceeds Ukraine's current law and the 8153 draft.
 - If Ukrainian digital sales could pass UAH 1M/yr, use a Merchant of Record.

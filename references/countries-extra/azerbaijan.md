@@ -19,7 +19,7 @@ Note: taxes.gov.az and regulator sites were not read; lines are secondary or mem
 - [V-sec] 21 Apr 2026 amendments: criminal liability for creating or spreading AI-made fake media of a real person without consent (including sexual content). No general AI law. (Caspian Legal Center)
 - [V-sec] Social network platforms face new regulatory requirements (2026). (Gratanet)
 
-## What a small foreign dev realistically must do
+## What a small foreign dev should consider
 - Under USD 10,000/yr from Azerbaijan: no VAT duty; above it, register or use a merchant of record.
 - Block or guardian-gate under-16s if your app has accounts or public chat for Azerbaijani users, ready before about mid-2027.
 - Do not let users make deepfakes of real people.

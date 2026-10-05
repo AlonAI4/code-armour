@@ -45,7 +45,7 @@ Severity: High / Med / Low for a small foreign-run app with a few users here.
 ## Accessibility and other
 - Only if there's real enforcement.
 
-## What a small foreign dev realistically must do
+## What a small foreign dev should consider
 - 3 to 5 bullet points.
 
 ## Upcoming

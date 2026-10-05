@@ -23,7 +23,7 @@ Marks: [V-reg] regulator/official text, [V-sec] law firm/news/tax vendor, [K] me
 - [K] Hate Speech and Disinformation Proclamation 1185/2020: platforms should remove such content (24h expectation). Internet shutdowns happen regionally.
 - [K] No AI law; national AI policy (2024) only.
 
-## What a small foreign dev realistically must do
+## What a small foreign dev should consider
 - Parent consent (or block) under 16.
 - 72-hour breach plan.
 - Moderate user content quickly (hate speech).

@@ -20,7 +20,7 @@ Note: the Commissioner's site (idp.al) appeared in results but was not read; lin
 ## AI, content and platforms
 - [V-sec] No standalone AI law; AI is covered by data, consumer and cybersecurity laws. (CMS AI scanner)
 
-## What a small foreign dev realistically must do
+## What a small foreign dev should consider
 - EU-style privacy: policy, consent, deletion, 72h breach plan; parent consent under 16.
 - Selling directly means 20% VAT from sale one plus a fiscal rep: use a merchant of record or app stores.
 - A free app with a few Albanian users is low enforcement risk; the representative duty is mainly a paper risk.

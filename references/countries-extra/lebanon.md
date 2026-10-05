@@ -21,7 +21,7 @@ Note: no regulator site fetched. [V-sec] = secondary page seen today; [K] = memo
 ## AI, content and platforms
 - [K] No AI law. [K] Content offences exist in the Penal and Press laws; no takedown deadline found.
 
-## What a small foreign dev realistically must do
+## What a small foreign dev should consider
 - Plain privacy policy, consent for data collection, delete-on-request; same as for other Arab users.
 - Ask for parent consent for kids as a safe default.
 - Do not collect Lebanese VAT unless you have a Lebanese entity; Merchant of Record handles it if needed.

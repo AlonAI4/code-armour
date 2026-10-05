@@ -21,7 +21,7 @@ Marks: [V-reg] regulator/official text, [V-sec] law firm/news/tax vendor, [K] me
 - [V-sec] Social Media Bill 2081 withdrawn by the interim government (Feb 2026).
 - [K] Electronic Transactions Act 2063 criminalises some online content; a National AI Policy (2025) exists, no AI law.
 
-## What a small foreign dev realistically must do
+## What a small foreign dev should consider
 - Consent-based privacy notice; parent consent for kids.
 - Moderate user content (report button).
 - Sales: nothing to do below NPR 3M/yr.

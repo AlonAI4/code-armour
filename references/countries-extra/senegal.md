@@ -20,7 +20,7 @@ Note: no regulator site fetched (cdp.sn, dgid.sn not read). [V-sec] = secondary 
 - [V-sec] The National Assembly adopted a cybersecurity bill no. 25/2026 (title seen only). (NDAR Info)
 - [K] 2008 cybercrime law; content offences incl. insulting the head of state; internet shutdowns have happened.
 
-## What a small foreign dev realistically must do
+## What a small foreign dev should consider
 - Privacy policy (French is smart), consent, deletion route; parent consent for kids.
 - Selling to Senegalese buyers directly: register for 18% VAT, or use a Merchant of Record or app stores.
 - Moderate chat; report button.

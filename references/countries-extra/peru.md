@@ -25,7 +25,7 @@ Note: gob.pe / elperuano.pe not fetched (snippets only). Marks: [V-reg] regulato
 - [K] No strict AI-label rule found for small foreign apps; still label AI output and AI chat.
 - [K] No local-representative rule for platforms apart from the privacy one.
 
-## What a small foreign dev realistically must do
+## What a small foreign dev should consider
 - Spanish privacy notice; parent consent (or block) under 14; delete/export on request.
 - 48-hour breach plan (shorter than GDPR's 72h).
 - Use a Merchant of Record for paid sales, since there is no IGV threshold.

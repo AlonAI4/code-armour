@@ -20,7 +20,7 @@ Note: no regulator site fetched (artci.ci, dgi.gouv.ci not read). [V-sec] = seco
 - [V-sec] Cybercrime Law 2013-451 sets online-provider duties; reported as toughened and consolidated in 2025. (Osiris, WeAreTech)
 - [K] No AI law.
 
-## What a small foreign dev realistically must do
+## What a small foreign dev should consider
 - French privacy policy, consent, deletion route; parent consent for kids.
 - Direct sales to Ivorian buyers: register for 18% VAT or use a Merchant of Record or app stores.
 - Moderate chat; report button; cooperate with takedown requests.

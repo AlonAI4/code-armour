@@ -19,7 +19,7 @@ Note: no regulator or tax-authority site read; all lines below are secondary sou
 ## AI, content and platforms
 - [K] No AI law. No platform registration rule found.
 
-## What a small foreign dev realistically must do
+## What a small foreign dev should consider
 - Treat BiH users like EU users for privacy; parent consent for under-16s; 72h breach plan.
 - A free app has little extra exposure. If you sell, use a merchant of record to avoid fiscal-representative VAT work.
 - Consider a local representative only if you have meaningful BiH user numbers (rule is real but enforcement is unproven).

@@ -20,7 +20,7 @@ Note: only search snippets read; no Bolivian official site opened. [V-sec] = new
 ## AI, content and platforms
 - [V-sec] AI Bill 178/2024-2025 (transparency, human oversight, bans on mass biometrics and social scoring) is pending.
 
-## What a small foreign dev realistically must do
+## What a small foreign dev should consider
 - Basic privacy policy and minimal data; there is no binding privacy law today.
 - Low priority market: don't build local tax set-up; use app stores or a Merchant of Record.
 - If you have chat with kids, moderate it.

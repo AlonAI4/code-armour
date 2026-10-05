@@ -17,7 +17,7 @@ Note: only search snippets read; sat.gob.gt and congreso.gob.gt not opened. [V-s
 ## AI, content and platforms
 - [K] No AI law found. [K] Cybercrime law is also pending (Iniciativa 6347 type), unconfirmed.
 
-## What a small foreign dev realistically must do
+## What a small foreign dev should consider
 - Short privacy policy, minimal data, deletion on request. Nothing is registered or filed.
 - Sell through app stores or a Merchant of Record.
 - Watch bill 6464.

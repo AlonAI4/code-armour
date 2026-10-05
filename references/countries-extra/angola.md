@@ -19,7 +19,7 @@ Note: no regulator site fetched (apd.ao not read). [V-sec] = secondary page seen
 ## AI, content and platforms
 - [K] No AI law; Angola's cybercrime and media laws exist; no takedown deadline found.
 
-## What a small foreign dev realistically must do
+## What a small foreign dev should consider
 - Privacy policy (Portuguese is smart), consent, deletion route; parent consent for kids as best practice.
 - Direct sales to Angolans: register for 14% IVA or use a Merchant of Record or app stores.
 - Watch the revision of Law 22/11: 72h breach notice and AI rules may come.

@@ -20,7 +20,7 @@ Note: no regulator site (personaldata.ge, rs.ge) was read; lines are secondary o
 ## AI, content and platforms
 - [K] No AI law in Georgia (country) found. No platform registration rule found.
 
-## What a small foreign dev realistically must do
+## What a small foreign dev should consider
 - EU-style privacy: policy, consent, deletion/export; extra care with kids' data; parent consent under 16 is the safe default.
 - Selling direct means VAT from sale one via the portal; otherwise use a merchant of record.
 - Free app: privacy basics only.

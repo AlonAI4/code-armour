@@ -57,7 +57,7 @@ Digital-consent ages (GDPR Art. 8): 13 = EE, LV, MT; 14 = BG, CY, LT; 15 = SI; 1
 - Privacy: [K] Consent age 16. [V-sec] CNPD issued 6 fines in 2025, EUR 1,277 to EUR 175,000, mainly over data minimisation/retention, plus focus on records of processing and video surveillance. The Administrative Court of Appeal annulled the EUR 746M Amazon fine on 13 Mar 2026 and sent it back. https://cms.law/en/int/publication/GDPR-Enforcement-Tracker-Report/luxembourg
 - [K] Languages: Luxembourgish, French, German are all accepted for consumer info; English is common. ILR regulates e-communications. No loot-box rule or social media ban found.
 
-## What a small foreign dev realistically must do
+## What a small foreign dev should consider
 - Ask for birth year and apply the consent age; simplest is to treat under-16s as needing a parent (SI 15, LT/BG/CY 14).
 - Malta/anywhere: do not add real-money prizes, cash-out or gambling-like random rewards without a gambling licence; MGA only matters if you do.
 - Latvia/Slovakia/Slovenia/Croatia/Bulgaria: give terms in the local language if you actively market there.

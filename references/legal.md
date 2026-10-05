@@ -156,7 +156,7 @@ Stripe dispute threshold; California ARL details; Netherlands loot-box status; A
 2. Supabase RLS on, keys server-side.
 3. Licence/credits file for every asset.
 4. No chat/UGC unless ready for OSA/DSA/TAKE IT DOWN moderation.
-5. Use a Merchant of Record (opened by a parent) so VAT isn't your problem.
+5. Use a Merchant of Record (opened by a parent) so the MoR handles most VAT/sales-tax collection (income tax is still yours).
 
 ## 12. Added from Alon's pre-launch list (2026-10-04)
 - Kids default design (COPPA + UK Children's Code): a NEUTRAL age question before any account (e.g. "enter your birth year", not "are you over 13? yes/no" and no hint which answer unlocks more). Under 13 → guest only: no email, no public name, nothing stored that identifies them. Everyone: private by default, leaderboards and friends opt-in, no chat with strangers. (G, High)

@@ -24,7 +24,7 @@ Note: SRI and Superintendencia sites not fetched. Marks: [V-reg] regulator/offic
 - [V-sec] No AI law: the National Assembly archived the AI bill on 15 Sep 2026 (asambleanacional.gob.ec, via search snippet). A separate bill on AI and children existed (2024); status unclear.
 - [K] No platform-registration or local-representative rule found for small foreign apps.
 
-## What a small foreign dev realistically must do
+## What a small foreign dev should consider
 - Spanish privacy notice; parent consent (or block) under 15; delete/export on request.
 - Breach plan: tell users within 3 days, authority within 5.
 - Sales: use a Merchant of Record, or accept that banks withhold 15% IVA.

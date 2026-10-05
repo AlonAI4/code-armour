@@ -26,7 +26,7 @@ Note: no regulator site was read (moj.gov.tw, pdpc, mof not fetched). Marks: [V-
 - [K] Ministry of Digital Affairs (MODA) is drafting risk framework / labelling guidance under the Act.
 - [K] No general platform takedown law for small apps; fraud-prevention act (2024) targets big ad platforms.
 
-## What a small foreign dev realistically must do
+## What a small foreign dev should consider
 - Privacy policy + delete/export on request; a breach plan that includes telling users promptly (and the PDPC once the amendment is in force).
 - Loot boxes: show exact % odds per item and the chance warning, or don't sell them to Taiwan.
 - Show an age rating for games.

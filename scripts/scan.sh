@@ -129,7 +129,7 @@ if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then   # works in worktr
       n=$(grep -o '"RuleID"' "$GL" | wc -l | tr -d ' ')
       if [ "$n" -gt 0 ]; then bad "gitleaks: $n secret(s) in git history (ROTATE them):"
         grep -oE '"(RuleID|File|StartLine)": *("[^"]*"|[0-9]+)' "$GL" | paste - - - | head -8 | sed -E 's/"//g; s/^/   /' | cut -c1-140
-      else ok "gitleaks: no secrets in git history"; fi
+      else ok "gitleaks found no secrets in git history"; fi
       GLOK=1
     fi
   fi
@@ -170,7 +170,7 @@ price_hits=$(grep -rInE "${EXCL[@]}" --exclude-dir=dist --exclude-dir=build '(un
 grep -rInE "${EXCL[@]}" --exclude-dir=dist --exclude-dir=build '(verify_jwt\s*=\s*false|jwt\.decode\(|unit_amount:\s*(req|body|request)|\.update\((req\.)?body\)|\.insert\((req\.)?body\))' . 2>/dev/null | head -10 | sed 's/^/  API? /' | cut -c1-200
 stripe_files=$(grep -rlE "${EXCL[@]}" --include=*.js --include=*.mjs --include=*.ts "from ['\"]stripe['\"]|require\(['\"]stripe['\"]\)" . 2>/dev/null | head -5)
 if [ -n "$stripe_files" ]; then
-  grep -rqE "${EXCL[@]}" 'constructEvent' . 2>/dev/null && ok "Stripe webhook signature check found" \
+  grep -rqE "${EXCL[@]}" 'constructEvent' . 2>/dev/null && ok "Stripe webhook signature check found (check every webhook route uses it)" \
     || bad "Stripe used ($(echo $stripe_files | tr '\n' ' ')) but no webhooks.constructEvent (webhook signature check) found"
 fi
 
@@ -199,7 +199,7 @@ elec=$(grep -rnE "${EXCL[@]}" --exclude-dir=dist --exclude-dir=build 'nodeIntegr
 bots=$(grep -rnoE "${EXCL[@]}" --exclude-dir=dist --exclude-dir=build '[MN][A-Za-z0-9_-]{23,25}\.[A-Za-z0-9_-]{6}\.[A-Za-z0-9_-]{27,}|[0-9]{8,10}:AA[A-Za-z0-9_-]{33}' . 2>/dev/null | head -3)
 [ -n "$bots" ] && { bad "Discord/Telegram bot token in the code (15.26): move it to an env var and reset it:"; echo "$bots" | mask; }
 if grep -rqlE "${EXCL[@]}" --exclude-dir=dist --exclude-dir=build 'cf-turnstile|h-captcha|hcaptcha\.com/1/api|turnstile\.render|grecaptcha' . 2>/dev/null; then
-  grep -rqE "${EXCL[@]}" 'siteverify|recaptcha/api/siteverify|captchaToken' . 2>/dev/null && ok "CAPTCHA is verified on the server" || bad "CAPTCHA widget found but no server check (siteverify): bots just skip it (15.10)"
+  grep -rqE "${EXCL[@]}" 'siteverify|recaptcha/api/siteverify|captchaToken' . 2>/dev/null && ok "Server-side CAPTCHA check (siteverify) found: make sure every protected form uses it" || bad "CAPTCHA widget found but no server check (siteverify): bots just skip it (15.10)"
 fi
 hosth=$(grep -rnE "${EXCL[@]}" --exclude-dir=dist --exclude-dir=build "(headers\.host|headers\[.x-forwarded-host.\]|req\.get\(.host.\)).*(reset|verify|confirm|magic|link|url)|(reset|verify|confirm|magic).*(headers\.host|req\.get\(.host.\))" . 2>/dev/null | head -3)
 [ -n "$hosth" ] && { bad "Email links built from the request's Host header (password-reset poisoning, 15.7): use a fixed SITE_URL:"; echo "$hosth" | cut -c1-160; }
@@ -210,8 +210,8 @@ lgi() { grep -rliE "${EXCL[@]}" --exclude-dir=dist --exclude-dir=build "${SRC_IN
 lg() { grep -rlE "${EXCL[@]}" --exclude-dir=dist --exclude-dir=build "${SRC_INC[@]}" "$1" . 2>/dev/null | head -3 | tr '\n' ' '; }
 f=$(lg '<video|youtube\.com/embed|player\.vimeo|mux-player'); p=$(lg 'fbq\(|connect\.facebook\.net|analytics\.tiktok\.com|snaptr\(')
 [ -n "$f" ] && [ -n "$p" ] && warn "Video + ad pixel ($f/ $p): US VPPA class actions. No pixels on video pages, or get opt-in (legal 14)"
-f=$(lgi "from ['\"](twilio|@vonage/server-sdk|messagebird|plivo|telnyx)['\"]|require\(['\"](twilio|plivo|telnyx)['\"]\)|sendSms\(|PhoneNumber:"); [ -n "$f" ] && warn "Sends SMS ($f): US TCPA needs written consent, STOP handling, 8am-9pm only (legal 14)"
-f=$(lg "(from|require\()\s*\(?['\"](face-api(\.js)?|@vladmandic/(human|face-api)|@tensorflow-models/face-(landmarks-detection|detection)|@mediapipe/(face_mesh|tasks-vision))['\"]"); [ -n "$f" ] && warn "Face or voice processing ($f): Illinois BIPA (\$1,000-\$5,000 per person). Keep it on-device, store nothing, or get written consent (legal 14)"
+f=$(lgi "from ['\"](twilio|@vonage/server-sdk|messagebird|plivo|telnyx)['\"]|require\(['\"](twilio|plivo|telnyx)['\"]\)|sendSms\(|PhoneNumber:"); [ -n "$f" ] && warn "Sends SMS ($f): US TCPA may need written consent, STOP handling, 8am-9pm only (legal 14)"
+f=$(lg "(from|require\()\s*\(?['\"](face-api(\.js)?|@vladmandic/(human|face-api)|@tensorflow-models/face-(landmarks-detection|detection)|@mediapipe/(face_mesh|tasks-vision))['\"]"); [ -n "$f" ] && warn "Face or voice processing ($f): Illinois BIPA (damages up to \$1,000-\$5,000 per person). Keep it on-device, store nothing, or get written consent (legal 14)"
 f=$(lg "from ['\"](ethers|web3|@solana/web3\.js|wagmi|viem)['\"]|require\(['\"](ethers|web3)['\"]\)"); [ -n "$f" ] && warn "Crypto wallet code ($f): MiCA (EU), securities law (US), app-store rules. Teen dev: no tokens, no holding user funds (legal 14)"
 f=$(lgi '(you are|act as|be) (my |their |a |the user.s )?(girlfriend|boyfriend|companion|best friend|lover)'); [ -n "$f" ] && warn "AI companion persona ($f): California SB 243 and New York rules: 'not a human' notices, crisis protocol, minors (legal 9 and 14)"
 f=$(lg 'GatewayIntentBits\.MessageContent|Intents\.FLAGS\.MESSAGE_CONTENT|IntentsBitField\.Flags\.MessageContent'); [ -n "$f" ] && warn "Discord bot uses the privileged message-content intent ($f): justify it or use slash commands (legal 14)"
@@ -239,7 +239,7 @@ for r in public/robots.txt static/robots.txt robots.txt; do [ -f "$r" ] && grep 
 gql=$(grep -rnE "${EXCL[@]}" --exclude-dir=dist --exclude-dir=build "introspection:\s*true" . 2>/dev/null | head -2); [ -n "$gql" ] && bad "GraphQL introspection on (16.4): turn it off in production"
 yt=$(lg "youtube\.com/(embed|iframe_api)"); [ -n "$yt" ] && warn "YouTube embeds ($yt): on kids' pages use youtube-nocookie.com behind click-to-load (legal 15)"
 img=$(grep -rlE "${EXCL[@]}" --exclude-dir=dist --exclude-dir=build "${SRC_INC[@]}" "images\.(generate|edit)\(|replicate\.run\(|fal\.(run|subscribe)\(|api\.stability\.ai|/v1/images/(generations|edits)" . 2>/dev/null | while read -r f; do grep -qiE "moderation|moderations\.create|safety_checker|nsfw" "$f" || echo "$f"; done | head -3 | tr '\n' ' ')
-[ -n "$img" ] && bad "AI image generation with no moderation ($img): CSAM/deepfake law, API bans (16.5, legal 15)"
+[ -n "$img" ] && bad "AI image generation found ($img): check it has input and output moderation (CSAM/deepfake law, API bans; 16.5, legal 15)"
 
 echo; echo "-- 6c. Trackers and third parties (privacy laws, kids) --"
 grep -rlE "${EXCL[@]}" --exclude-dir=dist --exclude-dir=build 'fonts\.googleapis\.com|fonts\.gstatic\.com' . 2>/dev/null | head -3 | sed 's/^/  ? Google Fonts loaded from Google (self-host them; a German court fined this): /'
@@ -322,7 +322,7 @@ if [ -n "${CA_FAST:-}" ]; then warn "Skipped (CA_FAST set)"; else
       zh=$(echo "$res" | awk '/^H /{print $2}'); zm=$(echo "$res" | awk '/^M /{print $2}')
       if [ "${zh:-0}" != 0 ]; then bad "zizmor: $zh high-severity GitHub Actions issue(s):"; echo "$res" | grep '^   ' | cut -c1-150
       elif [ "${zm:-0}" != 0 ]; then warn "zizmor: $zm medium GitHub Actions issue(s):"; echo "$res" | grep '^   ' | cut -c1-150
-      else ok "zizmor: GitHub Actions workflows look safe"; fi
+      else ok "zizmor: no high or medium GitHub Actions issues"; fi
     else tips="$tips zizmor"; fi
   fi
   command -v gitleaks >/dev/null || tips="$tips gitleaks"
@@ -403,6 +403,6 @@ if [ -n "$URL" ]; then
   esac
 fi
 echo
-[ $problems = 0 ] && echo "${GRN}No problems found by the scan. Now do the manual checks in SKILL.md.${RST}" || echo "${RED}$problems problem(s) found.${RST} Fix them, then run again."
+[ $problems = 0 ] && echo "${GRN}The scan's pattern checks found no problems. That isn't proof of safety. Now do the manual checks in SKILL.md.${RST}" || echo "${RED}$problems possible problem(s) found. Check each one.${RST} Fix the real ones, then run again."
 echo; echo "Code Armour provides automated technical checks and general compliance information. It does not provide legal advice, certify compliance, guarantee security or identify every possible risk. Results may be incomplete or incorrect. Users remain responsible for testing their websites, reviewing applicable requirements and obtaining professional advice where appropriate."
 [ $problems = 0 ]   # exit code 1 when problems were found, so re-tests and GitHub checks fail

@@ -128,7 +128,7 @@ try {
 } catch { ok("GraphQL not reachable"); }
 
 console.log(problems ? `\n${problems} problem(s): anyone on the internet can do the things marked ✗.`
-  : tables ? "\nNo open doors found with the public key. (Still run audit.sql and the Security Advisor: this probe only sees what's reachable from outside.)"
+  : tables ? "\nNo open doors found with the public key. (Still run audit.sql and the Security Advisor: this probe only sees what's reachable from outside, so it doesn't prove the database is locked down.)"
   : "\nTables NOT checked (see above), so this is not a clean result.");
 console.log("\nCode Armour provides automated technical checks and general compliance information. It does not provide legal advice, certify compliance, guarantee security or identify every possible risk. Results may be incomplete or incorrect. Users remain responsible for testing their websites, reviewing applicable requirements and obtaining professional advice where appropriate.");
 process.exit(problems ? 1 : 0);

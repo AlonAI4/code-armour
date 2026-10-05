@@ -20,7 +20,7 @@ Note: only search snippets read; gub.uy/URCDP and DGI pages were not opened. [V-
 - [V-sec] No AI law; a bill is being discussed (Panamericana, Pulitzer Center, 2026). Uruguay's AI governance is by strategy and guidance.
 - [K] No notice-and-takedown deadline found.
 
-## What a small foreign dev realistically must do
+## What a small foreign dev should consider
 - Plain-language privacy policy (Spanish is better), deletion/export, 72h breach plan.
 - Subscriptions: easy cancel, and let users cancel after a renewal.
 - Selling directly to Uruguayans: use a Merchant of Record or app stores; direct sales of audiovisual-type content need IVA registration.

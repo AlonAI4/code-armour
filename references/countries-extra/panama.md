@@ -20,7 +20,7 @@ Note: one news page opened (La Estrella); everything else is search snippets. an
 ## AI, content and platforms
 - [V-sec] AI law under discussion in the National Assembly; national AI strategy with Georgia Tech expected Jun-Jul 2026 (La Estrella, Panama America). Not law.
 
-## What a small foreign dev realistically must do
+## What a small foreign dev should consider
 - Spanish privacy policy, consent and deletion path; low enforcement risk for foreign-hosted apps.
 - Watch the 7% ITBMS bill; sell via Merchant of Record/app stores so they handle it.
 - No gambling-like features.

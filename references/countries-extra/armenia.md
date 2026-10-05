@@ -19,7 +19,7 @@ Note: no regulator site (moj.am, src.am) was read; lines are secondary or memory
 ## AI, content and platforms
 - [K] No AI law found. No platform registration rule found.
 
-## What a small foreign dev realistically must do
+## What a small foreign dev should consider
 - Privacy policy and consent; delete on request; extra care with kids' data.
 - Selling direct: VAT from sale one; or use a merchant of record. Show the 14-day cancellation (or the digital-content waiver) at checkout.
 - No cash-out of in-game currency.

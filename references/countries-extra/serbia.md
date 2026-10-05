@@ -22,7 +22,7 @@ Note: poverenik.rs fetched but only navigation text came back, so no regulator c
 - [V-sec] Draft new data protection law (30 Jul 2026, consultation to 10 Sep 2026) adds AI-processing rules (high-risk / chatbot / minimal) and video surveillance. Draft only.
 - [K] E-commerce law has notice-and-takedown for illegal user content.
 
-## What a small foreign dev realistically must do
+## What a small foreign dev should consider
 - Treat Serbian users like EU users: privacy policy, consent, deletion, 72h breach plan; under-15s need a parent.
 - If you sell directly: you owe 20% VAT from sale one plus a tax proxy. Not practical for a tiny app, so use a merchant of record or app stores.
 - Free app: nothing extra beyond privacy basics.

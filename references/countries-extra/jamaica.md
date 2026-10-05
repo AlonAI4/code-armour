@@ -19,7 +19,7 @@ Note: only search snippets read; oic.gov.jm and jamaicatax.gov.jm not opened. [V
 ## AI, content and platforms
 - [K] No AI law found. 
 
-## What a small foreign dev realistically must do
+## What a small foreign dev should consider
 - Privacy policy, parent consent for children, 72h breach plan, deletion path; if you have real Jamaican user numbers, check OIC registration and the local-representative rule.
 - Sell through app stores or a Merchant of Record before GCT begins (expected 2027).
 - Watch the GCT legislation text for a threshold.

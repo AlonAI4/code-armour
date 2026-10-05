@@ -23,7 +23,7 @@ Most lines are [V-sec] (law firm or news) or [K] (memory): regulator sites often
 ## Added 2026-10-05 (round 3)
 | File | Countries |
 |---|---|
-| `eu-national-rules-2.md`, `eu-national-rules-3.md` | Ireland, Sweden, Denmark, Finland, Belgium, Austria, Portugal, Czechia, Romania, Greece, Hungary · Estonia, Latvia, Lithuania, Slovakia, Slovenia, Croatia, Bulgaria, Cyprus, Malta, Luxembourg (with `eu-national-rules.md`: all 27 EU members) |
+| `eu-national-rules-2.md`, `eu-national-rules-3.md` | Ireland, Sweden, Denmark, Finland, Belgium, Austria, Portugal, Czechia, Romania, Greece, Hungary · Estonia, Latvia, Lithuania, Slovakia, Slovenia, Croatia, Bulgaria, Cyprus, Malta, Luxembourg (with `eu-national-rules.md`: general notes on all 27 EU members) |
 | `serbia.md` … `iceland.md` | Serbia, Bosnia and Herzegovina, Albania, North Macedonia, Moldova, Georgia, Armenia, Azerbaijan, Uzbekistan, Iceland |
 | `jordan.md` … `angola.md` | Jordan, Lebanon, Kuwait, Oman, Bahrain, Iraq, Algeria, Tunisia, Senegal, Côte d'Ivoire, Cameroon, Zambia, Zimbabwe, Angola |
 | `cambodia.md` … `jamaica.md` | Cambodia, Mongolia, Myanmar, Uruguay, Paraguay, Bolivia, Costa Rica, Panama, Guatemala, Dominican Republic, Jamaica |

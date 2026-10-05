@@ -22,7 +22,7 @@ Note: only search snippets were read; mta.gov.mn, legalinfo.mn and the data regu
 ## AI, content and platforms
 - [V-sec] No AI-specific rules in the data law (Rajah & Tann toolkit snippet). [K] No AI law found.
 
-## What a small foreign dev realistically must do
+## What a small foreign dev should consider
 - Privacy policy plus explicit consent; collect little; honour deletion.
 - If kids may use chat, get a parent's consent under 16 until the social-media law is settled.
 - Watch for the VAT reform; sell through a Merchant of Record if you charge Mongolians.

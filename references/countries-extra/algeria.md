@@ -21,7 +21,7 @@ Note: no regulator site fetched (anpdp.dz, mfdgi.gov.dz not read). [V-sec] = sec
 ## AI, content and platforms
 - [K] No AI law; content and cybercrime rules are strict; internet shutdowns during exams happen.
 
-## What a small foreign dev realistically must do
+## What a small foreign dev should consider
 - Privacy policy and explicit consent; parent consent for kids; avoid sharing identifiable photos without consent.
 - Sales: Merchant of Record or app stores for Algerian buyers; do not register yourself at small scale.
 - Moderate chat; report button.

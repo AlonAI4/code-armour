@@ -20,7 +20,7 @@ Note: no regulator site fetched (inpdp.nat.tn not read). [V-sec] = secondary pag
 - [V-sec] Decree-Law 54 of 2022: up to 5 years for spreading "false news"; used against journalists. (CPJ, ICJ)
 - [K] No AI law; AI profiling limits appear only in the pending bill.
 
-## What a small foreign dev realistically must do
+## What a small foreign dev should consider
 - Privacy policy, explicit consent, deletion route; parent consent for kids.
 - Moderate chat for political "false news"; report button.
 - Taxes: Merchant of Record or app stores; do not register yourself.

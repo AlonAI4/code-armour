@@ -22,7 +22,7 @@ Note: no regulator site (personuvernd.is, rsk.is) read; island.is and law-firm p
 - [V-sec] EU AI Act incorporation into the EEA Agreement not confirmed as of May 2026; Iceland has a national AI Action Plan 2024-2026. Plan as if it will apply. (regulations.ai, Chambers)
 - [K] EEA Digital Services Act and e-commerce rules apply or are being incorporated; notice-and-takedown for user content.
 
-## What a small foreign dev realistically must do
+## What a small foreign dev should consider
 - Same as EU GDPR; parent consent under 13 for Iceland (the EU-wide safest default is 16).
 - Selling direct: watch the ISK 2M threshold; otherwise a merchant of record covers it.
 - No children's-data-based ads or profiling.

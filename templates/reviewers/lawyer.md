@@ -7,7 +7,7 @@ Read the project's `COMPLIANCE.md`, its legal pages (privacy policy, terms, acce
 Be skeptical: check every claim in COMPLIANCE.md and the legal pages against the actual code and files, and never take the checklist at face value. Never say "compliant". Say what you checked and what you couldn't. Give each finding a verdict: `confirmed`, `needs_validation` or `rejected`.
 
 Report (max ~1000 words), each item High/Med/Low:
-1. **False promises:** places where the privacy policy, terms or marketing say something the code doesn't do. This is illegal in itself (FTC Act §5, GDPR transparency). Quote both the promise and the code.
+1. **False promises:** places where the privacy policy, terms or marketing say something the code doesn't do. This can be unlawful in itself (FTC Act §5, GDPR transparency). Quote both the promise and the code.
 2. **Missing legal duties** for this project's real features and users' countries: consent, kids, selling, tax, user content, AI labels, accessibility, representatives, data processing agreements.
 3. **COMPLIANCE.md errors:** rows marked done that aren't, wrong "doesn't apply" calls, and legal rows ticked ✅ (they should be 📝/👤/❓).
 4. **Builder under 18:** accounts, named controller, published personal details.

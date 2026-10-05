@@ -24,7 +24,7 @@ Note: ird.govt.nz page returned 404 (moved). Marks: [V-reg] regulator/law text t
 - [K] No AI law. Government chose light-touch, existing-law approach (AI Strategy, July 2025). OPC guidance: Privacy Act fully applies to AI tools; tell users.
 - [K] Harmful Digital Communications Act 2015: safe-harbour for hosts who pass on/remove complaints within 48 hours.
 
-## What a small foreign dev realistically must do
+## What a small foreign dev should consider
 - Privacy policy that covers the IPPs; collect the minimum; delete/correct on request.
 - If you pull user data from elsewhere (e.g. imports, scraped profiles, referrals), notify those people (IPP3A).
 - Breach plan: notify OPC + users promptly for serious-harm breaches.

@@ -4,7 +4,7 @@
 ![license](https://img.shields.io/badge/license-MIT-blue)
 ![works with](https://img.shields.io/badge/works%20with-Claude%20Code%20%7C%20Codex%20%7C%20Agent%20Skills-black)
 
-**A skill for AI coding agents that checks your app before launch, so you're less likely to get hacked, get a surprise bill, or break a law you didn't know about. Then it proves every fix works.**
+**Before you ship your vibe-coded website, Code Armour checks for the mistakes that can lead to hacks, privacy complaints and legal problems.** It fixes what you approve and re-tests each fix against the attack it's meant to stop.
 
 Made for vibe coders: solo builders, beginners and teenagers who build with AI and ship fast.
 
@@ -21,18 +21,18 @@ AI writes code that works, but it often isn't safe:
 - **Payments get faked.** If nobody checks Stripe's signature, anyone can send a fake "paid" message and get things for free.
 - **Laws apply even to tiny apps:** privacy rules, kids' rules (under 13s), tax on digital sales, loot-box bans, AI labels. They differ in every country.
 
-Most checklists only *list* these things. Code Armour **finds them in your real code, fixes them, attacks its own fixes to prove they work, and keeps re-testing** so a later "quick fix" can't quietly undo them.
+Most checklists only *list* these things. Code Armour **finds them in your real code, fixes them, attacks its own fixes, and keeps re-testing**, so the saved checks flag it if a later "quick fix" undoes one.
 
 ## What a run looks like
 
 You type `/armour` in your project. The agent:
 
 1. **Asks** what it can't work out from your code: your country, where your users are, whether you take payments, and whether kids might use it.
-2. **Picks only the rules that apply.** No payments means no tax section. Kids possible means the kids' rules switch on. When countries disagree, the strictest rule wins.
+2. **Picks the rules likely to apply, based on your answers.** No payments means no tax section. Kids possible means the kids' rules switch on. When countries disagree, it defaults to the strictest one.
 3. **Scans** the code, the git history, the build and the live site.
 4. **Fixes** problems using tested recipes, adapted to your tables and routes.
-5. **Attacks every fix to prove it.** It signs in as a second user and tries to read your data, sends a fake payment, and tries to make itself admin. Each attack must fail.
-6. **Saves those attacks as tests** in `security-tests/`, so `bash security-tests/run.sh` (or GitHub, on every push) re-checks them forever.
+5. **Tests every fix by trying the attack it should stop.** It signs in as a second user and tries to read your data, sends a fake payment, and tries to make itself admin. Each attack must fail.
+6. **Saves those attacks as tests** in `security-tests/`, so `bash security-tests/run.sh` re-runs them whenever you (or GitHub, on every push) run it.
 7. **Writes `COMPLIANCE.md`**, a dated checklist:
    - ✅ this check passed (with proof). It never means "compliant".
    - ❌ not done
@@ -64,10 +64,10 @@ If a tool isn't installed, the scan says how to get it. On a Mac: `brew install 
 
 | Command | What it does |
 |---|---|
-| `/armour` | **Add the armour.** The full run above. |
+| `/armour` | **Run the full check and fix.** The full run above. |
 | `/armourcheck` | **Check the armour.** Is it there, do the saved tests still pass, and has anything new been added or gone out of date? Changes nothing unless you ask. |
 | `/armourcost` | **What costs tokens.** A read-only table of what your Claude Code setup sends with every message (skills, plugins, MCP servers, CLAUDE.md, memory, agents), biggest first, with what you could turn off and the saving. All figures are estimates. It warns about secrets in your settings by file and line only, and never changes anything without asking. |
-| `/armourtest` | **Test the armour.** A *lawyer* agent reviews your legal pages and a *hacker* agent attacks local copies of your app (never live systems). Their findings are double-checked, and every real one becomes a new saved test. |
+| `/armourtest` | **Stress-test the checks.** An AI *legal reviewer* (not a lawyer) reviews your legal pages and a *hacker* agent attacks local copies of your app (never live systems). Their findings are double-checked, and every confirmed one becomes a new saved test. |
 
 You can also just ask: *"is my project safe to launch?"*
 
@@ -114,12 +114,9 @@ Before launch, or when asked about security, privacy or legal readiness, follow 
 | 📱 **Stores** | App Store, Google Play, Chrome Web Store, Steam, Discord rules that get apps removed |
 | ⚖️ **Content and IP** | Asset licences, UK Online Safety Act, EU DSA, takedowns |
 
-**Countries:**
-- In depth: UK, EU, US.
-- Summarised: 24 more (India, China, Brazil, Japan, Korea, Indonesia, Nigeria, Canada, Australia and others).
-- Researched with the skill's own template: 57 more countries across Europe, Asia, Africa, the Middle East and the Americas, what **all 27 EU members** add on top of EU law, and a guide to sanctioned places. See `references/countries-extra/README.md`.
-- Any other country: the skill researches it with a fixed template and saves it for next time.
-- **Upcoming laws:** a watchlist of laws with future dates, compared with today on every run.
+**Countries (general notes, not legal advice).** More detailed notes for the UK, the EU and the US; shorter notes for 24 more countries; AI-researched notes for 57 more, plus national rules in each of the 27 EU member states and a guide to sanctioned places. Most of the extra notes come from secondary sources and many lines are marked unverified. Last researched October 2026. Laws change, and these notes may be incomplete, out of date or wrong. Check anything you rely on with the regulator or a professional. Other countries: with web search the skill can research them, and marks the results ❓.
+
+**Upcoming laws:** a watchlist of laws with future dates, compared with today on every run.
 
 **Stacks:** Supabase, Firebase, Postgres/Prisma, Convex, PocketBase, Appwrite, MongoDB · Netlify, Vercel, Cloudflare, Firebase Hosting · Next.js, Express · Stripe, Lemon Squeezy, Paddle.
 
@@ -131,20 +128,21 @@ Every recipe is attacked by an automated test suite. [GitHub Actions](https://gi
 |---|---|---|
 | `sql.test.mjs` | 83 | Database recipes on **real Postgres** (PGlite) with Supabase-style roles. Attacks include: reading other users' rows, self-admin, free coins at signup, look-alike swear words, farmed scores, double payouts, double-spending coins, reusing coupons, rate limits. |
 | `webhooks.test.mjs` | 31 | Payment and AI endpoints with **real Stripe signatures** and Lemon Squeezy/Paddle HMACs: fake, tampered, replayed and duplicate events rejected; logged-out users refused; daily AI limits hold, CAPTCHAs are really verified (even when Cloudflare is down), cron endpoints need their secret. |
-| `scan.test.sh` | 67 | The scanner catches planted leaks, risky GitHub workflows, legal red flags in code (SMS, face AI, crypto, extension manifests…) and the deliberately broken test game, and gives **no false alarms** on a clean app or on real patterns that caused false alarms before. |
-| `retest.test.sh` | 9 | A fixed game passes its saved re-test. Four typical AI "quick fixes" that undo security each turn it **red**. |
+| `scan.test.sh` | 71 | The scanner catches planted leaks, risky GitHub workflows, legal red flags in code (SMS, face AI, crypto, extension manifests…) and the deliberately broken test game, and gives no false alarms on the clean test app or on real patterns that caused false alarms before. |
+| `retest.test.sh` | 11 | A fixed game passes its saved re-test. Four typical AI "quick fixes" that undo security each turn it **red**. |
 | `firestore.test.mjs` | 12 | Firestore rules in the **real Firebase emulator**. |
-| `plain.test.sh` | 5 |
-| `findings.test.mjs` | 19 | The findings validator: refuses made-up evidence (missing files, fake line numbers), unproven or undisproven findings, hardening notes with no blocking layer, and COMPLIANCE.md rows citing rejected or unknown findings. |
+| `plain.test.sh` | 5 | Projects with no database: git worktrees, monorepo `npm audit`, the slow-regex detector, the scanner ignoring its own copy. |
+| `findings.test.mjs` | 36 | The findings validator: refuses made-up evidence (missing files, fake line numbers), unproven or undisproven findings, hardening notes with no blocking layer, and COMPLIANCE.md rows citing rejected or unknown findings. It also enforces the 4 finding categories: legal findings need a source and a reason, are never ticked ✅, and sensitive topics need professional advice. |
 | `cost.test.mjs` | 21 | `/armourcost` with a fake `~/.claude`: ranking, totals, used/unused guesses, free skills, symlinks, plugins on/off, MCP servers, read-only, and fake secrets **never** appear in the output. |
-| `probe.test.mjs` | 10 | The Supabase probe against a fake leaky project: it finds every open door, **never writes**, and refuses a secret key. | Projects with no database: git worktrees, monorepo `npm audit`, the slow-regex detector, the scanner ignoring its own copy. |
+| `probe.test.mjs` | 15 | The Supabase probe against a fake leaky project: it finds every open door, **never writes**, and refuses a secret key. |
+| `disclaimer.test.sh` | 23 | The standard disclaimer is in the README, every command, the templates, the scripts' output and the legal references; the old wording is gone; the 4 category labels are used; the MIT licence wording stays. |
 
 ### Reviewed and attacked
 
-On 4 Oct 2026, every part was reviewed or attacked by independent checks:
+On 4 Oct 2026, every part was reviewed or attacked by separate AI agents and an automated scanner:
 
 - **A skill test:** a fresh AI agent followed the skill on a game with 30 planted problems. It found almost all of them and fixed them, with tests.
-- **A lawyer agent:** corrected cookie, AI Act, accessibility and consumer-law details, and rewrote the privacy template to cover GDPR Art. 13.
+- **An AI legal reviewer (not a lawyer):** corrected cookie, AI Act, accessibility and consumer-law details, and rewrote the privacy template to cover GDPR Art. 13.
 - **A hacker agent:** found bypasses in the name filter, profile creation, the scoring and webhook replay. All fixed, all now tested.
 - **NVIDIA [SkillSpector](https://github.com/NVIDIA/SkillSpector):** its AI reviewer confirmed one real bug the hacker agent had missed. In Firestore rules v2, `{sub=**}` also matches the profile document itself, so players could make themselves admin. It was reproduced in the emulator, fixed, and is now tested. SkillSpector's AI disagreed with every other high finding.
 
@@ -156,7 +154,7 @@ These are AI and automated reviews, **not** a human lawyer or a professional pen
 |---|---|
 | `SKILL.md` | The step-by-step instructions the agent follows |
 | `commands/` | `/armour`, `/armourcheck`, `/armourtest` |
-| `references/` | Security (~120 risks incl. GitHub Actions, AI agents, extensions, MCP), legal (UK/EU/US incl. lawsuit-heavy US laws, app-store rules, EU 2026 product laws), 83 countries + all 27 EU members' own rules + sanctions, stacks, upcoming-laws watchlist (~60 dated items) |
+| `references/` | Security (~120 risks incl. GitHub Actions, AI agents, extensions, MCP), legal (UK/EU/US incl. lawsuit-heavy US laws, app-store rules, EU 2026 product laws), general notes on 83 countries and on national rules in the 27 EU members (researched Oct 2026) + sanctions, stacks, upcoming-laws watchlist (~60 dated items) |
 | `recipes/` | Ready-to-adapt fixes: Supabase SQL and Edge Functions, Firebase rules, headers for Netlify, Vercel and Cloudflare, Stripe/Lemon Squeezy/Paddle webhooks, Express, Next.js |
 | `scripts/scan.sh` | The scanner: secrets, git history, risky code, GitHub Actions, legal red flags in code, packages, power tools, live-site checks, and whether the project's own armour is set up |
 | `scripts/supabase-probe.mjs` | Read-only Supabase front-door probe |
@@ -177,11 +175,13 @@ These are AI and automated reviews, **not** a human lawyer or a professional pen
 - The scanner finds known patterns. A clean scan isn't proof of safety, which is why the attack tests exist.
 - Recipes need adapting to your app. The two Supabase Edge Functions are type-checked but not run in the suite, because they need a live Supabase project.
 - The name filter can't catch everything (for example, random characters standing in for letters). Keep a report button.
+- Findings may be wrong in either direction: missed problems, or false alarms.
+- Legal notes are general information: whether a law applies to you depends on facts the skill can't check.
 - Most enforcement risk depends on scale. Severity labels mean "how likely is trouble for a small app", **not** "does the law apply".
 
 ## Going deeper
 
-Code Armour is for beginners and covers laws as well as security. It fixes what it finds and keeps re-testing. **For a deep expert audit, also run Cloudflare's [security-audit skill](https://github.com/cloudflare/security-audit-skill).** It sends every finding to fresh agents that try to disprove it, and Code Armour's verdicts and coverage ledger borrow that idea. Their key result: one run finds only about half of what repeated runs find, so run checks again after big changes.
+Code Armour is for beginners and gives general information on laws as well as security checks. It fixes what it finds and keeps re-testing. **For a deep expert audit, also run Cloudflare's [security-audit skill](https://github.com/cloudflare/security-audit-skill).** It sends every finding to fresh agents that try to disprove it, and Code Armour's verdicts and coverage ledger borrow that idea. Their key result: one run finds only about half of what repeated runs find, so run checks again after big changes.
 
 ## Contributing
 

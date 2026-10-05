@@ -20,7 +20,7 @@ Note: only search snippets read; prodhab.go.cr and hacienda.go.cr were not opene
 ## AI, content and platforms
 - [V-sec] Bill 23.919 "Ley para la Promoción Responsable de la IA" (drafted with ChatGPT-4): committee opinion Mar 2025; creates an AI authority (ARIA) with registration duties; not law (crhoy, OECD.AI). Industry (Camtic) and Micitt asked for changes.
 
-## What a small foreign dev realistically must do
+## What a small foreign dev should consider
 - Privacy policy in Spanish, consent for data you collect, deletion path.
 - Selling: charge 13% IVA via a Merchant of Record/app store, or use Hacienda's simplified registration.
 - Kids under 14: if the bill passes, chat and accounts for them need certified, parent-controlled versions; plan an age gate.

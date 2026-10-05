@@ -22,7 +22,7 @@ Note: no regulator site fetched (istd.gov.jo / pdp authority not read). [V-sec] 
 - [V-sec] AI: only a national AI strategy 2023-2027, no AI law. (dig.watch)
 - [K] No local representative rule found for small apps.
 
-## What a small foreign dev realistically must do
+## What a small foreign dev should consider
 - Privacy policy with explicit consent for sensitive data; guardian consent or age gate for kids; a way to delete data.
 - Chat/user content: report button and fast removal; the cybercrime law punishes "fake news" and insults.
 - Under JOD 30,000/yr of Jordan sales: likely nothing; above it use a Merchant of Record or register for GST.

@@ -22,7 +22,7 @@ Marks: [V-reg] regulator/official text, [V-sec] law firm/news/tax vendor, [K] me
 ## AI, content and platforms
 - [K] No AI law; NCSA guidelines on secure AI use (non-binding). Cybercrime Law 14/2014 punishes content harming social values, privacy or the state: moderate user content.
 
-## What a small foreign dev realistically must do
+## What a small foreign dev should consider
 - Kids' app: parent consent, parent access, minimal data in games.
 - 72-hour breach plan.
 - Moderate chat/user content (religion, royal family, privacy).

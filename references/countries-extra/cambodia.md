@@ -22,7 +22,7 @@ Note: only search snippets and summaries were read; no regulator site (tax.gov.k
 - [V-sec] No AI law. A Draft National AI Strategy 2025-2030 (strategy, not law) was circulated June 2025 (Rajah & Tann).
 - [K] Content: speech and "incitement" offences in the Criminal Code are used against online posts; moderate hate/political content in chat if Cambodia-facing.
 
-## What a small foreign dev realistically must do
+## What a small foreign dev should consider
 - Treat Cambodian users like any: short privacy policy, collect little data, honour deletion requests.
 - Stay below KHR 250M/yr Cambodian sales, or use a Merchant of Record (it handles VAT).
 - Keep coins non-cashable; no gambling features.

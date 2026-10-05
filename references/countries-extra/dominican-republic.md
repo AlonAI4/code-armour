@@ -19,7 +19,7 @@ Note: only search snippets read; dgii.gov.do and indotel.gob.do not opened. [V-s
 ## AI, content and platforms
 - [V-sec] No AI law; eight AI bills sat in committees and were set to expire on 12 Jan 2026 (El Caribe). Check whether re-filed.
 
-## What a small foreign dev realistically must do
+## What a small foreign dev should consider
 - Privacy policy in Spanish, consent, deletion path; little risk without a local presence.
 - Sell as normal; no VAT registration needed now. Use a Merchant of Record if ITBIS returns.
 - Keep a report/remove path for chat.

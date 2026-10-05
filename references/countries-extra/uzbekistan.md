@@ -19,7 +19,7 @@ Note: tax.uz, lex.uz and regulator sites were not read; lines are secondary or m
 - [V-sec] AI law No. LRU-1115 signed 21 Jan 2026: AI-generated content shared online must be labelled; bans AI uses that harm dignity, freedom or health. (Babl.ai, Kun.uz)
 - [K] Platforms must remove illegal content on request; foreign sites can be blocked. Not verified.
 
-## What a small foreign dev realistically must do
+## What a small foreign dev should consider
 - If selling to Uzbek individuals: register for 12% VAT from the first sale, or use a merchant of record.
 - Label AI-generated output shown to users. Label your AI coach / generated images.
 - Keep biometrics out of the app; any other personal data you may keep abroad, ideally with standard clauses.

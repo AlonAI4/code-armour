@@ -27,7 +27,7 @@ Note: adilet.zan.kz / kgd.gov.kz not fetched. Marks: [V-reg] regulator/official 
 - [V-sec] Digital Code Art. 43: disclose AI use, explain key factors, right to human review (procedures pending).
 - [K] Online Platforms law (2023) requires big foreign platforms to name a local legal representative; threshold not confirmed.
 
-## What a small foreign dev realistically must do
+## What a small foreign dev should consider
 - Label AI-generated output visibly + in metadata (C2PA/EXIF tag) and say chats are AI.
 - Get explicit consent for storing data abroad; know localisation is a risk if you grow.
 - Breach plan with a 1-working-day authority notice.

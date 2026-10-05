@@ -19,7 +19,7 @@ Note: no regulator site fetched (citra.gov.kw not read). [V-sec] = secondary pag
 - [V-sec] Cybercrime Law No. 63 of 2015, in force 12 Jan 2016; articles on online speech criticised as broad. (Wikipedia, Article 19)
 - [K] No AI law. Strict rules on religion, the Emir and public morals in online content.
 
-## What a small foreign dev realistically must do
+## What a small foreign dev should consider
 - Short privacy policy with consent; parent consent for kids.
 - Moderate chat for insults to the Emir, religion and similar; keep a report button.
 - Nothing to collect on tax today; re-check if Kuwait adopts VAT.

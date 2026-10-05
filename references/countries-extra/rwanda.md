@@ -23,7 +23,7 @@ Marks: [V-reg] regulator/official text, [V-sec] law firm/news/tax vendor, [K] me
 ## AI, content and platforms
 - [K] National AI Policy (2023); no AI law. Rwanda moderates online speech strictly (genocide denial / "divisionism" laws), so moderate user content.
 
-## What a small foreign dev realistically must do
+## What a small foreign dev should consider
 - Parent consent (or block) under 16.
 - 48-hour breach plan.
 - Know that registration + "store in Rwanda" rules exist; if you target Rwanda specifically, register with the NCSA and request transfer authorisation.
