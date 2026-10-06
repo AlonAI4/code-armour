@@ -183,6 +183,7 @@ A fix that worked today can be undone by tomorrow's change (an AI "fixing" an RL
    - `scripts/scan.sh`
    - `scripts/validate-findings.mjs` (run.sh checks `.code-armour/` with it on every re-test)
    - `recipes/supabase/audit.sql` (if Supabase)
+   - If the project uses Vitest or Jest, exclude `security-tests/` from it (Vitest: `test: { exclude: ['**/node_modules/**', 'security-tests/**'] }`). These files are plain Node scripts and break those runners.
 2. Fill `attacks.test.mjs` with **this project's** attacks from Step 5, using its real tables. One `check()` per attack. Each check must fail if the protection disappears. Pin the **exact** protected code, not just a count: e.g. store the reviewed `innerHTML` lines (or a hash of them) so removing one `esc()` fails the test, not only adding a new sink. Where there are two layers (e.g. column permissions + a trigger), test **each layer on its own** too (`canUpdateColumn()` in the harness), or losing one layer goes unnoticed while the other still blocks. Keep the database audit at the top.
 3. If Supabase is used, add the test tool: `npm i -D @electric-sql/pglite`. No database? Skip it; `run.sh` runs plain tests without it.
 4. Run `bash security-tests/run.sh` and show it passing.

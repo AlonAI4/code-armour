@@ -1,6 +1,7 @@
 // Code Armour attack tests for THIS project. Written by the skill during its first run; re-run them any time:
 //   node security-tests/attacks.test.mjs        (or: bash security-tests/run.sh)
 // Each check tries a real attack and must FAIL to get in. If one starts passing, something broke.
+// Plain Node script, not a Vitest/Jest test: exclude security-tests/ from those runners.
 // >>> The skill (or you) replaces the examples below with this project's real tables and rules.
 import { freshDb, addUsers, as, audit, check, summary, canUpdateColumn, USER_A, USER_B } from "./harness.mjs";
 
