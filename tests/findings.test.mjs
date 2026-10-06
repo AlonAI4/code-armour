@@ -47,6 +47,10 @@ f = good(); f.findings[0].verdict = "probably";
 r = run(project(f, cov())); check("only confirmed / needs_validation / rejected are allowed", !r.ok && /verdict must be/.test(r.out), r.out);
 f = good(); f.findings[0].evidence.file = "../../etc/passwd";
 r = run(project(f, cov())); check("evidence outside the project is refused", !r.ok && /outside the project/.test(r.out), r.out);
+// review 5 Oct: "/tmp/ca-find-abc-evil" passed a startsWith("/tmp/ca-find-abc") check
+{ const d = project(good(), cov()); const ev = d + "-evil"; mkdirSync(ev, { recursive: true }); writeFileSync(join(ev, "x.sql"), "a\nb\nc\nd\n");
+  f = good(); f.findings[0].evidence.file = "../" + d.split(/[\\/]/).pop() + "-evil/x.sql"; writeFileSync(join(d, ".code-armour/findings.json"), JSON.stringify(f));
+  r = run(d); check("evidence in a sibling folder with the same name start is refused", !r.ok && /outside the project/.test(r.out), r.out); }
 
 r = run(project(good(), cov(), "| Leaderboard | ❌ | F-003 |\n")); check("COMPLIANCE.md can't cite a rejected finding", !r.ok && /was rejected/.test(r.out), r.out);
 r = run(project(good(), cov(), "| Something | ❌ | F-099 |\n")); check("COMPLIANCE.md can't cite a finding that doesn't exist", !r.ok && /isn't in findings.json/.test(r.out), r.out);

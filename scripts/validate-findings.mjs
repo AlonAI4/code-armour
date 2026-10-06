@@ -3,7 +3,7 @@
 //   node validate-findings.mjs [project-dir]      (reads .code-armour/findings.json and .code-armour/coverage.json)
 // Exit 1 with a list of problems if anything is wrong.
 import { readFileSync, existsSync } from "node:fs";
-import { join, resolve } from "node:path";
+import { join, resolve, relative, isAbsolute } from "node:path";
 
 const dir = resolve(process.argv[2] || ".");
 const AREAS = ["auth", "database-rules", "payments", "uploads", "ai-features", "prompt-injection", "supply-chain",
@@ -81,7 +81,7 @@ else if (f) {
       err(`${at}: evidence missing (give {file, line} or {command, output})`);
     } else if (str(ev.file)) {
       const p = resolve(dir, ev.file);
-      if (!p.startsWith(dir)) err(`${at}: evidence file is outside the project`);
+      if (relative(dir, p).startsWith("..") || isAbsolute(relative(dir, p))) err(`${at}: evidence file is outside the project`);
       else if (!existsSync(p)) err(`${at}: evidence file ${ev.file} does not exist (made-up finding?)`);
       else if (ev.line != null) {
         const n = readFileSync(p, "utf8").split("\n").length;

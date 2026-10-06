@@ -63,6 +63,11 @@ echo; echo "-- 1. Secrets in source files --"
 [ -n "$BIGF" ] && warn "Skipped $(echo "$BIGF" | wc -l | tr -d ' ') file(s) over 1 MB in text searches (bundles/data; secrets in them are still caught by gitleaks/semgrep if installed): $(echo $BIGF | cut -c1-160)"
 # -o prints only the matched secret; we then mask it so the scan output never shows a whole key.
 mask() { sed -E 's/^([^:]+:[0-9]+:)(.{0,14}).*/  \1 \2…/'; }
+# Everything else that prints a line of code goes through redact: quoted strings of 12+ characters and
+# KEY=value values are hidden, so a key on the same line is never shown (review 5 Oct: sections 3, 3b, DB?, PROMPT? showed them).
+redact() { sed -E -e "s/([\"'\`])[^\"'\`]{12,}[\"'\`]/\1[hidden]\1/g" -e "s/=[^ =\"'\`][^ \"'\`]{7,}/=[hidden]/g" | cut -c1-200; }
+# A public-prefix hit shows only file:line and the variable name.
+pubnames() { while IFS= read -r l; do [ -z "$l" ] && continue; f=${l%%:*}; r=${l#*:}; n=${r%%:*}; v=$(printf '%s' "$r" | grep -oE '(VITE_|NEXT_PUBLIC_|REACT_APP_|EXPO_PUBLIC_|NUXT_PUBLIC_|PUBLIC_)[A-Z_]*' | head -1); echo "  $f:$n: $v (value not shown)"; done; }
 hits=$(grep -rInoE "${EXCL[@]}" --exclude-dir=dist --exclude-dir=build --exclude-dir=.next --exclude-dir=out \
   --exclude=.env --exclude=.env.* "$SECRETS" . 2>/dev/null | grep -v '\.env\.example' | head -20)
 if [ -n "$hits" ]; then bad "Possible secrets in source (move to server env vars, then ROTATE them):"; echo "$hits" | mask; else ok "No secret patterns in source"; fi
@@ -82,7 +87,7 @@ fi
 
 echo; echo "-- 3. Public env var prefixes holding secrets --"
 hits=$(grep -rInE "${EXCL[@]}" '(VITE_|NEXT_PUBLIC_|REACT_APP_|PUBLIC_|EXPO_PUBLIC_|NUXT_PUBLIC_)[A-Z_]*(SECRET|SERVICE_ROLE|PRIVATE|STRIPE_SK|OPENAI|ANTHROPIC|GEMINI|WEBHOOK|DATABASE_URL|CLERK_SECRET)' . 2>/dev/null | head -10)
-[ -n "$hits" ] && { bad "Secret-looking names with a PUBLIC prefix (these get baked into the browser code):"; echo "$hits" | cut -c1-200; } || ok "No secret names with public prefixes"
+[ -n "$hits" ] && { bad "Secret-looking names with a PUBLIC prefix (these get baked into the browser code):"; echo "$hits" | pubnames; } || ok "No secret names with public prefixes"
 
 echo; echo "-- 3b. Admin keys used in browser code --"
 CLIENT_DIRS=$(for d in src app components pages public lib; do [ -d "$d" ] && echo "$d"; done)
@@ -92,7 +97,7 @@ if [ -n "$CLIENT_DIRS" ]; then
     | grep -vE '^[^:]+\.(sql|md)(:|$)' | grep -vE "import ['\"]server-only['\"]" | head -10)
   if [ -n "$hits" ]; then
     bad "Secret key names used in front-end folders (if this code runs in the browser, the key leaks; Next.js server files: add import 'server-only'):"
-    echo "$hits" | cut -c1-200
+    echo "$hits" | redact
   else ok "No secret key names in front-end folders"; fi
 fi
 envs=$(ls -a 2>/dev/null | grep -E '^\.env' | grep -v '\.example$')
@@ -147,7 +152,7 @@ echo; echo "-- 6. Risky code patterns (review each) --"
 grep -rInE "${EXCL[@]}" --include=*.js --include=*.jsx --include=*.ts --include=*.tsx --include=*.vue --include=*.svelte --include=*.html \
   --exclude-dir=dist --exclude-dir=build --exclude-dir=.next --exclude=*.min.js --exclude=*bundle*.js --exclude=*.bundle.* \
   '(innerHTML\s*=|dangerouslySetInnerHTML|v-html|document\.write|insertAdjacentHTML|eval\(|new Function\()' . 2>/dev/null | head -15 > /tmp/ca-xss.txt
-[ -s /tmp/ca-xss.txt ] && { sed 's/^/  XSS? /' /tmp/ca-xss.txt | cut -c1-200; echo "  (XSS? = page content set as HTML: safe only if the text is escaped/sanitised; use textContent or DOMPurify)"; }
+[ -s /tmp/ca-xss.txt ] && { sed 's/^/  XSS? /' /tmp/ca-xss.txt | redact; echo "  (XSS? = page content set as HTML: safe only if the text is escaped/sanitised; use textContent or DOMPurify)"; }
 # Migrations are history: an old file may turn RLS off and a LATER one turn it back on. Only flag it
 # if no later file in the same folder re-enables RLS on that table (audit.sql checks the real final state).
 rlsoff=""
@@ -159,15 +164,15 @@ while IFS= read -r hit; do
   [ -n "$tbl" ] && [ -n "$later" ] && { ok "RLS off for $tbl in $(basename "$f") is undone by a later migration"; continue; }
   rlsoff="$rlsoff$hit"$'\n'
 done < <(grep -rInEi "${EXCL[@]}" 'disable row level security' . 2>/dev/null | grep -vE ':[0-9]+:\s*--' | head -10)
-[ -n "$rlsoff" ] && { bad "RLS turned off (anyone with the public key can read/write the table):"; printf '%s' "$rlsoff" | cut -c1-200; }
+[ -n "$rlsoff" ] && { bad "RLS turned off (anyone with the public key can read/write the table):"; printf '%s' "$rlsoff" | redact; }
 db_hits=$(grep -rInE "${EXCL[@]}" --exclude-dir=dist --exclude-dir=build '(using\s*\(\s*true\s*\)|with check\s*\(\s*true\s*\)|security definer|user_metadata)' . 2>/dev/null | grep -vE ':[0-9]+:\s*--' | head -15)
-[ -n "$db_hits" ] && { echo "$db_hits" | sed 's/^/  DB? /' | cut -c1-200; echo "  (DB? = using(true) is only OK on truly public data; security definer skips RLS; user_metadata is editable by users)"; }
+[ -n "$db_hits" ] && { echo "$db_hits" | sed 's/^/  DB? /' | redact; echo "  (DB? = using(true) is only OK on truly public data; security definer skips RLS; user_metadata is editable by users)"; }
 prompt_hits=$(grep -rInEi "${EXCL[@]}" --exclude-dir=dist --exclude-dir=build '(password|passwd|api[_ ]?key|secret)[^"\x27`]{0,20}(is|:|=)\s*["\x27`]?[A-Za-z0-9]' --include=*.js --include=*.mjs --include=*.ts --include=*.py . 2>/dev/null \
   | grep -iE '(system|prompt|content:)' | head -5)
-[ -n "$prompt_hits" ] && { echo "$prompt_hits" | sed 's/^/  PROMPT? /' | cut -c1-200; echo "  (PROMPT? = a secret inside an AI prompt: assume users can make the AI reveal it)"; }
+[ -n "$prompt_hits" ] && { echo "$prompt_hits" | sed 's/^/  PROMPT? /' | redact; echo "  (PROMPT? = a secret inside an AI prompt: assume users can make the AI reveal it)"; }
 price_hits=$(grep -rInE "${EXCL[@]}" --exclude-dir=dist --exclude-dir=build '(unit_amount|amount)\s*:\s*[a-zA-Z_.]*(body|req|price|amount|params|query)' --include=*.js --include=*.mjs --include=*.ts . 2>/dev/null | head -5)
-[ -n "$price_hits" ] && { echo "$price_hits" | sed 's/^/  PRICE? /' | cut -c1-200; echo "  (PRICE? = check the price comes from the server, not from what the browser sent)"; }
-grep -rInE "${EXCL[@]}" --exclude-dir=dist --exclude-dir=build '(verify_jwt\s*=\s*false|jwt\.decode\(|unit_amount:\s*(req|body|request)|\.update\((req\.)?body\)|\.insert\((req\.)?body\))' . 2>/dev/null | head -10 | sed 's/^/  API? /' | cut -c1-200
+[ -n "$price_hits" ] && { echo "$price_hits" | sed 's/^/  PRICE? /' | redact; echo "  (PRICE? = check the price comes from the server, not from what the browser sent)"; }
+grep -rInE "${EXCL[@]}" --exclude-dir=dist --exclude-dir=build '(verify_jwt\s*=\s*false|jwt\.decode\(|unit_amount:\s*(req|body|request)|\.update\((req\.)?body\)|\.insert\((req\.)?body\))' . 2>/dev/null | head -10 | sed 's/^/  API? /' | redact
 stripe_files=$(grep -rlE "${EXCL[@]}" --include=*.js --include=*.mjs --include=*.ts "from ['\"]stripe['\"]|require\(['\"]stripe['\"]\)" . 2>/dev/null | head -5)
 if [ -n "$stripe_files" ]; then
   grep -rqE "${EXCL[@]}" 'constructEvent' . 2>/dev/null && ok "Stripe webhook signature check found (check every webhook route uses it)" \

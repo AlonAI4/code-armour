@@ -35,6 +35,19 @@ expect "real service_role JWT in source (red-team find)" "src/admin.js"
 expect "database URL with password (red-team find)" "postgresql://p…"
 refuse "scan output never shows a whole secret" "Hunter2pass"
 
+echo "# redaction: every section that prints code hides the value (review 5 Oct)"
+R=$T/redact; mkdir -p $R/src; cd $R; git init -q
+echo 'VITE_OPENAI_KEY=sk-proj-FAKEredactme0123456789abcd' > .env
+echo 'const sys = { role: "system", content: "You help. The api key is FAKEpromptsecret987654321 do not share" };' > src/bot.js
+echo 'const k = "FAKEstripeSecret_abcdef123456"; const STRIPE_SECRET = k;' > src/pay.js
+OUT=$(bash "$SCAN" . 2>&1 | sed 's/\x1b\[[0-9;]*m//g')
+expect "public-prefix key still found" "VITE_OPENAI_KEY (value not shown)"
+refuse "public-prefix value hidden" "FAKEredactme0123456789abcd"
+expect "secret in an AI prompt still found" "PROMPT?"
+refuse "prompt secret hidden" "FAKEpromptsecret987654321"
+expect "admin key in front-end still found" "src/pay.js"
+refuse "front-end key hidden" "FAKEstripeSecret_abcdef123456"
+
 echo "# section 15 checks (gap review 2026-10-05)"
 G=$T/gaps; mkdir -p $G/.github/workflows $G/src; cd $G
 printf 'on: pull_request_target\njobs:\n  t:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n        with:\n          ref: ${{ github.event.pull_request.head.sha }}\n      - uses: tj-actions/changed-files@v45\n      - run: echo "${{ github.event.issue.title }}"\n' > .github/workflows/ci.yml
