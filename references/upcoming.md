@@ -7,7 +7,7 @@ Laws that change on a known future date. Compare each date with **today** on eve
 - **Due within 6 months:** tell the user if it applies to their project, so they can prepare.
 - **Later:** mention it only if it clearly applies.
 
-Last full update: 2026-10-05. Status: ⏳ coming · ✅ confirmed started · ⚠️ slipped or changed (see note).
+Last full update: 2026-10-07. Status: ⏳ coming · ✅ confirmed started · ⚠️ slipped or changed (see note).
 
 | Date | Where | What changes | Affects | Status |
 |---|---|---|---|---|
@@ -63,5 +63,32 @@ Last full update: 2026-10-05. Status: ⏳ coming · ✅ confirmed started · ⚠
 | open | Thailand | Game Industry Promotion Act (expected end of 2025, not confirmed passed) | Games with Thai users | ⏳ |
 | open | UK | Planned law for device-level child protections (no timetable yet; aimed at big platforms first) — [MLex](https://www.mlex.com/mlex/articles/2522663/uk-law-for-device-level-child-protections-now-in-the-works-no-timetable-given-update) | Apps for kids in the UK | ⏳ |
 | open | US | New state privacy and kids' laws keep arriving (app-store age laws, AI companion laws) | Apps with US users | ⏳ |
+| 2026-10-09 | Sudan | UN 1591 sanctions/arms embargo expire unless renewed (EU regime 2026-10-10) — check renewal | Apps with users in Sudan | ⏳ |
+| 2026-10-15 | Nicaragua | EU sanctions renewal due | Paid apps, Nicaragua | ⏳ |
+| 2026-10 | Marshall Islands | Personal Data Protection Act 2025 takes effect (government agencies only) | Few small apps | ⏳ |
+| 2026-11-01 | Lesotho | Mandatory e-invoicing for VAT-registered vendors (sources disagree on date) | Selling to Lesotho | ⏳ |
+| 2026-11-30 | Somalia | UN Al-Shabaab measures expire unless renewed | Paid apps, Somalia | ⏳ |
+| 2026 (late) | Guinea | New 3% "RCN" levy on digital services, after a 6-month transition from May 2026 | Selling to Guinea | ⏳ |
+| 2026 (late) | Gabon | 18% VAT + CSS on foreign digital services (finance law 002/2026) | Selling to Gabon | ⏳ |
+| 2027-01-01 | Liberia | VAT replaces GST (~18%); may cover foreign digital sellers | Selling to Liberia | ⏳ |
+| 2027-01-01 | Tajikistan | VAT rate drops from 14% to 13% | Selling to Tajikistan | ⏳ |
+| 2027-01-10 | Venezuela | EU sanctions renewal due | Paid apps, Venezuela | ⏳ |
+| 2027 | Grenada | VAT on digital services from non-residents (VAT Amendment Bill 2026, awaiting sign-off) | Selling to Grenada | ⏳ |
+| 2027 | Timor-Leste | VAT planned | Selling to Timor-Leste | ⏳ |
+| 2027-03-19 | Montenegro | New GDPR-style data law applies (one news source; confirm) | Apps with Montenegro users | ⏳ |
+| 2027-04-30 | Vatican City | Data-protection decree's 3-year trial ends | Few small apps | ⏳ |
+| 2027-05-31 | South Sudan | UN sanctions renewal due | Paid apps, South Sudan | ⏳ |
+| 2027-07-31 | Central African Republic | UN sanctions regime ends unless renewed | Paid apps, CAR | ⏳ |
+| 2028-08-20 | Kiribati | Grace period ends for small controllers based in Kiribati (foreign apps get none) | Apps with Kiribati users | ⏳ |
+| open | Bahamas | Data Protection Act 2025 passed, start date not announced | Apps with Bahamas users | ⏳ |
+| open | Belize, Grenada, Saint Kitts and Nevis, Guyana | Data protection Acts passed but not yet brought into force | Apps with users there | ⏳ |
+| open | Sierra Leone, South Sudan, Mozambique, Namibia, Maldives, Palestine, Timor-Leste, Nauru | Data protection bills or plans, no date | Apps with users there | ⏳ |
+| open | Burundi, Djibouti, Chad, DR Congo | New data/digital laws waiting for their regulator or implementing rules | Apps with users there | ⏳ |
+| open | ECOWAS | Revised data-protection Supplementary Act (approved by experts Nov 2024, not adopted) | West African users | ⏳ |
+| open | Palau | Cybersecurity Act passed 2026-07-20, awaiting signature | Few small apps | ⏳ |
+| 2026 (end) | Fiji | Under-16 social media bill and Online Safety Act amendments expected | Social apps with Fiji users | ⏳ |
+| 2026 (end) | Papua New Guinea | Social media age-limit law planned; Data Governance and Data Protection Bill 2026 (consultation closed 2026-08-19) | Apps with PNG users | ⏳ |
+| open | Tonga | Privacy Act 2025 and Consumer Protection Act 2025 start when Cabinet proclaims them | Apps with Tonga users | ⏳ |
+| 2028 | Solomon Islands | VAT at 15% incl. imported services (VAT Bill 2025, planned) | Selling to Solomon Islands | ⏳ |
 
 Add a row whenever research finds a future date. Never delete rows: mark them ✅ or ⚠️ and keep a note, so the history stays visible.

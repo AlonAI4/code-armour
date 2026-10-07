@@ -51,7 +51,7 @@ Load only the reference files you need:
 | Always | `references/upcoming.md`: compare each date with today (see "Staying up to date") |
 | Users anywhere sanctioned (Iran, North Korea, Cuba, occupied regions, Russia/Belarus limits; Syria changed in 2025–26) | `references/countries-extra/sanctioned-places.md` |
 | Users in EU countries | Also `references/countries-extra/eu-national-rules*.md` (general notes on national rules in all 27 EU members) |
-| Users in any other country | `references/countries-extra/<country>.md` if it exists (57 countries, general notes; list in its README) |
+| Users in any other country | `references/countries-extra/<country>.md` if it exists (142 countries and territories, general notes; list in its README) |
 | A country not in the files | Check `references/countries-extra/` first. Not there? Research it with `templates/country-research.md` (needs web search), save it to `references/countries-extra/<country>.md`, and mark its rows ❓. No web search? Say so plainly and apply the general rules (privacy notice, consent, delete-my-data, breach plan, kids' consent, tax via a Merchant of Record), all ❓ |
 
 **Read in tiers to save effort:** start with the "10-minute pre-launch check" at the end of `security.md`, the Top 5 in `legal.md`, and the "Cross-cutting" sections of the country files. Only open a detailed section when the project has that feature (payments, user posts, AI, kids...).

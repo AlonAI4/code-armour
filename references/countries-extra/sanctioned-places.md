@@ -63,3 +63,14 @@ Marks: [V-reg] regulator/official text, [V-sec] law firm/news/company docs, [K] 
 - [K] Not a full embargo: US (OFAC Burma program), UK and EU sanctions are **list-based** (named people, military-owned companies, some state firms), plus some sector bans (e.g. jet fuel). Serving ordinary users is generally allowed; dealing with listed parties isn't.
 - Payments are hard: many card networks and payment providers don't serve Myanmar. Check Stripe/Paddle/app-store availability before selling.
 - See `myanmar.md` for local rules. Re-check the lists before any business deal there.
+
+## Afghanistan, Yemen, Turkmenistan (added 2026-10-07)
+- [V-reg] Afghanistan: NOT comprehensively sanctioned (OFAC FAQ 951). Taliban = SDGT, Haqqani Network = SDGT + FTO; UN 1988 list. OFAC GL 20 (2022) authorises most dealings with Afghan governing institutions. Ordinary users may sign up and pay; screen any business partner. See `afghanistan.md`.
+- [V-reg] Yemen: list-based only (E.O. 13611 doesn't generally ban trade). Houthis/Ansarallah = SDGT + FTO (2025); GL 23A covers telecom only within Yemen. Never serve or take money from Ansarallah, its companies or designated banks. See `yemen.md`.
+- [K] Turkmenistan: no sanctions; the problem is state censorship (your app may be unreachable). See `turkmenistan.md`.
+
+## Sudan, South Sudan, Libya, Somalia, Eritrea, Djibouti (added 2026-10-07)
+- [V-reg] None is comprehensively sanctioned. US programs for Sudan, South Sudan, Libya and Somalia block **listed** persons only; UN/EU/UK add arms embargoes and list-based asset freezes (Somalia: Al-Shabaab only). Eritrea: UN measures ended 2018; US EO 14046 listings removed 18 Sep 2026. Djibouti: none.
+- [V-sec] Sudan extra: a US Chemical Weapons Act export ban (from 23 Jun 2026) waives items not on the Commerce Control List, so ordinary web apps are generally fine.
+- [V-sec] Practical: free sign-ups OK; paid sales not banned, but PayPal doesn't serve Sudan, South Sudan or Libya, and cards from there often fail. Screen business deals against the SDN/UK/EU lists. See the country files.
+- Venezuela, Nicaragua, Mali, Central African Republic: also list-based (named people/entities), not country-wide — see their country files.

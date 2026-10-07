@@ -29,4 +29,22 @@ Most lines are [V-sec] (law firm or news) or [K] (memory): regulator sites often
 | `cambodia.md` … `jamaica.md` | Cambodia, Mongolia, Myanmar, Uruguay, Paraguay, Bolivia, Costa Rica, Panama, Guatemala, Dominican Republic, Jamaica |
 | `peru.md` … `qatar.md`, `sanctioned-places.md` | Peru, Ecuador, Kazakhstan, Sri Lanka, Nepal, Ethiopia, Tanzania, Uganda, Rwanda, Qatar; sanctioned places |
 
+## Added 2026-10-07 (all remaining countries, round 4)
+| File | Countries |
+|---|---|
+| `venezuela.md` … `puerto-rico.md` | Venezuela, Honduras, El Salvador, Nicaragua, Trinidad and Tobago, Puerto Rico (US territory) |
+| `bahamas.md` … `haiti.md` | Bahamas, Barbados, Belize, Antigua and Barbuda, Dominica, Grenada, Saint Kitts and Nevis, Saint Lucia, Saint Vincent and the Grenadines, Guyana, Suriname, Haiti |
+| `kosovo.md` … `san-marino.md` | Kosovo, Montenegro, Liechtenstein, Monaco, Andorra, San Marino |
+| `kyrgyzstan.md` … `maldives.md` | Kyrgyzstan, Tajikistan, Laos, Macau, Brunei, Maldives |
+| `dr-congo.md` … `namibia.md` | DR Congo, Mozambique, Madagascar, Mauritius, Botswana, Namibia |
+| `benin.md` … `mauritania.md` | Benin, Togo, Burkina Faso, Mali, Niger, Guinea, Guinea-Bissau, Sierra Leone, Liberia, The Gambia, Cabo Verde, Mauritania |
+| `malawi.md` … `comoros.md` | Malawi, Lesotho, Eswatini, Burundi, Seychelles, Comoros |
+| `chad.md` … `sao-tome-and-principe.md` | Chad, Central African Republic, Republic of the Congo, Gabon, Equatorial Guinea, São Tomé and Príncipe |
+| `djibouti.md` … `libya.md` | Djibouti, Eritrea, Somalia, South Sudan, Sudan, Libya (sanctions notes in each) |
+| `afghanistan.md` … `vatican-city.md` | Afghanistan, Yemen, Palestine, Bhutan, Turkmenistan, Timor-Leste, Vatican City |
+| `fiji.md` … `solomon-islands.md` | Fiji, Papua New Guinea, Samoa, Tonga, Vanuatu, Solomon Islands |
+| `kiribati.md` … `micronesia.md` | Kiribati, Tuvalu, Nauru, Palau, Marshall Islands, Micronesia |
+
+With round 4, every UN member state (plus Kosovo, Palestine, Taiwan, Hong Kong, Macau, Puerto Rico and Vatican City) has at least general notes in Code Armour. Many small states have no data-protection law in force; their files say so. Laws change: check the research date on each file.
+
 Honest note: the round-3 files are mostly [V-sec] (search snippets, law-firm or news sources) and [K]. No regulator page could be read directly for most of them, so the skill treats them as ❓ "check this".

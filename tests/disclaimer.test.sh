@@ -22,4 +22,8 @@ for lab in "Confirmed technical issue" "Potential issue requiring verification" 
   t "SKILL.md and the COMPLIANCE template name the category '$lab'" 'grep -qF "$lab" "$R/SKILL.md" && grep -qF "$lab" "$R/templates/COMPLIANCE.md"'
 done
 t "LICENSE keeps MIT's 'AS IS, WITHOUT WARRANTY' wording" 'grep -q "PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND" "$R/LICENSE" && grep -q "IN NO EVENT SHALL THE" "$R/LICENSE"'
+for f in "$R"/references/countries-extra/*.md; do
+  case "$f" in */README.md) continue;; esac
+  t "$(basename "$f") points to the disclaimer and has a research date" 'grep -q "General notes, not legal advice" "$f" && grep -qE "researched [0-9]{4}-[0-9]{2}-[0-9]{2}" "$f"'
+done
 echo; echo "$pass passed, $fail failed"; [ $fail = 0 ]

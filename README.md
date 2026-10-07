@@ -114,7 +114,7 @@ Before launch, or when asked about security, privacy or legal readiness, follow 
 | 📱 **Stores** | App Store, Google Play, Chrome Web Store, Steam, Discord rules that get apps removed |
 | ⚖️ **Content and IP** | Asset licences, UK Online Safety Act, EU DSA, takedowns |
 
-**Countries (general notes, not legal advice).** More detailed notes for the UK, the EU and the US; shorter notes for 24 more countries; AI-researched notes for 57 more, plus national rules in each of the 27 EU member states and a guide to sanctioned places. Most of the extra notes come from secondary sources and many lines are marked unverified. Last researched October 2026. Laws change, and these notes may be incomplete, out of date or wrong. Check anything you rely on with the regulator or a professional. Other countries: with web search the skill can research them, and marks the results ❓.
+**Countries (general notes, not legal advice).** More detailed notes for the UK, the EU and the US; shorter notes for 24 more countries; AI-researched notes for 142 more, plus national rules in each of the 27 EU member states and a guide to sanctioned places. Most of the extra notes come from secondary sources and many lines are marked unverified. Last researched October 2026. Laws change, and these notes may be incomplete, out of date or wrong. Check anything you rely on with the regulator or a professional. Other countries: with web search the skill can research them, and marks the results ❓.
 
 **Upcoming laws:** a watchlist of laws with future dates, compared with today on every run.
 
