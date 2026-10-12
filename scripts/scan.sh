@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # Code Armour quick scan. Finds common leaks and missing protections.
 # Usage: bash scan.sh [project-dir] [live-url]
+# Cloned or forked project: CA_BASE=<the original's branch or commit> bash scan.sh ...  (e.g. CA_BASE=upstream/main)
+# tags each hit [mine] (in a file you changed or added) or [original] (came with the project).
 # A clean result is NOT proof of safety: it only catches known patterns.
 
 # Speed: macOS's built-in grep is very slow on big repos (72 s vs 1 s on a 22,000-file project). If ripgrep
@@ -22,7 +24,7 @@ grep() {
         --*) command grep "$@"; return;;
         -*) for ((i=1; i<${#a}; i++)); do
               case "${a:i:1}" in
-                r|R) rec=1;; I|E) ;; n) out+=(-n);; o) out+=(-o);; l) out+=(-l);; i) out+=(-i);;
+                r|R) rec=1;; I|E) ;; F) out+=(-F);; n) out+=(-n);; o) out+=(-o);; l) out+=(-l);; i) out+=(-i);;
                 q) out+=(-q);; h) out+=(--no-filename);; H) out+=(--with-filename);; s) out+=(--no-messages);;
                 *) command grep "$@"; return;;
               esac
@@ -52,8 +54,43 @@ ok()   { echo "${GRN}✓ $*${RST}"; }
 SECRETS='(sk_live_[0-9A-Za-z]{10,}|sk_test_[0-9A-Za-z]{10,}|rk_live_[0-9A-Za-z]{10,}|sk-ant-[0-9A-Za-z_-]{10,}|sk-proj-[0-9A-Za-z_-]{10,}|sk-[A-Za-z0-9]{32,}|sb_secret_[0-9A-Za-z_-]{10,}|InJvbGUiOiJzZXJ2aWNlX3Jv|b2xlIjoic2VydmljZV9yb2xl|cm9sZSI6InNlcnZpY2Vfcm9s|AIza[0-9A-Za-z_-]{35}|gh[pousr]_[0-9A-Za-z]{30,}|xox[baprs]-[0-9A-Za-z-]{10,}|AKIA[0-9A-Z]{16}|-----BEGIN [A-Z ]*PRIVATE KEY-----|whsec_[0-9A-Za-z]{10,}|postgres(ql)?://[^:@/[:space:]]+:[^@/[:space:]]+@|mongodb(\+srv)?://[^:@/[:space:]]+:[^@/[:space:]]+@|GOCSPX-[0-9A-Za-z_-]{10,})'
 EXCL=(--exclude-dir=node_modules --exclude-dir=.git --exclude-dir=.netlify --exclude-dir=.next/cache --exclude=*.lock --exclude=package-lock.json --exclude=scan.sh --exclude=audit.sql)
 
+# Folders test tools fill with logs and recordings (not the project's source). They are skipped in the code
+# checks and reported on their own, so a key inside a logged web address isn't called "your secret in source".
+TOOLLOGS=".playwright-mcp playwright-report test-results .nyc_output"
+for t in $TOOLLOGS; do EXCL+=(--exclude-dir="$t"); done
+# .env files in the project root (not the .example ones). Their values are compared, never printed.
+ENVF=$(ls -a 2>/dev/null | grep -E '^\.env' | grep -vE '\.(example|sample|template)$')
+TAB=$'\t'
+# NAME<tab>value for every key-length value (16+ characters; plain web addresses and paths are skipped).
+envvals() { for e in $ENVF; do sed -nE "s/^[[:space:]]*(export[[:space:]]+)?([A-Za-z_][A-Za-z0-9_]*)[[:space:]]*=[[:space:]]*[\"']?([^\"'#[:space:]]{16,})[\"']?.*/\2${TAB}\3/p" "$e" 2>/dev/null; done | command grep -vE "${TAB}(https?://[^@]*$|/|\./)"; }
+# Is this found text inside one of the .env files? (passed on stdin-style, so it never shows in the process list)
+inenv() { command grep -qF -f <(printf '%s\n' "$1") $ENVF 2>/dev/null; }
+# Files (other than the .env files themselves) that contain the value stored in file $1.
+valfiles() { { if command -v rg >/dev/null 2>&1 && [ -z "${CA_NO_RG:-}" ]; then rg --hidden --no-ignore --no-config --no-messages -lF -f "$1" -g '!node_modules' -g '!.git' .
+    else command grep -rIlF -f "$1" --exclude-dir=node_modules --exclude-dir=.git . ; fi; } 2>/dev/null \
+  | while IFS= read -r x; do x=${x#./}; case " $(echo $ENVF) " in *" $x "*) ;; *) echo "$x";; esac; done | head -5 | tr '\n' ' '; }
+
 echo "== Code Armour scan: $(pwd) =="
 echo "Pattern scan: it finds known patterns only. A clean result isn't proof of safety."
+
+# Clone mode: which files are mine (changed or added since the original), which came with the project.
+MINE=""
+if [ -n "${CA_BASE:-}" ]; then
+  echo; echo "-- 0. Cloned or forked project (legal.md 16) --"
+  if MB=$(git merge-base HEAD "$CA_BASE" 2>/dev/null); then
+    MINE=$(mktemp); { git diff --name-only "$MB" HEAD; git diff --name-only HEAD; git ls-files --others --exclude-standard; } 2>/dev/null | sort -u > "$MINE"
+    ok "Comparing with $CA_BASE: $(wc -l < "$MINE" | tr -d ' ') file(s) changed or added by you. [mine] = in your changes. [original] = came with the project: you still ship it, so report it to the original author or fix it in your copy"
+    lic=$(git ls-tree --name-only "$MB" 2>/dev/null | command grep -iE '^(LICEN[SC]E|COPYING|NOTICE)')
+    [ -z "$lic" ] && warn "The original has no licence file: without a licence you have no permission to copy or share it (legal 16)"
+    for l in $lic; do { [ -f "$l" ] && git diff --quiet "$MB" -- "$l" 2>/dev/null; } && ok "$l is unchanged from the original" || bad "$l was changed or removed: a copy must keep the original licence and copyright notice (legal 16)"; done
+    ls | command grep -qiE '^([A-Z]+[-_])?(NOTICES?|CREDITS|ATTRIBUTION|THIRD[-_]PARTY[-_A-Z]*)(\.md|\.txt)?$' && ok "Credits/notices file found: check it lists everything you added (data, images, fonts, services)" \
+      || warn "No credits/notices file for what you added (open data, images, fonts, services): add one with each source and licence (legal 16)"
+  else warn "CA_BASE=$CA_BASE isn't a branch or commit in this repo: clone mode is off"; fi
+elif git remote 2>/dev/null | command grep -qx upstream; then
+  echo "  Tip: this looks like a fork (it has an 'upstream' remote). Run with CA_BASE=upstream/main to separate your changes from the original's code."
+fi
+who() { if [ -z "$MINE" ]; then cat; else awk -v L="$MINE" 'BEGIN{while((getline l < L)>0) m[l]=1} {s=$0; sub(/^ +/,"",s); sub(/^[A-Z]+\? /,"",s); sub(/^\.\//,"",s); p=s; sub(/:.*/,"",p); t=(p in m)?"[mine]":"[original]"; i=match($0,/[^ ]/); print substr($0,1,i-1) t " " substr($0,i)}'; fi; }
+tagl() { if [ -z "$MINE" ]; then cat; else tr ' ' '\n' | sed '/^$/d' | while IFS= read -r x; do command grep -qxF -- "${x#./}" "$MINE" && printf '%s[mine] ' "$x" || printf '%s[original] ' "$x"; done; fi; }
 # Huge files (generated bundles, word lists, data) make every text search crawl. Skip files over 1 MB in the
 # pattern searches and SAY which ones, so nothing is silently ignored.
 BIGF=$(find . -type f -size +1000k -not -path '*/node_modules/*' -not -path '*/.git/*' 2>/dev/null | head -50)
@@ -62,15 +99,25 @@ for b in $BIGF; do EXCL+=(--exclude="$(basename "$b")"); done
 echo; echo "-- 1. Secrets in source files --"
 [ -n "$BIGF" ] && warn "Skipped $(echo "$BIGF" | wc -l | tr -d ' ') file(s) over 1 MB in text searches (bundles/data; secrets in them are still caught by gitleaks/semgrep if installed): $(echo $BIGF | cut -c1-160)"
 # -o prints only the matched secret; we then mask it so the scan output never shows a whole key.
-mask() { sed -E 's/^([^:]+:[0-9]+:)(.{0,14}).*/  \1 \2…/'; }
+mask() { sed -E 's/^([^:]+:[0-9]+:)(.{0,14}).*/  \1 \2…/' | who; }
 # Everything else that prints a line of code goes through redact: quoted strings of 12+ characters and
 # KEY=value values are hidden, so a key on the same line is never shown (review 5 Oct: sections 3, 3b, DB?, PROMPT? showed them).
-redact() { sed -E -e "s/([\"'\`])[^\"'\`]{12,}[\"'\`]/\1[hidden]\1/g" -e "s/=[^ =\"'\`][^ \"'\`]{7,}/=[hidden]/g" | cut -c1-200; }
+redact() { sed -E -e "s/([\"'\`])[^\"'\`]{12,}[\"'\`]/\1[hidden]\1/g" -e "s/=[^ =\"'\`][^ \"'\`]{7,}/=[hidden]/g" | cut -c1-200 | who; }
 # A public-prefix hit shows only file:line and the variable name.
-pubnames() { while IFS= read -r l; do [ -z "$l" ] && continue; f=${l%%:*}; r=${l#*:}; n=${r%%:*}; v=$(printf '%s' "$r" | grep -oE '(VITE_|NEXT_PUBLIC_|REACT_APP_|EXPO_PUBLIC_|NUXT_PUBLIC_|PUBLIC_)[A-Z_]*' | head -1); echo "  $f:$n: $v (value not shown)"; done; }
+pubnames() { while IFS= read -r l; do [ -z "$l" ] && continue; f=${l%%:*}; r=${l#*:}; n=${r%%:*}; v=$(printf '%s' "$r" | grep -oE '(VITE_|NEXT_PUBLIC_|REACT_APP_|EXPO_PUBLIC_|NUXT_PUBLIC_|PUBLIC_)[A-Z_]*' | head -1); echo "  $f:$n: $v (value not shown)"; done | who; }
 hits=$(grep -rInoE "${EXCL[@]}" --exclude-dir=dist --exclude-dir=build --exclude-dir=.next --exclude-dir=out \
   --exclude=.env --exclude=.env.* "$SECRETS" . 2>/dev/null | grep -v '\.env\.example' | head -20)
-if [ -n "$hits" ]; then bad "Possible secrets in source (move to server env vars, then ROTATE them):"; echo "$hits" | mask; else ok "No secret patterns in source"; fi
+if [ -n "$hits" ]; then bad "Possible secrets in source (move to server env vars, then ROTATE them):"
+  # Each hit says whether it is one of YOUR keys: the found text is compared with the .env values, never shown.
+  echo "$hits" | while IFS= read -r h; do r=${h#*:}; m=${r#*:}; lab=""
+    [ -n "$ENVF" ] && { inenv "$m" && lab=" (matches a value in your .env: this is your real key)" || lab=" (matches nothing in your .env: may be another service's key, an old key or a made-up example)"; }
+    echo "$(printf '%s\n' "$h" | mask)$lab"; done
+else ok "No secret patterns in source"; fi
+for t in $TOOLLOGS; do [ -d "$t" ] || continue
+  n=$(grep -rIlE "$SECRETS" "$t" 2>/dev/null | wc -l | tr -d ' ')
+  [ "$n" -gt 0 ] && warn "$t/ is a test tool's log folder, not your source: $n file(s) in it hold key-looking text (often another service's key inside a logged web address). Delete the folder and git-ignore it: a zip of the project would carry it" \
+    || echo "  $t/ is a test tool's log folder: skipped in the code checks (delete it before sharing the folder)"
+done
 
 echo; echo "-- 2. Secrets in built files (what visitors download) --"
 found_build=0; build_bad=0
@@ -93,6 +140,7 @@ echo; echo "-- 3b. Admin keys used in browser code --"
 CLIENT_DIRS=$(for d in src app components pages public lib; do [ -d "$d" ] && echo "$d"; done)
 if [ -n "$CLIENT_DIRS" ]; then
   hits=$(grep -rInE "${EXCL[@]}" --exclude-dir=api --exclude-dir=server --exclude-dir=functions \
+    --exclude=*.test.* --exclude=*.spec.* --exclude-dir=__tests__ --exclude-dir=__mocks__ --exclude-dir=test --exclude-dir=tests \
     '(SERVICE_ROLE|service_role|sb_secret_|STRIPE_SECRET|stripe_secret|OPENAI_API_KEY|ANTHROPIC_API_KEY)' $CLIENT_DIRS 2>/dev/null \
     | grep -vE '^[^:]+\.(sql|md)(:|$)' | grep -vE "import ['\"]server-only['\"]" | head -10)
   if [ -n "$hits" ]; then
@@ -148,6 +196,25 @@ else
   warn "Not a git repo. Use git + GitHub so you have history and secret scanning."
 fi
 
+echo; echo "-- 5b. Sharing the folder: what a zip or copy would carry (security.md 17.1-17.2) --"
+if [ -n "$ENVF" ]; then
+  nk=$(envvals | wc -l | tr -d ' ')
+  [ "$nk" -gt 0 ] && warn "A plain zip or copy of this folder would hand over $(echo $ENVF) ($nk key-length value(s)): git-ignoring a file keeps it out of git only. To share the project, send a git-based copy: recipes/sharing/share-zip.sh"
+  TV=$(mktemp); leaks=""
+  while IFS="$TAB" read -r name val; do
+    printf '%s\n' "$val" > "$TV"; fl=$(valfiles "$TV")
+    [ -n "$fl" ] && leaks="$leaks  $name is also in: $fl"$'\n'
+  done < <(envvals)
+  rm -f "$TV"
+  if [ -n "$leaks" ]; then bad "A real value from your .env is also in other files (values not shown). Remove it there, and ROTATE the key if that file was ever pushed, deployed or shared:"; printf '%s' "$leaks"
+  elif [ "$nk" -gt 0 ]; then ok "No other file contains a real value from your .env ($nk compared, none shown)"; fi
+else ok "No .env file in the folder"; fi
+if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+  ign=$(git ls-files --others --ignored --exclude-standard 2>/dev/null | command grep -vE '(^|/)(node_modules|dist|build|out|\.next|\.netlify)/' | command grep -vE '(^|/)\.env[^/]*$' | head -300 \
+    | while IFS= read -r x; do command grep -lIE "$SECRETS" "$x" 2>/dev/null; done | head -5 | tr '\n' ' ')
+  [ -n "$ign" ] && warn "Git-ignored file(s) with key-looking text: $ign(not in git, but a zip or copy of the folder would carry them)"
+fi
+
 echo; echo "-- 6. Risky code patterns (review each) --"
 grep -rInE "${EXCL[@]}" --include=*.js --include=*.jsx --include=*.ts --include=*.tsx --include=*.vue --include=*.svelte --include=*.html \
   --exclude-dir=dist --exclude-dir=build --exclude-dir=.next --exclude=*.min.js --exclude=*bundle*.js --exclude=*.bundle.* \
@@ -198,22 +265,26 @@ if ls .github/workflows/*.y*ml >/dev/null 2>&1; then
   [ -n "$unp" ] && { warn "Third-party actions pinned to a movable tag, not a commit SHA (15.3):"; echo "$unp" | cut -c1-160; } || ok "Third-party actions pinned (or none)"
 fi
 short=$(grep -rnE "${EXCL[@]}" --exclude-dir=dist --exclude-dir=build 'rejectUnauthorized: *false|NODE_TLS_REJECT_UNAUTHORIZED *= *.?0|verify *= *False|InsecureSkipVerify: *true' . 2>/dev/null | grep -vE ':[0-9]+:\s*(//|#)' | head -5)
-[ -n "$short" ] && { bad "Security check turned off to 'make it work' (15.33):"; echo "$short" | cut -c1-160; }
+[ -n "$short" ] && { bad "Security check turned off to 'make it work' (15.33):"; echo "$short" | cut -c1-160 | who; }
 elec=$(grep -rnE "${EXCL[@]}" --exclude-dir=dist --exclude-dir=build 'nodeIntegration: *true|contextIsolation: *false|webSecurity: *false|exposeInMainWorld\(.*ipcRenderer' . 2>/dev/null | head -5)
-[ -n "$elec" ] && { bad "Unsafe Electron setting: any XSS becomes control of the computer (15.27):"; echo "$elec" | cut -c1-160; }
+[ -n "$elec" ] && { bad "Unsafe Electron setting: any XSS becomes control of the computer (15.27):"; echo "$elec" | cut -c1-160 | who; }
 bots=$(grep -rnoE "${EXCL[@]}" --exclude-dir=dist --exclude-dir=build '[MN][A-Za-z0-9_-]{23,25}\.[A-Za-z0-9_-]{6}\.[A-Za-z0-9_-]{27,}|[0-9]{8,10}:AA[A-Za-z0-9_-]{33}' . 2>/dev/null | head -3)
 [ -n "$bots" ] && { bad "Discord/Telegram bot token in the code (15.26): move it to an env var and reset it:"; echo "$bots" | mask; }
 if grep -rqlE "${EXCL[@]}" --exclude-dir=dist --exclude-dir=build 'cf-turnstile|h-captcha|hcaptcha\.com/1/api|turnstile\.render|grecaptcha' . 2>/dev/null; then
   grep -rqE "${EXCL[@]}" 'siteverify|recaptcha/api/siteverify|captchaToken' . 2>/dev/null && ok "Server-side CAPTCHA check (siteverify) found: make sure every protected form uses it" || bad "CAPTCHA widget found but no server check (siteverify): bots just skip it (15.10)"
 fi
 hosth=$(grep -rnE "${EXCL[@]}" --exclude-dir=dist --exclude-dir=build "(headers\.host|headers\[.x-forwarded-host.\]|req\.get\(.host.\)).*(reset|verify|confirm|magic|link|url)|(reset|verify|confirm|magic).*(headers\.host|req\.get\(.host.\))" . 2>/dev/null | head -3)
-[ -n "$hosth" ] && { bad "Email links built from the request's Host header (password-reset poisoning, 15.7): use a fixed SITE_URL:"; echo "$hosth" | cut -c1-160; }
+[ -n "$hosth" ] && { bad "Email links built from the request's Host header (password-reset poisoning, 15.7): use a fixed SITE_URL:"; echo "$hosth" | cut -c1-160 | who; }
 
 echo; echo "-- 6e. Legal red flags in the code (legal.md section 14; warnings: check whether the rule applies) --"
 SRC_INC=(--include=*.js --include=*.jsx --include=*.ts --include=*.tsx --include=*.mjs --include=*.vue --include=*.svelte --include=*.html --include=*.py --exclude=*.min.js --exclude=*bundle* --exclude=*-mcp.mjs)
-lgi() { grep -rliE "${EXCL[@]}" --exclude-dir=dist --exclude-dir=build "${SRC_INC[@]}" "$1" . 2>/dev/null | head -3 | tr '\n' ' '; }
-lg() { grep -rlE "${EXCL[@]}" --exclude-dir=dist --exclude-dir=build "${SRC_INC[@]}" "$1" . 2>/dev/null | head -3 | tr '\n' ' '; }
-f=$(lg '<video|youtube\.com/embed|player\.vimeo|mux-player'); p=$(lg 'fbq\(|connect\.facebook\.net|analytics\.tiktok\.com|snaptr\(')
+lgi() { grep -rliE "${EXCL[@]}" --exclude-dir=dist --exclude-dir=build "${SRC_INC[@]}" "$1" . 2>/dev/null | head -3 | tr '\n' ' ' | tagl; }
+lg() { grep -rlE "${EXCL[@]}" --exclude-dir=dist --exclude-dir=build "${SRC_INC[@]}" "$1" . 2>/dev/null | head -3 | tr '\n' ' ' | tagl; }
+# A <video> tag that shows a camera (webcam preview, CCTV feed) isn't a video people "watch" in the VPPA sense,
+# and fbq( / snaptr( must be whole names, not the end of another function's name.
+f=$(grep -rlE "${EXCL[@]}" --exclude-dir=dist --exclude-dir=build "${SRC_INC[@]}" '<video|youtube\.com/embed|player\.vimeo|mux-player' . 2>/dev/null \
+  | while IFS= read -r x; do command grep -qiE 'getUserMedia|srcObject|mediaDevices|cctv|webcam|traffic.?cam' "$x" || echo "$x"; done | head -3 | tr '\n' ' ' | tagl)
+p=$(lg '(^|[^A-Za-z0-9_$.])(fbq|snaptr)\(|connect\.facebook\.net|analytics\.tiktok\.com')
 [ -n "$f" ] && [ -n "$p" ] && warn "Video + ad pixel ($f/ $p): US VPPA class actions. No pixels on video pages, or get opt-in (legal 14)"
 f=$(lgi "from ['\"](twilio|@vonage/server-sdk|messagebird|plivo|telnyx)['\"]|require\(['\"](twilio|plivo|telnyx)['\"]\)|sendSms\(|PhoneNumber:"); [ -n "$f" ] && warn "Sends SMS ($f): US TCPA may need written consent, STOP handling, 8am-9pm only (legal 14)"
 f=$(lg "(from|require\()\s*\(?['\"](face-api(\.js)?|@vladmandic/(human|face-api)|@tensorflow-models/face-(landmarks-detection|detection)|@mediapipe/(face_mesh|tasks-vision))['\"]"); [ -n "$f" ] && warn "Face or voice processing ($f): Illinois BIPA (damages up to \$1,000-\$5,000 per person). Keep it on-device, store nothing, or get written consent (legal 14)"
@@ -245,6 +316,13 @@ gql=$(grep -rnE "${EXCL[@]}" --exclude-dir=dist --exclude-dir=build "introspecti
 yt=$(lg "youtube\.com/(embed|iframe_api)"); [ -n "$yt" ] && warn "YouTube embeds ($yt): on kids' pages use youtube-nocookie.com behind click-to-load (legal 15)"
 img=$(grep -rlE "${EXCL[@]}" --exclude-dir=dist --exclude-dir=build "${SRC_INC[@]}" "images\.(generate|edit)\(|replicate\.run\(|fal\.(run|subscribe)\(|api\.stability\.ai|/v1/images/(generations|edits)" . 2>/dev/null | while read -r f; do grep -qiE "moderation|moderations\.create|safety_checker|nsfw" "$f" || echo "$f"; done | head -3 | tr '\n' ' ')
 [ -n "$img" ] && bad "AI image generation found ($img): check it has input and output moderation (CSAM/deepfake law, API bans; 16.5, legal 15)"
+
+echo; echo "-- 6g. Local servers: who can reach them (security.md 17.3) --"
+lsn=$(grep -rnE "${EXCL[@]}" --exclude-dir=dist --exclude-dir=build --exclude=*.test.* --exclude=*.spec.* --exclude=*.min.js --include=*.js --include=*.mjs --include=*.cjs --include=*.ts --include=*.py \
+  "(\.listen\(\s*[A-Za-z0-9_.|' \"]+\s*(\)|,\s*(\(|function|async|[A-Za-z_]+\s*=>))|['\"]0\.0\.0\.0['\"]|HTTPServer\(\s*\(\s*['\"]['\"])" . 2>/dev/null | command grep -vE ':[0-9]+:\s*(//|#)' | head -5)
+if [ -n "$lsn" ]; then warn "Server listens on every network interface, not only this machine. On your own computer that lets anyone on the same Wi-Fi reach it: for a local tool pass the host, e.g. .listen(port, '127.0.0.1'). (A hosted server needs all interfaces, so check which this is.) CHECK while it runs: lsof -iTCP -sTCP:LISTEN -nP shows 127.0.0.1:PORT, not *:PORT"
+  echo "$lsn" | redact
+elif grep -rqE "${EXCL[@]}" --exclude-dir=dist --exclude-dir=build --include=*.js --include=*.mjs --include=*.cjs --include=*.ts '\.listen\(' . 2>/dev/null; then ok "Servers in the code name a host (check it is 127.0.0.1 or localhost for a local tool)"; fi
 
 echo; echo "-- 6c. Trackers and third parties (privacy laws, kids) --"
 grep -rlE "${EXCL[@]}" --exclude-dir=dist --exclude-dir=build 'fonts\.googleapis\.com|fonts\.gstatic\.com' . 2>/dev/null | head -3 | sed 's/^/  ? Google Fonts loaded from Google (self-host them; a German court fined this): /'

@@ -98,5 +98,21 @@ r = run(project(good(), c)); check("coverage values are checked", !r.ok && /must
 r = run(project(null, cov())); check("a missing findings.json is reported", !r.ok && /findings.json is missing/.test(r.out), r.out);
 r = run(project("{not json", cov())); check("broken JSON is reported, not crashed on", !r.ok && /not valid JSON/.test(r.out), r.out);
 
+// The COMPLIANCE.md template carries the validator's row rules, and a first draft written from its example lines passes.
+const TPL = readFileSync(new URL("../templates/COMPLIANCE.md", import.meta.url), "utf8");
+const examples = TPL.match(/"- (?:🔧|🔍|📋|⚖️)[^"]*"/g) || [];
+check("the template has an example line for each kind of finding (fixed, open, to verify, compliance, advice)", examples.length === 5, examples.join(" | "));
+f = good();
+f.findings.push({ id: "F-006", title: "Sign-up may have no rate limit", area: "auth", severity: "medium", verdict: "needs_validation",
+  category: "needs_verification", evidence: { file: "supabase/migrations/001_init.sql", line: 1 } });
+const ids = ["F-001", "F-002", "F-006", "F-004", "F-005"];   // fixed 🔧, open 🔧, 🔍, 📋, ⚖️: the order the template lists them
+const draft = examples.map((e, i) => e.slice(1, -1).replace("F-NNN", ids[i])).join("\n");
+r = run(project(f, cov(), TPL + "\n" + draft + "\n"));
+check("a first draft written from the template's example lines passes the validator", r.ok, r.out);
+r = run(project(f, cov(), TPL + "\n" + draft.replace("🔧 ❌ F-002", "🔧 ✅ F-002") + "\n"));
+check("…and breaking a template rule (✅ on an open finding) is still refused", !r.ok && /still open/.test(r.out), r.out);
+for (const rule of ["Never cite a rejected finding", "must contain ❓", "no ✅ anywhere on that line", "can never contain ✅"])
+  check(`the template states the rule: ${rule}`, TPL.includes(rule));
+
 console.log(`\n${passed} passed, ${failed} failed`);
 process.exit(failed ? 1 : 0);

@@ -58,6 +58,10 @@ If a tool isn't installed, the scan says how to get it. On a Mac: `brew install 
 
 **Also built in:**
 - Live-site checks: HTTPS and certificate expiry, cookies, CORS, ~20 commonly leaked files, source maps, `security.txt`, SPF/DMARC.
+- **Sharing checks:** what a zip or copy of the folder would carry. It finds keys in git-ignored files like `.env`, and compares the real `.env` values with every other file without ever printing one. `recipes/sharing/share-zip.sh` builds a zip from the code saved in git instead.
+- **Clone mode** for cloned or forked projects: `CA_BASE=upstream/main bash scripts/scan.sh` tags each hit `[mine]` or `[original]`, and checks the original licence file is unchanged and a credits file exists.
+- **Local servers:** flags a server that listens on the whole network instead of only your machine.
+- **Less noise:** test-tool log folders are reported on their own line, and a found key says whether it matches a value in your `.env`.
 - A **Supabase front-door probe** (`scripts/supabase-probe.mjs`). It looks at your project with only the public key, the way an attacker would, and shows which tables anyone can read. It's read-only.
 
 ## Commands
@@ -128,11 +132,12 @@ Every recipe is attacked by an automated test suite. [GitHub Actions](https://gi
 |---|---|---|
 | `sql.test.mjs` | 83 | Database recipes on **real Postgres** (PGlite) with Supabase-style roles. Attacks include: reading other users' rows, self-admin, free coins at signup, look-alike swear words, farmed scores, double payouts, double-spending coins, reusing coupons, rate limits. |
 | `webhooks.test.mjs` | 31 | Payment and AI endpoints with **real Stripe signatures** and Lemon Squeezy/Paddle HMACs: fake, tampered, replayed and duplicate events rejected; logged-out users refused; daily AI limits hold, CAPTCHAs are really verified (even when Cloudflare is down), cron endpoints need their secret. |
-| `scan.test.sh` | 71 | The scanner catches planted leaks, risky GitHub workflows, legal red flags in code (SMS, face AI, crypto, extension manifests…) and the deliberately broken test game, and gives no false alarms on the clean test app or on real patterns that caused false alarms before. |
+| `scan.test.sh` | 107 | The scanner catches planted leaks, keys a folder zip would carry, real `.env` values copied into other files, servers open to the network, risky GitHub workflows, legal red flags in code (SMS, face AI, crypto, extension manifests…) and the deliberately broken test game; clone mode tags hits `[mine]` or `[original]`; and gives no false alarms on the clean test app or on real patterns that caused false alarms before. |
 | `retest.test.sh` | 11 | A fixed game passes its saved re-test. Four typical AI "quick fixes" that undo security each turn it **red**. |
 | `firestore.test.mjs` | 12 | Firestore rules in the **real Firebase emulator**. |
+| `share.test.sh` | 11 | The share-zip recipe: the zip is built from git, so the ignored `.env` can't be inside; a committed `.env` or a real key value in the code stops it; the value is never printed. |
 | `plain.test.sh` | 5 | Projects with no database: git worktrees, monorepo `npm audit`, the slow-regex detector, the scanner ignoring its own copy. |
-| `findings.test.mjs` | 36 | The findings validator: refuses made-up evidence (missing files, fake line numbers), unproven or undisproven findings, hardening notes with no blocking layer, and COMPLIANCE.md rows citing rejected or unknown findings. It also enforces the 4 finding categories: legal findings need a source and a reason, are never ticked ✅, and sensitive topics need professional advice. |
+| `findings.test.mjs` | 44 | The findings validator: refuses made-up evidence (missing files, fake line numbers), unproven or undisproven findings, hardening notes with no blocking layer, and COMPLIANCE.md rows citing rejected or unknown findings. It also enforces the 4 finding categories: legal findings need a source and a reason, are never ticked ✅, and sensitive topics need professional advice. |
 | `cost.test.mjs` | 21 | `/armourcost` with a fake `~/.claude`: ranking, totals, used/unused guesses, free skills, symlinks, plugins on/off, MCP servers, read-only, and fake secrets **never** appear in the output. |
 | `probe.test.mjs` | 15 | The Supabase probe against a fake leaky project: it finds every open door, **never writes**, and refuses a secret key. |
 | `disclaimer.test.sh` | 23 | The standard disclaimer is in the README, every command, the templates, the scripts' output and the legal references; the old wording is gone; the 4 category labels are used; the MIT licence wording stays. |
@@ -155,8 +160,8 @@ These are AI and automated reviews, **not** a human lawyer or a professional pen
 | `SKILL.md` | The step-by-step instructions the agent follows |
 | `commands/` | `/armour`, `/armourcheck`, `/armourtest`, `/armourcost` |
 | `references/` | Security (~120 risks incl. GitHub Actions, AI agents, extensions, MCP), legal (UK/EU/US incl. lawsuit-heavy US laws, app-store rules, EU 2026 product laws), general notes on 83 countries and on national rules in the 27 EU members (researched Oct 2026) + sanctions, stacks, upcoming-laws watchlist (~60 dated items) |
-| `recipes/` | Ready-to-adapt fixes: Supabase SQL and Edge Functions, Firebase rules, headers for Netlify, Vercel and Cloudflare, Stripe/Lemon Squeezy/Paddle webhooks, Express, Next.js |
-| `scripts/scan.sh` | The scanner: secrets, git history, risky code, GitHub Actions, legal red flags in code, packages, power tools, live-site checks, and whether the project's own armour is set up |
+| `recipes/` | Ready-to-adapt fixes: Supabase SQL and Edge Functions, Firebase rules, headers for Netlify, Vercel and Cloudflare, Stripe/Lemon Squeezy/Paddle webhooks, Express, Next.js, a keys-free share zip |
+| `scripts/scan.sh` | The scanner: secrets, git history, what a folder zip would carry, local servers, clone mode, risky code, GitHub Actions, legal red flags in code, packages, power tools, live-site checks, and whether the project's own armour is set up |
 | `scripts/supabase-probe.mjs` | Read-only Supabase front-door probe |
 | `scripts/armour-cost.mjs` | Read-only token-cost report for `/armourcost` |
 | `scripts/validate-findings.mjs` | Checks findings and the coverage ledger |

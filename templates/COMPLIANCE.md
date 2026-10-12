@@ -12,15 +12,24 @@ Finding categories: 🔧 Confirmed technical issue · 🔍 Potential issue requi
 Legal rows can never be ✅ from code alone: use 📝 drafted · 👤 reviewed by an adult · ❓ not reviewed.
 If the builder is under 18, a parent reads every legal page before launch.
 
+<!-- Rules the checker (scripts/validate-findings.mjs) applies to EVERY line that mentions a finding id, in the lists
+     below and in the tables. Follow them and the first draft passes. Delete this comment when the file is filled in.
+     1. Only cite ids that are in .code-armour/findings.json. Never cite a rejected finding.
+     2. The line shows the finding's category: its icon (🔧 🔍 📋 ⚖️) or its full label.
+     3. Verdict needs_validation (every 🔍, and most 📋 and ⚖️): the line must contain ❓.
+     4. Confirmed and still open: no ✅ anywhere on that line (use ❌).
+     5. Confirmed and fixed (it has a proving test): don't mark the line ❌ (use ✅, or no status mark in the lists).
+     6. A line citing a 📋 or ⚖️ finding can never contain ✅, even next to another finding that is fixed.
+     Two findings on one line must each obey these, so give a fixed finding and an open one separate lines. -->
 ## Findings by category
 ### 🔧 Confirmed technical issue
-<F-ids, one line each, worst first>
+<one line per finding, worst first. Fixed: "- 🔧 F-NNN <problem in plain words>. Fixed, proven by <test name>." Open: "- 🔧 ❌ F-NNN <problem>. Open: <what to do>.">
 ### 🔍 Potential issue requiring verification
-<F-ids, one line each, with what to check>
+<one line per finding: "- 🔍 ❓ F-NNN <what might be wrong>. Check: <exact step or command>.">
 ### 📋 General compliance consideration
-<F-ids, one line each>
+<one line per finding: "- 📋 ❓ F-NNN <rule that may apply>. <what to do or decide>.">
 ### ⚖️ Professional advice recommended
-<F-ids, one line each, with who to ask>
+<one line per finding: "- ⚖️ ❓ F-NNN <topic>. Ask: <who, e.g. a parent, a privacy lawyer, an accountant>.">
 
 ## 1. Data access
 | Item | Status | Proof / what to do |
@@ -40,6 +49,7 @@ If the builder is under 18, a parent reads every legal page before launch.
 | No secrets in the repo or git history (leaked ones rotated) | | |
 | GitHub secret scanning, push protection, Dependabot on | | |
 | 2FA on GitHub, host, database, payments, domain, npm | | |
+| Shared as a zip or folder: built from git, no `.env` or real key value inside (`recipes/sharing/share-zip.sh`) | | |
 
 ## 3. Server code
 | Item | Status | Proof / what to do |
@@ -79,6 +89,7 @@ If the builder is under 18, a parent reads every legal page before launch.
 | 📋 No trackers or ads (or a real consent banner) | | |
 | 📋 Fonts self-hosted | | |
 | 📋 Breach plan: who to tell and how fast (72h in many countries) | | |
+| 📋 No backend: users told which outside services their device contacts and what each one sees (legal 16) | | |
 
 ## 7. Names & user content
 | Item | Status | Proof / what to do |
@@ -96,6 +107,8 @@ If the builder is under 18, a parent reads every legal page before launch.
 | ⚖️ Tax: Merchant of Record, or registered where needed | | |
 | ⚖️ Accounts owned by an adult where required (Stripe, app stores, AI APIs) | | |
 | 📋 Licences/credits file for every asset, font, sound and library | | |
+| 📋 Cloned or renamed project: original licence file unchanged, original author credited, credits for added data and services (legal 16) | | |
+| 📋 Free public data services used within their usage rules (attribution, request limits; legal 16) | | |
 | 📋 Lawful basis written down for each use of personal data | | |
 | 📋 Data processing agreements accepted (database, host, payments, AI) | | |
 | ⚖️ EU/UK representative needed? (builders outside the EU/UK) | | |

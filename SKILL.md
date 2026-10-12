@@ -35,6 +35,10 @@ Read the project first and answer what you can yourself: the **stack** (look for
 - Could under-13s or under-18s use it?
 - Can users post anything others see (chat, names, uploads, comments)?
 - How old are you? (only if payments, app stores or AI API accounts are involved)
+- Is the code yours, or a clone or fork of someone else's project (renamed or not)? If a clone: which branch or commit is the original?
+- How will people get it: a live website, an app store, a public repo, a zip or folder sent to friends, or only your own computer?
+
+**Clone or fork?** Keep the original's code and your changes apart from here on. Run the scan in clone mode (Step 3), say in every finding whether it is in your changes or the original's, and go through the licence and credit checklist in `references/legal.md` 16. **Shared as a zip or folder?** Read `references/security.md` 17 first: the hidden `.env` travels with a plain zip.
 
 ## Step 2: Choose the rules that may apply
 
@@ -72,9 +76,13 @@ Skip whole sections that can't apply. For example, no payments means skip Stripe
    - source maps;
    - `npm audit`;
    - the live site's security headers;
-   - exposed `/.env` and `/.git`.
+   - exposed `/.env` and `/.git`;
+   - what a zip or copy of the folder would carry: keys in git-ignored files, and any real `.env` value that also sits in another file (values are compared, never printed);
+   - servers that listen on the whole network instead of only this machine.
 
    Read every line it prints. It only finds patterns, so a clean scan isn't proof of safety.
+   - **Clone mode:** for a cloned or forked project, run `CA_BASE=<the original's branch or commit> bash scripts/scan.sh ...` (e.g. `CA_BASE=upstream/main`). Each hit is tagged `[mine]` (a file the user changed or added) or `[original]` (came with the project), and the scan checks the licence file is unchanged and a credits file exists. `[original]` problems are still shipped: report them to the original's author, or fix them in the copy.
+   - **Whose key is it?** A found key is labelled as matching a value in the user's `.env` or matching nothing there. One that matches nothing may be another service's key, an old key or a made-up example: find out which before calling it the user's secret. Test-tool log folders (`.playwright-mcp/` and similar) are reported on their own line, not as source.
    - **Power tools:** if gitleaks, osv-scanner, Semgrep or zizmor are installed, the scan runs them automatically: secrets in history, vulnerable and **malicious** packages in every ecosystem, real code analysis, and GitHub Actions attacks. If they're missing, the scan prints the install line. Suggest installing them, but ask first (Mac: `brew install gitleaks osv-scanner semgrep zizmor`). Never send code to an online service without asking.
    - **With a live URL**, it also checks HTTPS and certificate expiry, cookie flags, CORS from a random website, ~20 commonly leaked files, server version leaks, public source maps, folder listings, `security.txt`, and SPF/DMARC on a custom domain. These are read-only requests.
 2. **Supabase front-door probe** (ask first; only the user's own project): `node scripts/supabase-probe.mjs <project URL> <anon/publishable key> <project folder>` (the folder lets it test the tables the code uses when Supabase hides the table list). With only the public key, it shows which tables anyone can read, callable functions, public buckets, whether email confirmation is off, and whether GraphQL shows the schema. It's read-only and refuses a secret key.
@@ -149,6 +157,7 @@ Use the recipes in `recipes/` as starting points. Each one marks the names you m
 | Cron or "internal" endpoints anyone can call | `recipes/netlify/cron-auth.mjs` |
 | GitHub workflow with unpinned actions or dangerous triggers | `templates/security-tests/github-workflow.yml` (pinned, read-only, no stored credentials) |
 | Lemon Squeezy / Paddle webhook not verified | `recipes/payments/mor-webhooks.mjs` |
+| Project shared as a zip or folder (the hidden `.env` would go with it) | `recipes/sharing/share-zip.sh` (zip built from git; refuses if a `.env` file or a real `.env` value is inside) |
 | Privacy page, terms, accessibility statement | `templates/privacy-policy.md` (fill from what the code really collects) |
 
 For any database change, give the user the migration and say what it does before applying it.
@@ -194,7 +203,7 @@ Not Supabase? Same idea in the project's own test tool: Firebase rules with the 
 
 ## Step 6: Write COMPLIANCE.md
 
-Copy `templates/COMPLIANCE.md` into the project root and fill it in. Keep the disclaimer block at the top exactly as it is. **Delete whole sections that don't apply** (e.g. no database: replace the data-access and payments tables with one ➖ line saying why) instead of filling them with ➖ rows. Add rows for what this project really has (extension, MCP server, CLI):
+Copy `templates/COMPLIANCE.md` into the project root and fill it in. Keep the disclaimer block at the top exactly as it is. The template lists the rules the validator applies to every line that cites a finding: follow them and the first draft passes. **Delete whole sections that don't apply** (e.g. no database: replace the data-access and payments tables with one ➖ line saying why) instead of filling them with ➖ rows. Add rows for what this project really has (extension, MCP server, CLI):
 
 - ✅ done (with evidence);
 - ❌ not done (with how to fix);

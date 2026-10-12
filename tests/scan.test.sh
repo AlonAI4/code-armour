@@ -199,5 +199,92 @@ git add -A && git -c user.email=t@t -c user.name=t commit -qm two
 OUT=$(bash "$SCAN" . 2>&1 | sed 's/\x1b\[[0-9;]*m//g')
 expect "secret key in history is a leak" "in git history ("
 
+echo "# sharing the folder: keys a zip would leak, real .env values in other files (security.md 17)"
+FK="FAKEmapkey_0123456789abcdef"      # made-up value, no known key shape
+Z=$T/zip; mkdir -p $Z/src; cd $Z; git init -q
+printf '.env*\nsecrets.local\n' > .gitignore
+echo "MAP_KEY=$FK" > .env
+echo "export const key = \"$FK\"" > src/config.js
+echo "token sk_live_$(printf 'FAKEfakeFAKEfake1234')" > secrets.local
+OUT=$(bash "$SCAN" . 2>&1 | sed 's/\x1b\[[0-9;]*m//g')
+expect "a folder zip would carry .env" "would hand over .env (1 key-length value(s))"
+expect "real .env value found in another file" "MAP_KEY is also in: src/config.js"
+refuse "the real value is never printed" "$FK"
+expect "git-ignored file with a key" "Git-ignored file(s) with key-looking text: secrets.local"
+rm src/config.js secrets.local; echo 'export const key = import.meta.env.MAP_KEY' > src/config.js
+OUT=$(bash "$SCAN" . 2>&1 | sed 's/\x1b\[[0-9;]*m//g')
+expect "clean: no other file holds the value" "No other file contains a real value from your .env (1 compared, none shown)"
+refuse "clean: no leak reported" "is also in:"
+refuse "clean: no ignored-file warning" "Git-ignored file(s) with key-looking text"
+rm .env
+OUT=$(bash "$SCAN" . 2>&1 | sed 's/\x1b\[[0-9;]*m//g')
+expect "no .env: says so" "No .env file in the folder"
+refuse "no .env: no zip warning" "would hand over"
+
+echo "# scanner noise: tool logs, keys that aren't yours, test files, camera code"
+NZ=$T/noise; mkdir -p $NZ/src $NZ/.playwright-mcp; cd $NZ
+GK="AIza$(printf 'FAKEfakeFAKEfakeFAKEfakeFAKEfake123')"       # Google-key shape, built at run time
+SL="sk_$(printf live)_"     # Stripe prefix built at run time, so this file holds no key-shaped text
+echo "GET https://maps.example/api/js?key=$GK 403" > .playwright-mcp/console.log
+echo "MY_KEY=${SL}MINEmineMINEmine0001" > .env
+OUT=$(bash "$SCAN" . 2>&1 | sed 's/\x1b\[[0-9;]*m//g')
+expect "tool log folder is labelled on its own" ".playwright-mcp/ is a test tool's log folder, not your source: 1 file(s)"
+refuse "a key in a tool log isn't called a secret in source" "Possible secrets in source"
+echo 'nothing here' > .playwright-mcp/console.log
+OUT=$(bash "$SCAN" . 2>&1 | sed 's/\x1b\[[0-9;]*m//g')
+expect "clean tool log folder is only mentioned" "skipped in the code checks"
+refuse "clean tool log folder raises no warning" "hold key-looking text"
+echo "const other = \"${SL}OTHERotherOTHER0002\"" > src/other.js
+OUT=$(bash "$SCAN" . 2>&1 | sed 's/\x1b\[[0-9;]*m//g')
+expect "a found key that isn't in .env says so" "matches nothing in your .env"
+refuse "…and isn't called your real key" "this is your real key"
+echo "const mine = \"${SL}MINEmineMINEmine0001\"" > src/other.js
+OUT=$(bash "$SCAN" . 2>&1 | sed 's/\x1b\[[0-9;]*m//g')
+expect "a found key that IS in .env says so" "this is your real key"
+rm src/other.js .env
+echo 'process.env.STRIPE_SECRET = "made-up"; test("x", () => {})' > src/pay.test.js
+mkdir -p src/__tests__ && echo 'const OPENAI_API_KEY = "made-up"' > src/__tests__/ai.js
+OUT=$(bash "$SCAN" . 2>&1 | sed 's/\x1b\[[0-9;]*m//g')
+refuse "secret key names in test files aren't flagged" "Secret key names used in front-end folders"
+echo '<video id="cam" autoplay></video><script>navigator.mediaDevices.getUserMedia({video:true}).then(s => cam.srcObject = s); function refbq(){}; refbq()</script>' > src/cam.html
+echo '<video src="cctv-feed.m3u8"></video>' > src/cctv.html
+OUT=$(bash "$SCAN" . 2>&1 | sed 's/\x1b\[[0-9;]*m//g')
+refuse "camera code with a look-alike function name isn't video + ad pixel" "Video + ad pixel"
+echo '<script>fbq("init","1")</script>' > src/index.html
+OUT=$(bash "$SCAN" . 2>&1 | sed 's/\x1b\[[0-9;]*m//g')
+refuse "camera/CCTV video with a real pixel still isn't the watch-a-video case" "Video + ad pixel"
+
+echo "# local servers: who can reach them (security.md 17.3)"
+LS=$T/listen; mkdir -p $LS/src; cd $LS
+echo 'app.listen(3000, () => console.log("up"))' > src/server.js
+OUT=$(bash "$SCAN" . 2>&1 | sed 's/\x1b\[[0-9;]*m//g')
+expect "server open to the network" "listens on every network interface"
+echo 'app.listen(3000, "127.0.0.1", () => console.log("up"))' > src/server.js
+OUT=$(bash "$SCAN" . 2>&1 | sed 's/\x1b\[[0-9;]*m//g')
+refuse "server bound to this machine stays quiet" "listens on every network interface"
+expect "…and is reported as naming a host" "Servers in the code name a host"
+
+echo "# clone mode: my changes vs the original's code, licence and credits (legal.md 16)"
+CL=$T/clone; mkdir -p $CL; cd $CL; git init -q
+echo 'MIT License. Copyright (c) Original Author' > LICENSE
+echo 'el.innerHTML = theirs' > orig.js
+git add -A && git -c user.email=t@t -c user.name=t commit -qm original
+BASE=$(git rev-parse HEAD)
+echo 'el.innerHTML = mine' > mine.js
+git add -A && git -c user.email=t@t -c user.name=t commit -qm mine
+OUT=$(CA_BASE=$BASE bash "$SCAN" . 2>&1 | sed 's/\x1b\[[0-9;]*m//g')
+expect "my file is tagged [mine]" "[mine] XSS? ./mine.js"
+expect "the original's file is tagged [original]" "[original] XSS? ./orig.js"
+expect "unchanged licence passes" "LICENSE is unchanged from the original"
+expect "missing credits file is flagged" "No credits/notices file"
+echo 'MIT License. Copyright (c) Me' > LICENSE; echo '# Credits' > ALON-NOTICES.md
+OUT=$(CA_BASE=$BASE bash "$SCAN" . 2>&1 | sed 's/\x1b\[[0-9;]*m//g')
+expect "edited licence is caught" "LICENSE was changed or removed"
+expect "credits file is found" "Credits/notices file found"
+OUT=$(bash "$SCAN" . 2>&1 | sed 's/\x1b\[[0-9;]*m//g')
+refuse "without CA_BASE nothing is tagged" "[mine]"
+OUT=$(CA_BASE=no-such-branch bash "$SCAN" . 2>&1 | sed 's/\x1b\[[0-9;]*m//g')
+expect "a wrong CA_BASE is explained" "clone mode is off"
+
 rm -rf "$T"
 echo; echo "$pass passed, $fail failed"; [ $fail = 0 ]
