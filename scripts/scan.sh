@@ -247,8 +247,13 @@ if [ -n "$stripe_files" ]; then
 fi
 
 echo; echo "-- 6b. Firebase / other backends --"
-for f in $(find . -path ./node_modules -prune -o \( -name 'firestore.rules' -o -name 'storage.rules' -o -name 'database.rules.json' \) -print 2>/dev/null); do
-  grep -qE 'if true|request\.time *<|"\.(read|write)" *: *true' "$f" && bad "$f has open/test-mode rules (anyone can read or write)" || ok "$f has no open rules"
+# node_modules at any depth is skipped (packages ship example rules). Comment lines don't count. Anyone may WRITE,
+# or test-mode dates = open; anyone may READ some paths = a public collection, fine only for truly public data.
+for f in $(find . -name node_modules -prune -o \( -name 'firestore.rules' -o -name 'storage.rules' -o -name 'database.rules.json' \) -print 2>/dev/null); do
+  r=$(grep -vE '^\s*//' "$f")
+  if echo "$r" | grep -qE 'request\.time *<|allow [^:;]*write[^:;]*: *if true|"\.write" *: *true'; then bad "$f has open/test-mode rules (anyone can write, or test-mode dates)"
+  elif echo "$r" | grep -qE 'allow [^:;]*read[^:;]*: *if true|"\.read" *: *true'; then warn "$f lets anyone read some paths: fine only for truly public data (no emails or ids you want private)"
+  else ok "$f has no open rules"; fi
 done
 sa=$(grep -rlE "${EXCL[@]}" '"type": *"service_account"' . 2>/dev/null | head -5)
 [ -n "$sa" ] && bad "Service-account key file(s) in the project (full admin access, never commit or ship): $sa"

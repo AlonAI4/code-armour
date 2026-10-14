@@ -286,5 +286,17 @@ refuse "without CA_BASE nothing is tagged" "[mine]"
 OUT=$(CA_BASE=no-such-branch bash "$SCAN" . 2>&1 | sed 's/\x1b\[[0-9;]*m//g')
 expect "a wrong CA_BASE is explained" "clone mode is off"
 
+echo "# Firebase rules: public reads vs open writes, nested node_modules (debug check 2026-10-14)"
+FB=$T/fbrules; mkdir -p $FB/pkg/node_modules/firebase-tools/templates; cd $FB
+cp "$HERE/../recipes/firebase/firestore.rules" firestore.rules
+printf 'service cloud.firestore { match /{d=**} { allow read, write: if true; } }\n' > pkg/node_modules/firebase-tools/templates/firestore.rules
+OUT=$(bash "$SCAN" . 2>&1 | sed 's/\x1b\[[0-9;]*m//g')
+refuse "our own Firestore recipe isn't called open/test-mode" "./firestore.rules has open/test-mode rules"
+expect "…its public leaderboard read is pointed out" "lets anyone read some paths"
+refuse "rules inside a nested node_modules are skipped" "node_modules/firebase-tools"
+printf 'service cloud.firestore { match /posts/{p} { allow read: if true; allow write: if true; } }\n' > firestore.rules
+OUT=$(bash "$SCAN" . 2>&1 | sed 's/\x1b\[[0-9;]*m//g')
+expect "anyone may write is still caught" "./firestore.rules has open/test-mode rules"
+
 rm -rf "$T"
 echo; echo "$pass passed, $fail failed"; [ $fail = 0 ]

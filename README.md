@@ -132,7 +132,7 @@ Every recipe is attacked by an automated test suite. [GitHub Actions](https://gi
 |---|---|---|
 | `sql.test.mjs` | 83 | Database recipes on **real Postgres** (PGlite) with Supabase-style roles. Attacks include: reading other users' rows, self-admin, free coins at signup, look-alike swear words, farmed scores, double payouts, double-spending coins, reusing coupons, rate limits. |
 | `webhooks.test.mjs` | 31 | Payment and AI endpoints with **real Stripe signatures** and Lemon Squeezy/Paddle HMACs: fake, tampered, replayed and duplicate events rejected; logged-out users refused; daily AI limits hold, CAPTCHAs are really verified (even when Cloudflare is down), cron endpoints need their secret. |
-| `scan.test.sh` | 107 | The scanner catches planted leaks, keys a folder zip would carry, real `.env` values copied into other files, servers open to the network, risky GitHub workflows, legal red flags in code (SMS, face AI, crypto, extension manifests…) and the deliberately broken test game; clone mode tags hits `[mine]` or `[original]`; and gives no false alarms on the clean test app or on real patterns that caused false alarms before. |
+| `scan.test.sh` | 111 | The scanner catches planted leaks, keys a folder zip would carry, real `.env` values copied into other files, servers open to the network, risky GitHub workflows, legal red flags in code (SMS, face AI, crypto, extension manifests…) and the deliberately broken test game; clone mode tags hits `[mine]` or `[original]`; and gives no false alarms on the clean test app or on real patterns that caused false alarms before. |
 | `retest.test.sh` | 11 | A fixed game passes its saved re-test. Four typical AI "quick fixes" that undo security each turn it **red**. |
 | `firestore.test.mjs` | 12 | Firestore rules in the **real Firebase emulator**. |
 | `share.test.sh` | 11 | The share-zip recipe: the zip is built from git, so the ignored `.env` can't be inside; a committed `.env` or a real key value in the code stops it; the value is never printed. |
@@ -159,7 +159,7 @@ These are AI and automated reviews, **not** a human lawyer or a professional pen
 |---|---|
 | `SKILL.md` | The step-by-step instructions the agent follows |
 | `commands/` | `/armour`, `/armourcheck`, `/armourtest`, `/armourcost` |
-| `references/` | Security (~120 risks incl. GitHub Actions, AI agents, extensions, MCP), legal (UK/EU/US incl. lawsuit-heavy US laws, app-store rules, EU 2026 product laws), general notes on 83 countries and on national rules in the 27 EU members (researched Oct 2026) + sanctions, stacks, upcoming-laws watchlist (~60 dated items) |
+| `references/` | Security (~120 risks incl. GitHub Actions, AI agents, extensions, MCP), legal (UK/EU/US incl. lawsuit-heavy US laws, app-store rules, EU 2026 product laws), general notes on 166 more countries and on national rules in the 27 EU members (researched Oct 2026) + sanctions, stacks, upcoming-laws watchlist (~60 dated items) |
 | `recipes/` | Ready-to-adapt fixes: Supabase SQL and Edge Functions, Firebase rules, headers for Netlify, Vercel and Cloudflare, Stripe/Lemon Squeezy/Paddle webhooks, Express, Next.js, a keys-free share zip |
 | `scripts/scan.sh` | The scanner: secrets, git history, what a folder zip would carry, local servers, clone mode, risky code, GitHub Actions, legal red flags in code, packages, power tools, live-site checks, and whether the project's own armour is set up |
 | `scripts/supabase-probe.mjs` | Read-only Supabase front-door probe |
