@@ -124,9 +124,18 @@ Before launch, or when asked about security, privacy or legal readiness, follow 
 
 **Stacks:** Supabase, Firebase, Postgres/Prisma, Convex, PocketBase, Appwrite, MongoDB · Netlify, Vercel, Cloudflare, Firebase Hosting · Next.js, Express · Stripe, Lemon Squeezy, Paddle.
 
+## What's new (October 2026)
+
+- **Sharing a project as a zip.** Zipping a folder in Finder or Explorer also packs the hidden `.env` file with your keys. The scan now warns about this, and `recipes/sharing/share-zip.sh` makes a zip from the code saved in git instead. It refuses to finish if a key is inside.
+- **Your real keys, compared.** The scan reads the values in your `.env` and checks no other file contains one. It reports the key's name and the file, never the value.
+- **Cloned or forked projects.** Clone mode (`CA_BASE=upstream/main`) marks each finding `[mine]` or `[original]`, so you know whose code it's in. It also checks you kept the original licence and added credits.
+- **Local tools.** It warns when a server you run on your computer can be reached by anyone on the same Wi-Fi.
+- **Fewer false alarms:** test-tool logs, test files, camera video and public Firebase reads no longer set it off.
+- **Every UN country** now has general notes (193 member states).
+
 ## Tested, not just written
 
-Every recipe is attacked by an automated test suite. [GitHub Actions](https://github.com/AlonAI4/code-armour/actions) is set up to run it on every push (paused right now: Actions is disabled on this account while a GitHub support ticket is open). Run it yourself with `cd tests && npm install && npm test`.
+Every recipe is attacked by an automated test suite. [GitHub Actions](https://github.com/AlonAI4/code-armour/actions) runs it on every push. Run it yourself with `cd tests && npm install && npm test`.
 
 | Suite | Checks | What it proves |
 |---|---|---|
@@ -173,6 +182,25 @@ These are AI and automated reviews, **not** a human lawyer or a professional pen
 - **Never install a skill, plugin or repo from a link someone DMs you.** Fake copies of real repos are a common malware trick. Find it yourself, then check the owner (here: `AlonAI4`), the stars, the licence and the recent commits before installing.
 - Read a skill's scripts before enabling it, or scan it with NVIDIA [SkillSpector](https://github.com/NVIDIA/SkillSpector). Skills can run code on your computer.
 - Pin what you install to a version, and update on purpose, not automatically.
+
+### Why SkillSpector rates Code Armour "critical"
+
+If you scan Code Armour itself with SkillSpector (`skillspector scan ~/code-armour --no-llm`), it scores **100/100, critical**. That sounds scary, so here is what's behind it. We read every high-severity finding by hand on 14 Oct 2026. All of them were false alarms, for reasons like these:
+
+- **"Credential access" (63 findings).** The scanner reads your `.env` file to check your real keys haven't been copied into other files, and to warn that a zip would carry them. That's the job. Values are compared on your computer and never printed, saved or sent anywhere. The temporary file that holds one value at a time is deleted even if you stop the scan.
+- **"Tool parameter abuse" and "chaining abuse".** These are lines like `rm -rf "$T"` in the tests, which delete the test's own temporary folder.
+- **"Anti-refusal", "prompt extraction", "memory manipulation", "info stealer".** These come from legal notes that use words like "disclaimer", "rules" or "cookies" (for example Norway's cookie law).
+- **"MCP config access".** `/armourcost` reads your Claude settings, including `.mcp.json`, to show what costs tokens and to warn about plain-text secrets in them. It changes nothing and never prints a secret.
+- **"External transmission".** These are recipes that call Anthropic, OpenAI or Cloudflare. That code is meant to go in *your* server, not run by the skill.
+
+**What really leaves your computer:**
+- live-site checks and the Supabase probe go only to the address you give;
+- `osv-scanner`, if installed, sends your package names and versions to osv.dev to look up known problems;
+- Semgrep, if installed, downloads its rules.
+
+Nothing sends your code or keys anywhere.
+
+Don't take our word for it: the scripts are plain shell and Node, so read them, or ask your AI to check these claims against the code.
 
 ## Honest limits
 

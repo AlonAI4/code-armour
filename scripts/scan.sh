@@ -200,7 +200,7 @@ echo; echo "-- 5b. Sharing the folder: what a zip or copy would carry (security.
 if [ -n "$ENVF" ]; then
   nk=$(envvals | wc -l | tr -d ' ')
   [ "$nk" -gt 0 ] && warn "A plain zip or copy of this folder would hand over $(echo $ENVF) ($nk key-length value(s)): git-ignoring a file keeps it out of git only. To share the project, send a git-based copy: recipes/sharing/share-zip.sh"
-  TV=$(mktemp); leaks=""
+  TV=$(mktemp); leaks=""; trap 'rm -f "$TV"' EXIT   # holds one real value at a time: deleted even if the scan is stopped
   while IFS="$TAB" read -r name val; do
     printf '%s\n' "$val" > "$TV"; fl=$(valfiles "$TV")
     [ -n "$fl" ] && leaks="$leaks  $name is also in: $fl"$'\n'

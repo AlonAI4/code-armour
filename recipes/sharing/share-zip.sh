@@ -24,7 +24,7 @@ envin=$(echo "$names" | grep -E '(^|/)\.env[^/]*$' | grep -vE '\.(example|sample
 if [ -n "$envin" ]; then rm -f "$OUT"; echo "✗ Stopped: the saved code contains $envin. Remove it from git (git rm --cached), ROTATE its keys, then try again."; exit 1; fi
 
 # Check 2: no real value from the local .env files anywhere in the saved code (compared, never printed).
-bad=0; T=$(mktemp); TAB=$'\t'
+bad=0; T=$(mktemp); TAB=$'\t'; trap 'rm -f "$T"' EXIT   # holds one real value at a time: deleted even if stopped
 for e in $(ls -a | grep -E '^\.env' | grep -vE '\.(example|sample|template)$'); do
   while IFS="$TAB" read -r name val; do
     printf '%s\n' "$val" > "$T"
