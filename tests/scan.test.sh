@@ -193,11 +193,11 @@ H=$T/hist; mkdir -p $H; cd $H; git init -q
 echo 'const supabaseKey = "sb_publishable_Qk3vR9xLm2PzT8wYc5NbJ1hF7g"' > client.js
 git add -A && git -c user.email=t@t -c user.name=t commit -qm one
 OUT=$(bash "$SCAN" . 2>&1 | sed 's/\x1b\[[0-9;]*m//g')
-refuse "publishable key in history isn't a leak" "in git history ("
+refuse "publishable key in history isn't a leak" "in git history (ROTATE"   # (the all-clear line without gitleaks also says "in git history (built-in")
 echo "const admin = \"sb_secret_$(printf 'Qk3vR9xLm2PzT8wYc5NbJ1hF7g')\"" > admin.js
 git add -A && git -c user.email=t@t -c user.name=t commit -qm two
 OUT=$(bash "$SCAN" . 2>&1 | sed 's/\x1b\[[0-9;]*m//g')
-expect "secret key in history is a leak" "in git history ("
+expect "secret key in history is a leak" "in git history (ROTATE"
 
 echo "# sharing the folder: keys a zip would leak, real .env values in other files (security.md 17)"
 FK="FAKEmapkey_0123456789abcdef"      # made-up value, no known key shape

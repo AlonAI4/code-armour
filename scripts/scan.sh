@@ -37,6 +37,14 @@ grep() {
   [ ${#rest[@]} = 0 ] && rest=(.)
   rg --hidden --no-ignore --no-config --no-messages "${out[@]}" -e "$pat" -- "${rest[@]}"
 }
+else
+# GNU grep (Linux) ignores --include when an --exclude came first: "a file is included unless the first such
+# option is --include". So every --include moves to the front; BSD grep (macOS) doesn't mind either way.
+grep() {
+  local a inc=() rest=()
+  for a in "$@"; do case "$a" in --include=*) inc+=("$a");; *) rest+=("$a");; esac; done
+  command grep "${inc[@]}" "${rest[@]}"
+}
 fi
 
 DIR="${1:-.}"
