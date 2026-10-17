@@ -7,6 +7,7 @@ t() { if eval "$2"; then pass=$((pass+1)); echo "✓ $1"; else fail=$((fail+1));
 blocks=$(awk '/^## Quick start/{q=1} /^\*\*Other agents/{q=0} q&&/^```bash/{b++; inb=1; next} inb&&/^```/{inb=0; next} q&&inb{print b"\t"$0}' "$README")
 step() { echo "$blocks" | awk -F'\t' -v n="$1" '$1==n{sub(/^[^\t]*\t/,""); print}'; }
 t "README has the clone, Claude Code and Codex steps" '[ -n "$(step 1)" ] && [ -n "$(step 2)" ] && [ -n "$(step 3)" ]'
+t "a fresh clone carries no log files (emulator logs are git-ignored)" '[ -z "$(git -C "$R" ls-files | grep -E "\.log$")" ] && git -C "$R" check-ignore -q tests/firestore-debug.log'
 t "the clone step clones github.com/AlonAI4/code-armour" 'step 1 | grep -q "git clone https://github.com/AlonAI4/code-armour.git ~/code-armour"'
 for sh in zsh bash; do
   command -v $sh >/dev/null || { echo "  ($sh not installed: skipped)"; continue; }

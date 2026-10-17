@@ -2,3 +2,5 @@
 .env*
 !.env.example
 node_modules/
+# Logs the Firebase emulator writes on every test run
+tests/*-debug.log
