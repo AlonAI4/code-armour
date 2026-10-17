@@ -83,14 +83,14 @@ git clone https://github.com/AlonAI4/code-armour.git ~/code-armour
 
 **Claude Code**
 ```bash
-ln -s ~/code-armour ~/.claude/skills/code-armour
+mkdir -p ~/.claude/skills && ln -sfn ~/code-armour ~/.claude/skills/code-armour
 mkdir -p ~/.claude/commands && for c in armour armourcheck armourtest armourcost; do ln -sfn ~/code-armour/commands/$c.md ~/.claude/commands/$c.md; done
 ```
 Then open your project and type `/armour`.
 
 **Codex**
 ```bash
-ln -s ~/code-armour ~/.codex/skills/code-armour
+mkdir -p ~/.codex/skills && ln -sfn ~/code-armour ~/.codex/skills/code-armour
 mkdir -p ~/.codex/prompts && for c in armour armourcheck armourtest armourcost; do ln -sfn ~/code-armour/commands/$c.md ~/.codex/prompts/$c.md; done
 ```
 Then type `/prompts:armour` or `$code-armour`.
@@ -145,6 +145,7 @@ Every recipe is attacked by an automated test suite. [GitHub Actions](https://gi
 | `retest.test.sh` | 11 | A fixed game passes its saved re-test. Four typical AI "quick fixes" that undo security each turn it **red**. |
 | `firestore.test.mjs` | 12 | Firestore rules in the **real Firebase emulator**. |
 | `share.test.sh` | 11 | The share-zip recipe: the zip is built from git, so the ignored `.env` can't be inside; a committed `.env` or a real key value in the code stops it; the value is never printed. |
+| `install.test.sh` | 14 | The README Quick start, run exactly as written in an empty home folder, in zsh and bash: the skill and all 4 commands are found, running it twice is fine, and the installed scanner works. |
 | `plain.test.sh` | 5 | Projects with no database: git worktrees, monorepo `npm audit`, the slow-regex detector, the scanner ignoring its own copy. |
 | `findings.test.mjs` | 44 | The findings validator: refuses made-up evidence (missing files, fake line numbers), unproven or undisproven findings, hardening notes with no blocking layer, and COMPLIANCE.md rows citing rejected or unknown findings. It also enforces the 4 finding categories: legal findings need a source and a reason, are never ticked ✅, and sensitive topics need professional advice. |
 | `cost.test.mjs` | 21 | `/armourcost` with a fake `~/.claude`: ranking, totals, used/unused guesses, free skills, symlinks, plugins on/off, MCP servers, read-only, and fake secrets **never** appear in the output. |
