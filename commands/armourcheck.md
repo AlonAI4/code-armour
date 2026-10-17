@@ -15,6 +15,8 @@ Check this project's **Code Armour** using the code-armour skill (SKILL.md in th
 2. **Does it still work?**
    - Run `bash security-tests/run.sh $ARGUMENTS`. If it's missing, run the skill's `scripts/scan.sh . $ARGUMENTS` instead.
    - Every ✗ means a protection broke since the last check. Find the change that caused it with `git log -p`. Not a git repo? Compare file dates with the date in COMPLIANCE.md, and suggest `git init`.
+   - Cloned or forked project? Run the scan in clone mode too (`CA_BASE=<the original's branch>`) and check `LICENSE` is unchanged and the credits file still lists what was added.
+   - Shared as a zip? Check the last zip was made with `recipes/sharing/share-zip.sh` (built from git), not by zipping the folder, which carries the hidden `.env`.
 3. **Coverage gaps:** read `.code-armour/coverage.json` and list the areas that are `not_checked`, `partial`, or that changed since they were checked. Run `node <skill>/scripts/validate-findings.mjs .` and report what it says.
 4. **Is it up to date?** Follow the skill's "Re-testing" and "Staying up to date" sections:
    - the date of the last re-test;
