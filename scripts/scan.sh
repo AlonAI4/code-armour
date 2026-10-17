@@ -257,12 +257,12 @@ fi
 echo; echo "-- 6b. Firebase / other backends --"
 # node_modules at any depth is skipped (packages ship example rules). Comment lines don't count. Anyone may WRITE,
 # or test-mode dates = open; anyone may READ some paths = a public collection, fine only for truly public data.
-for f in $(find . -name node_modules -prune -o \( -name 'firestore.rules' -o -name 'storage.rules' -o -name 'database.rules.json' \) -print 2>/dev/null); do
+while IFS= read -r f; do   # (read line by line, so folder names with spaces work)
   r=$(grep -vE '^\s*//' "$f")
   if echo "$r" | grep -qE 'request\.time *<|allow [^:;]*write[^:;]*: *if true|"\.write" *: *true'; then bad "$f has open/test-mode rules (anyone can write, or test-mode dates)"
   elif echo "$r" | grep -qE 'allow [^:;]*read[^:;]*: *if true|"\.read" *: *true'; then warn "$f lets anyone read some paths: fine only for truly public data (no emails or ids you want private)"
   else ok "$f has no open rules"; fi
-done
+done < <(find . -name node_modules -prune -o \( -name 'firestore.rules' -o -name 'storage.rules' -o -name 'database.rules.json' \) -print 2>/dev/null)
 sa=$(grep -rlE "${EXCL[@]}" '"type": *"service_account"' . 2>/dev/null | head -5)
 [ -n "$sa" ] && bad "Service-account key file(s) in the project (full admin access, never commit or ship): $sa"
 grep -rqE "${EXCL[@]}" --include=*.ts --include=*.tsx --include=*.js '"use server"' . 2>/dev/null && warn "Next.js Server Actions found: each one must check the login inside it (middleware isn't enough)"

@@ -297,6 +297,9 @@ refuse "rules inside a nested node_modules are skipped" "node_modules/firebase-t
 printf 'service cloud.firestore { match /posts/{p} { allow read: if true; allow write: if true; } }\n' > firestore.rules
 OUT=$(bash "$SCAN" . 2>&1 | sed 's/\x1b\[[0-9;]*m//g')
 expect "anyone may write is still caught" "./firestore.rules has open/test-mode rules"
+mkdir -p "my app" && printf 'service cloud.firestore { match /{d=**} { allow read, write: if true; } }\n' > "my app/firestore.rules"
+OUT=$(bash "$SCAN" . 2>&1 | sed 's/\x1b\[[0-9;]*m//g')
+expect "rules in a folder with a space in its name are still read" "./my app/firestore.rules has open/test-mode rules"
 
 rm -rf "$T"
 echo; echo "$pass passed, $fail failed"; [ $fail = 0 ]
