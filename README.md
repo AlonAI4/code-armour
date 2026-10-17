@@ -80,6 +80,7 @@ You can also just ask: *"is my project safe to launch?"*
 ```bash
 git clone https://github.com/AlonAI4/code-armour.git ~/code-armour
 ```
+That always gets the latest version. To pin one instead (see Stay safe), clone a release: `git clone --branch v1.0.0 https://github.com/AlonAI4/code-armour.git ~/code-armour`.
 
 **Claude Code**
 ```bash
