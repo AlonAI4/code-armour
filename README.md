@@ -145,12 +145,12 @@ Every recipe is attacked by an automated test suite. [GitHub Actions](https://gi
 | `retest.test.sh` | 11 | A fixed game passes its saved re-test. Four typical AI "quick fixes" that undo security each turn it **red**. |
 | `firestore.test.mjs` | 12 | Firestore rules in the **real Firebase emulator**. |
 | `share.test.sh` | 11 | The share-zip recipe: the zip is built from git, so the ignored `.env` can't be inside; a committed `.env` or a real key value in the code stops it; the value is never printed. |
-| `install.test.sh` | 14 | The README Quick start, run exactly as written in an empty home folder, in zsh and bash: the skill and all 4 commands are found, running it twice is fine, and the installed scanner works. |
+| `install.test.sh` | 17 | The README Quick start, run exactly as written in an empty home folder, in zsh and bash: the skill and all 4 commands are found, running it twice is fine, and the installed scanner works. |
 | `plain.test.sh` | 5 | Projects with no database: git worktrees, monorepo `npm audit`, the slow-regex detector, the scanner ignoring its own copy. |
 | `findings.test.mjs` | 44 | The findings validator: refuses made-up evidence (missing files, fake line numbers), unproven or undisproven findings, hardening notes with no blocking layer, and COMPLIANCE.md rows citing rejected or unknown findings. It also enforces the 4 finding categories: legal findings need a source and a reason, are never ticked ✅, and sensitive topics need professional advice. |
 | `cost.test.mjs` | 21 | `/armourcost` with a fake `~/.claude`: ranking, totals, used/unused guesses, free skills, symlinks, plugins on/off, MCP servers, read-only, and fake secrets **never** appear in the output. |
 | `probe.test.mjs` | 15 | The Supabase probe against a fake leaky project: it finds every open door, **never writes**, and refuses a secret key. |
-| `disclaimer.test.sh` | 23 | The standard disclaimer is in the README, every command, the templates, the scripts' output and the legal references; the old wording is gone; the 4 category labels are used; the MIT licence wording stays. |
+| `disclaimer.test.sh` | 169 | The standard disclaimer is in the README, every command, the templates, the scripts' output and the legal references; the old wording is gone; the 4 category labels are used; the MIT licence wording stays; and each of the 146 country files points to the disclaimer and shows its research date. |
 
 ### Reviewed and attacked
 
@@ -169,7 +169,7 @@ These are AI and automated reviews, **not** a human lawyer or a professional pen
 |---|---|
 | `SKILL.md` | The step-by-step instructions the agent follows |
 | `commands/` | `/armour`, `/armourcheck`, `/armourtest`, `/armourcost` |
-| `references/` | Security (~120 risks incl. GitHub Actions, AI agents, extensions, MCP), legal (UK/EU/US incl. lawsuit-heavy US laws, app-store rules, EU 2026 product laws), general notes on 166 more countries and on national rules in the 27 EU members (researched Oct 2026) + sanctions, stacks, upcoming-laws watchlist (~60 dated items) |
+| `references/` | Security (~130 risks incl. GitHub Actions, AI agents, extensions, MCP), legal (UK/EU/US incl. lawsuit-heavy US laws, app-store rules, EU 2026 product laws), general notes on 166 more countries and on national rules in the 27 EU members (researched Oct 2026) + sanctions, stacks, upcoming-laws watchlist (~80 items, 54 with a date) |
 | `recipes/` | Ready-to-adapt fixes: Supabase SQL and Edge Functions, Firebase rules, headers for Netlify, Vercel and Cloudflare, Stripe/Lemon Squeezy/Paddle webhooks, Express, Next.js, a keys-free share zip |
 | `scripts/scan.sh` | The scanner: secrets, git history, what a folder zip would carry, local servers, clone mode, risky code, GitHub Actions, legal red flags in code, packages, power tools, live-site checks, and whether the project's own armour is set up |
 | `scripts/supabase-probe.mjs` | Read-only Supabase front-door probe |

@@ -9,6 +9,8 @@ step() { echo "$blocks" | awk -F'\t' -v n="$1" '$1==n{sub(/^[^\t]*\t/,""); print
 t "README has the clone, Claude Code and Codex steps" '[ -n "$(step 1)" ] && [ -n "$(step 2)" ] && [ -n "$(step 3)" ]'
 t "a fresh clone carries no log files (emulator logs are git-ignored)" '[ -z "$(git -C "$R" ls-files | grep -E "\.log$")" ] && git -C "$R" check-ignore -q tests/firestore-debug.log'
 t "the clone step clones github.com/AlonAI4/code-armour" 'step 1 | grep -q "git clone https://github.com/AlonAI4/code-armour.git ~/code-armour"'
+t "README's risk count (~N risks) is within 10 of security.md's numbered risks" 'n=$(grep -cE "^[0-9]+\.[0-9]+ " "$R/references/security.md"); r=$(grep -oE "~[0-9]+ risks" "$R/README.md" | head -1 | tr -dc 0-9); [ $(( n>r ? n-r : r-n )) -le 10 ]'
+t "README's country-file count matches the files in countries-extra" 'n=$(ls "$R"/references/countries-extra/*.md | grep -vc "/README\.md$"); grep -q "each of the $n country files" "$R/README.md"'
 for sh in zsh bash; do
   command -v $sh >/dev/null || { echo "  ($sh not installed: skipped)"; continue; }
   H=$(mktemp -d); mkdir -p "$H/code-armour"
