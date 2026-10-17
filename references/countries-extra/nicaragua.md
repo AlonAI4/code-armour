@@ -36,7 +36,7 @@ Note: La Gaceta and dgi.gob.ni not opened.
 - Merchant of Record or app stores for payments.
 
 ## Upcoming
-- [V-sec] EU sanctions renewal due 15 Oct 2026. US 301 tariff steps up 1 Jan 2027.
+- [V-sec] EU sanctions renewal due 15 Oct 2026. Update 2026-10-17: renewed on 9 Oct 2026 until 15 Oct 2027, still 21 people and 3 entities (Council/EEAS press release). US 301 tariff steps up 1 Jan 2027.
 
 ## Unverified
 - Whether the data regulator was set up in 2025-2026.
@@ -53,3 +53,4 @@ Note: La Gaceta and dgi.gob.ni not opened.
 - https://delfino.cr/2024/11/derechos-digitales-en-nicaragua-situacion-critica-que-se-agudiza
 - https://public-inspection.federalregister.gov/2026-07699.pdf
 - https://www.thompsonhinesmartrade.com/2025/12/ustr-announces-section-301-tariffs-on-nicaragua/
+- https://www.eeas.europa.eu/eeas/nicaragua-council-extends-restrictive-measures-until-october-2027_en (renewal to Oct 2027, checked 2026-10-17)

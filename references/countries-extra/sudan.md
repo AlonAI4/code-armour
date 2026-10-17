@@ -31,8 +31,8 @@ Marks: [V-reg] regulator/official text, [V-sec] law firm/news/tax vendor, [K] me
 - Don't ship controlled tech (e.g. specialised encryption hardware/software beyond mass-market) to Sudan.
 
 ## Upcoming
-- [V-sec] UN 1591 measures expire 9 Oct 2026 unless renewed; Panel of Experts 9 Nov 2026.
-- [V-sec] EU Sudan regime expires 10 Oct 2026 unless renewed.
+- [V-sec] UN 1591 measures expire 9 Oct 2026 unless renewed; Panel of Experts 9 Nov 2026. Update 2026-10-17: on 8 Oct 2026 the Council rolled them over again, only to 11 Dec 2026, after the US dropped its draft to widen the arms embargo to all of Sudan (Security Council Report, Sudan Tribune; resolution number unverified).
+- [V-sec] EU Sudan regime expires 10 Oct 2026 unless renewed. Unverified: whether it was renewed (not checked on 2026-10-17).
 - [V-sec] US CBW second-round sanctions: in place at least until about Jun-Jul 2027.
 
 ## Unverified
@@ -51,3 +51,5 @@ Marks: [V-reg] regulator/official text, [V-sec] law firm/news/tax vendor, [K] me
 - https://dataprotection.africa/sudan/
 - https://pymnts.com/?p=787786
 - https://www.paypal.com/us/webapps/mpp/country-worldwide ; https://stripe.com/legal/restricted-businesses
+- https://www.securitycouncilreport.org/monthly-forecast/2026-10/sudan-42.php (Oct 2026 renewal, checked 2026-10-17)
+- https://sudantribune.com/article/319788 (two-month technical rollover, checked 2026-10-17)

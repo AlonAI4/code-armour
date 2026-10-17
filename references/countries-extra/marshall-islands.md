@@ -29,7 +29,7 @@ Marks: [V-reg] regulator/official text, [V-sec] law firm/news/tax vendor, [K] me
 - Watch the new consumption tax for digital-services rules.
 
 ## Upcoming
-- [V-reg] PDPA 2025 (government agencies only) takes effect 12 months after certification, likely about Oct 2026.
+- [V-reg] PDPA 2025 (government agencies only) takes effect 12 months after certification, likely about Oct 2026. Update 2026-10-17: if certification was on the 7 Oct 2025 commencement date, it has been in force since 7 Oct 2026 (certification date unconfirmed). It still doesn't cover private businesses or foreign apps.
 - [V-sec] Consumption Tax Act 2025: start date not found.
 
 ## Unverified

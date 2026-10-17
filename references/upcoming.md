@@ -7,7 +7,7 @@ Laws that change on a known future date. Compare each date with **today** on eve
 - **Due within 6 months:** tell the user if it applies to their project, so they can prepare.
 - **Later:** mention it only if it clearly applies.
 
-Last full update: 2026-10-07. Status: ⏳ coming · ✅ confirmed started · ⚠️ slipped or changed (see note).
+Last full update: 2026-10-07; passed dates checked 2026-10-17. Status: ⏳ coming · ✅ confirmed started · ⚠️ slipped or changed (see note).
 
 | Date | Where | What changes | Affects | Status |
 |---|---|---|---|---|
@@ -63,9 +63,9 @@ Last full update: 2026-10-07. Status: ⏳ coming · ✅ confirmed started · ⚠
 | open | Thailand | Game Industry Promotion Act (expected end of 2025, not confirmed passed) | Games with Thai users | ⏳ |
 | open | UK | Planned law for device-level child protections (no timetable yet; aimed at big platforms first) — [MLex](https://www.mlex.com/mlex/articles/2522663/uk-law-for-device-level-child-protections-now-in-the-works-no-timetable-given-update) | Apps for kids in the UK | ⏳ |
 | open | US | New state privacy and kids' laws keep arriving (app-store age laws, AI companion laws) | Apps with US users | ⏳ |
-| 2026-10-09 | Sudan | UN 1591 sanctions/arms embargo expire unless renewed (EU regime 2026-10-10) — check renewal | Apps with users in Sudan | ⏳ |
-| 2026-10-15 | Nicaragua | EU sanctions renewal due | Paid apps, Nicaragua | ⏳ |
-| 2026-10 | Marshall Islands | Personal Data Protection Act 2025 takes effect (government agencies only) | Few small apps | ⏳ |
+| 2026-12-11 | Sudan | UN 1591 sanctions/arms embargo expire unless renewed. Rolled over again on 8 Oct 2026, only to 11 Dec (resolution number unverified); a US push to widen the embargo was dropped. EU regime renewal (due 10 Oct 2026) not checked | Apps with users in Sudan | ⚠️ |
+| 2027-10-15 | Nicaragua | EU sanctions renewal due (renewed on 9 Oct 2026 for one year: 21 people, 3 entities, no new names) | Paid apps, Nicaragua | ⏳ |
+| 2026-10-07 | Marshall Islands | Personal Data Protection Act 2025 (government agencies only): 12 months after certification, so probably in force since about 7 Oct 2026 (certification date unconfirmed) | Few small apps | ⚠️ |
 | 2026-11-01 | Lesotho | Mandatory e-invoicing for VAT-registered vendors (sources disagree on date) | Selling to Lesotho | ⏳ |
 | 2026-11-30 | Somalia | UN Al-Shabaab measures expire unless renewed | Paid apps, Somalia | ⏳ |
 | 2026 (late) | Guinea | New 3% "RCN" levy on digital services, after a 6-month transition from May 2026 | Selling to Guinea | ⏳ |
